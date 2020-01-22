@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-\usepackage[margin=1.15in]{geometry}
+\usepackage[margin=1.2in]{geometry}
 \usepackage{hyperref}
 \usepackage{datetime}
 \usepackage[auth-sc,affil-sl]{authblk}
@@ -26,7 +26,7 @@
 \newcommand{\qu}[1]{``#1''}
 
 
-\title{MATH 342W Spring 2020 \\ Course Syllabus}
+\title{MATH 390.4 (soon to be 342W) Spring 2020 \\ Course Syllabus}
 
 \author[]{Adam Kapelner, Ph.D.}
 
@@ -53,7 +53,7 @@ Course Homepage & \href{https://github.com/kapelner/QC_Math_390.4_Spring_2019}{h
 
 \section*{Course Overview}
 
-MATH 342W. Data Science via Machine Learning and Statistical Modeling. 6 hr.; 4 cr. Prereq.: MATH 241 (intro to probablity and statistics), MATH 231 (intro to linear algebra), CSCI 111 (intro to programming) or equivalents. Recommended: ECON 382 (intro to economentrics) or equivalent, MATH 341 (Bayesian modeling), MATH 633 (statistical inference) or equivalent. Philosophy of modeling and learning using data. Prediction via the ordinary linear model including orthogonal projections, sum of squares identity, $R^2$ and RMSE. Polynomial and interaction regressions. Prediction with machine learning including neural nets (the perceptron), support vector machines and the tree methods CART, bagged trees and Random Forests. Probability estimation using logistic regression, asymmetric cost classifiers and the ROC / DET performance curves. Underfitting vs. overfitting and the bias-variance decomposition / tradeoff. Model validation including out of sample techniques such as cross validation and bootstrap validation. Correlation vs. causation, causal models, lurking variables and interpretations of linear model coefficients. Extrapolation. The \texttt{R} language will be taught formally from the ground and up (its use will be a substantial part of the homework) as well as visualization using the \texttt{ggplot} library and manipulation using the \texttt{dplyr} library. \emph{Spring} \pagebreak
+MATH 342W. Data Science via Machine Learning and Statistical Modeling. 6 hr.; 4 cr. Prereq.: MATH 241 (intro to probablity and statistics), MATH 231 (intro to linear algebra), CSCI 111 (intro to programming) or equivalents. Recommended: ECON 382 (intro to economentrics) or equivalent, MATH 341 (Bayesian modeling), MATH 633 (statistical inference) or equivalent. Philosophy of modeling and learning using data. Prediction via the ordinary linear model including orthogonal projections, sum of squares identity, $R^2$ and RMSE. Polynomial and interaction regressions. Prediction with machine learning including neural nets (the perceptron), support vector machines and the tree methods CART, bagged trees and Random Forests. Probability estimation using logistic regression, asymmetric cost classifiers and the ROC / DET performance curves. Underfitting vs. overfitting and the bias-variance decomposition / tradeoff. Model validation including out of sample techniques such as cross validation and bootstrap validation. Correlation vs. causation, causal models, lurking variables and interpretations of linear model coefficients. Extrapolation. The \texttt{R} language will be taught formally from the ground and up (its use will be a substantial part of the homework) as well as visualization using the \texttt{ggplot} library and manipulation using the \texttt{dplyr} and \texttt{data.table} libraries. \pagebreak
 
 You should be familiar with the following before entering the class:
 
@@ -73,7 +73,7 @@ You should be familiar with the following before entering the class:
 
 \textbf{This is not your typical mathematics course.} This course will do lots of modeling of real-world situations using data via the \texttt{R} statistical language.
 
-\section*{The 650.3 section}
+\section*{The 650.4 section}
 
 You are the students taking this course as part of a masters degree in mathematics. Thus, there will be extra homework problems for you and you will be graded on a separate curve.
 
@@ -97,11 +97,20 @@ We will be using many reference texts and three popular books which you will rea
 
 Announcements will be made via email. I am known to send a couple emails per week on important issues. Thus, I will need the email address that you reliably check. The default is whatever is in CUNYfirst which many of you do not check. (See Homework \#0 for more information).
 
-\section*{Lectures}
+\section*{Classes}
+
+There are 42 scheduled meetings. Of these, 25 will be lectures, 13 will be labs, 2 will be midterm exams which are in class and 2 will be review periods (the meeting before the exams). The exam schedule is given on page~\pageref{subsec:exam_schedule}.
+
+I am \inred{canceling} Friday, April 17 (the Friday after the break which ends the day before) because many people will be away for the whole week returning the Monday after. We will do a makeup 2hr session at the end of the semester possibly during finals week to help with the projects. 
+
+\subsection*{Lectures}
 
 Lectures will be split into two periods: theory and practice. The first is a standard chalkboard lectue where we learn concepts and the second will be using the computer/projector to see the concepts in action in the \texttt{R} language. I have a no computer / tablet / phone policy during the theory component of the lectures (only pen / pencil and paper) but you are highly recommended to have the laptop during the second part.
 
-There are 28 scheduled meetings. Of these, 24 will be lectures, 2 will be midterm exams which are in class and 2 will be review periods (the meeting before the exams). The exam schedule is given on page~\pageref{subsec:exam_schedule}.
+\subsection*{Labs}
+
+Labs will take place on the Friday morning meeting. Sometimes we will spend some of the two hours doing a practice lecture but the majority of this time will be your time. You will take turns \qu{driving} the coding in front of the class, working on exercises that you will finish for homework. Thus we will spend most a lot of time talking through problem solving skills in data science.
+
 
 \subsection*{Lecture Upload}
 
@@ -113,20 +122,29 @@ As many previous students have noted, my handwritten notes are useful to me and 
 \item The file must be $<$2MB. No exceptions.
 \end{itemize}
 
+If you send me your notes, you are (1) agreeing to the \href{https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/LICENSE}{MIT license} which means someone can freely copy your notes and even make money off of it (and not owe you a cent!) and (2) since github is mirrored once your upload is on the web, it is there indeliby forever. \inred{If you are not comfortable with these two points, do not send me your notes.}
+
 \section*{Homework}
 
-There will be 8-10 homework assignments and they will be a combination of theory and practice. Homeworks will be assigned and placed on the \coursewebpage~ and will usually be due a week later in class. Homework will be \textbf{graded} out of 100 with extra credit getting scores possibly $> 100$. I will be doing the grading and will grade an \textit{arbitrary subset of the assignment} which is determined after the homework is handed in. Homework must be printed, neat and stapled (\textbf{it cannot be emailed to me}) but if you use \LaTeX~it can be pushed to your own repository (see \qu{Homework \LaTeX~bonus points} section below). Homework can be given to me in class or delivered under my office door (KY 604).
+Homework will be split into \textit{theory} and \textit{practice} (labs, see above). This will be the \qu{writing in the major course} next year. Thus, a portion of each theory and practice homework will involve writing \textit{English} and being graded on \textit{English}.
+
+\subsection*{Theory Homework}
+
+There will be 4-7 theory homework assignments and they will be a combination of theory and practice. Homeworks will be assigned and placed on the \coursewebpage~ and will usually be due a week later in class. Homework will be \textbf{graded} out of 100 with extra credit getting scores possibly $> 100$. I will be doing the grading and will grade an \textit{arbitrary subset of the assignment} which is determined after the homework is handed in. Homework must be printed, neat and stapled (\textbf{it cannot be emailed to me}) but if you use \LaTeX~it can be pushed to your own repository (see \qu{Homework \LaTeX~bonus points} section below). Homework can be given to me in class or delivered under my office door (KY 604).
 
 Graded homework will be returned in class. Regrades are handled during office hours or right after class is over. Scores for homeworks are finalized one week after the graded copies are handed back. Thereafter there will be no changes and no re-grading. Do not delay checking your graded homeworks. I am not perfect and I do make mistakes. It is your obligation to find our mistakes and report them.
 
 You are encouraged to seek help from me if you have questions. After class and office hours are good times. \ingreen{You are highly recommended to work with each other and help each other.} \inred{You must, however, submit your own solutions, \textit{with your own write-up} and in \textit{your own words}. There can be no collaboration on the actual \textit{writing}. Failure to comply will result in severe penalties.} The university honor code is something I take seriously and I send people to the Dean every semester for violations.
 
-\subsection*{Philosophy of Homework}
+\subsection*{Practice Homework (Labs)}
+
+These will almost exclusively consist of short and medium coding exercises in \texttt{R}. Most of the assignment will be done for you and your peers during the Friday lab session.
+
+
+\subsection*{Philosophy of Homework and Labs}
 
 
 Homework is the \textit{most} important part of this course.\footnote{In one student's \href{http://www.ratemyprofessors.com/ShowRatings.jsp?tid=1951051}{observation}, I give a \qu{mind-blowing homework} every week.} Success in Statistics and Mathematics courses comes from experience in working with and thinking about the concepts. It's kind of like weightlifting; you have to lift weights to build muscles. My job as an instructor is to provide assistance through your \href{http://en.wikipedia.org/wiki/Zone_of_proximal_development}{zone of proximal development}. With me, you can grow more than you can alone. To this effect, homework problems are color coded \ingreen{green} for easy, \inyellow{yellow} for harder, \inred{red} for challenging and \inpurple{purple} for extra credit. You need to know how to do all the greens by yourself. If you've been to class and took notes, they are a joke. Yellows and reds: feel free to work with others. Only do extra credits if you have already finished the assignment. The \qu{[Optional]} problems are for extra practice --- highly recommended for exam study.
-
-This will be the \qu{writing in the major course} next year. Thus,s ome of the homework will involve writing \textit{English} and being graded on \textit{English}.
 
 \subsection*{Time Spent on Homework }
 
@@ -163,27 +181,37 @@ For your first homework, you must:
 
 \noindent \inred{This constitutes a contract --- you are agreeing to this syllabus.} \\
 
-This assignment is due Friday, Feb 1, 5PM and will receive a grade of 0 or 100 with the usual 10 point penalty for lateness.
+This assignment is due Friday, Jan 31, noon and will receive a grade of 0 or 100 with the usual 10 point penalty for lateness.
+
+\section*{Writing Assignments}
+
+There will be two writing assingments. (1) A \qu{philosophy of modeling} essay. Here you will coalesce the non-mathematical material that is crucial to this class. The purpose is to make you truly understand the modeling process and its limitations from start to finish. (2) A final project. Here you will use build a predictive model using a dataset. This is the capstone project for the entire data science and statistics major and it is where you will tie everything together.
+
+This class will soon be the writing in the major course. Thus, writing is a major part of the curriculum herein.
 
 \section*{Examinations}
 
-Examinations are solely based on homeworks (which are rooted in the lectures)! If you can do all the green and yellow problems on the homeworks, the exams should not present any challenge. I will \textit{never} give you exam problems on concepts which you have not seen at home on one of the weekly homework assignments. There will be three exams and the schedule is below.
+Examinations are solely based on homeworks (which are rooted in the lectures)! If you can do all the green and yellow problems on the homeworks, the exams should not present any challenge. I will \textit{never} give you exam problems on concepts which you have not seen at home on one of the weekly homework assignments. 
+
+Since the is the capstone course, there is no final exam, but a large final project. There will be two midterm exams and the schedule is below.
 
 \subsection*{Exam and Major Assignment Schedule}\label{subsec:exam_schedule}
 
 \begin{itemize}
 \itemsep -0.0em 
-\item Midterm examination I will be Tues, March 5 in class with the first review session on the Thurs prior
-\item Midterm examination II will be Thurs, April 18 in class with a review on the Tues prior
-\item The philosophy of modeling paper is due April 29 at 11:59PM
-\item The final project is due and has a 10min presentation on Tues, May 14 11AM-1PM in KY283
+\item Midterm examination I will be Thurs, March 12 in class with the first review session on the Tuesday prior
+\item Midterm examination II will be Tues, May 12 in class with a review on the Friday prior
+\item The philosophy of modeling paper is due Mar 24 at 11:59PM
+\item The final project is due Sat, May 23 11:59PM by email
 \end{itemize}
 
 \subsection*{Exam Materials}
 
 I allow you to bring any calculator you wish but it cannot be your phone. The only other items allowed are pencil and eraser. I do not recommend using pen but it is allowed
 
-I also allow \qu{cheat sheets} on examinations. For both midterms, you are allowed to bring one 8.5'' $\times$ 11'' sheet of paper (front and back). \inred{Two sheets single sided are not allowed.} On this paper you can write anything you would like which you believe will help you on the exam. For the final, you are allowed to bring three 8.5'' $\times$ 11'' sheet of paper (front and back). \inred{Six sheets single sided are not allowed.} I will be handing back the cheat sheets so you can reuse your midterm cheat sheets for the final if you wish. 
+I also allow \qu{cheat sheets} on examinations. For both midterms, you are allowed to bring two 8.5'' $\times$ 11'' sheet of paper (front and back). \inred{Four sheets single sided are not allowed.} On this paper you can write anything you would like which you believe will help you on the exam. %For the final, you are allowed to bring three 8.5'' $\times$ 11'' sheet of paper (front and back). \inred{Six sheets single sided are not allowed.} I will be handing back the cheat sheets so you can reuse your midterm cheat sheets for the final if you wish. 
+
+\inred{Food is not allowed during exams but beverages are allowed.}
 
 %
 %\subsection*{Cheating on Exams}
@@ -214,10 +242,10 @@ Your course grade will be calculated based on the percentages as follows:
 Theory Homework & 7\% \\
 Labs & 13\% \\
 Class participation & 5\% \\
-Midterm Examination I & 20\%\\
-Midterm Examination II & 20\%\\
-Philosophy of Modeling Paper & 10\% \\
-Final Project with Writeup & 25\%
+Midterm Examination I & 19\%\\
+Midterm Examination II & 19\%\\
+Philosophy of Modeling Paper & 7\% \\
+Final Project with Writeup & 30\%
 \end{tabular}
 \end{table}
 \FloatBarrier

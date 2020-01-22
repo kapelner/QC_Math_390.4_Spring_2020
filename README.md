@@ -96,21 +96,19 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 * Homework 3 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf) (due 4/1)
 * Homework 2 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw02/hw02t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw02/hw02t.pdf) (due 3/6)
 * Homework 1 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw01/hw01t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw01/hw01t.pdf) (due 2/12)-->
-* Homework 0 [(see midway through syllabus)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/syllabus/syllabus.pdf?raw=true) (due 2/1)
+* Homework 0 [(syllabus, page 8)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/syllabus/syllabus.pdf?raw=true) (due 1/31)
 
 ## Writing Assignments
 <!--
-* Final Project [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/w01.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/w01.pdf) (due 5/24)
-* Modeling Essay [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/final_project.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/final_project.pdf) (due 4/18)-->
+* Final Project [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/final_project.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/final_project.pdf) (due 5/23 by email)-->
+* Modeling Essay [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/modeling_essay.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/modeling_essay.pdf) (due 3/30)
 
 
 ## Exams
 
-* Midterm I is Tues, March 5 (in class). 
+* Midterm I is Thurs, Mar 12 (in class). 
 
-* Midterm II is Thurs, April 11 (in class). 
-
-
+* Midterm II is Tues, May 12 (in class).
 
 
 ## Practice Exams
@@ -124,24 +122,22 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 
  [(practice exam 1)](https://github.com/kapelner/QC_Math_390.4_Spring_2019/blob/master/exams/midterm2/midterm2.pdf) [(practice exam solutions 1)](https://github.com/kapelner/QC_Math_390.4_Spring_2019/blob/master/exams/midterm2/midterm2_solutions.pdf)
 [(practice exam 2)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/midterm2/midterm2.pdf) [(practice exam solutions 2)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/midterm2/midterm2_solutions.pdf)
-
-<!--* Final
-
-[(practice exam)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/final/final.pdf) [(practice exam solutions)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/final/final_solutions.pdf)-->
+[(practice exam 3)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/final/final.pdf) [(practice exam solutions)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/final/final_solutions.pdf)
 
 ## Office Hours
 
 I *want* you to come to office hours! My office hours are:
 
-Time: Tues/Thurs 12:50-1:30PM
+Time: Tues/Thurs 10:30-11AM
 Location: Kiely Hall 283 (the classroom)
+Time: Friday, 10:50-11:20AM (except April 17)
+Location: Kiely Hall 061
 
-In addition, the TA, ***** will hold office hours as well:
+<!--In addition, the TA, ***** will hold office hours as well:
 
 Time: Thurs 1:45-2:45PM
-Location: Kiely Hall 5th floor math lounge
+Location: Kiely Hall 5th floor math lounge-->
 
 ## Grades and Class Standing
 
 You can check your grades in realtime at [http://qc.gradesly.com](http://qc.gradesly.com). You type in your email address and the password (which was emailed to you at the beginning of the semester).
-
