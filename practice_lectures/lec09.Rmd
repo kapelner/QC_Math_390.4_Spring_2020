@@ -1,0 +1,411 @@
+---
+title: "Practice Lecture 9 MATH 390.4 Queens College"
+author: "Professor Adam Kapelner"
+date: "April 2, 2019"
+---
+
+## Dplyr
+
+Now that we know piping, we can start adding some nice functions that manipulate data frames. Let's look at the diamonds dataset and load the dplyr library.
+
+```{r}
+data(diamonds, package = "ggplot2")
+pacman::p_load(dplyr)
+```
+
+Let's remind ourselves of the dataset:
+
+```{r}
+str(diamonds)
+summary(diamonds)
+```
+
+The package `dplyr` offers many conveninent functions to manipulate, clean, put together data frames (AKA "munging", "wrangling"). It works really nicely with the piping chain as you "begin" the manipulation with the dataset and then iteratively do step 1, step 2, etc until you wind up with what end product you would like.
+
+Beginning with the most obvious, `rename` will rename a column
+
+```{r}
+diamonds %>% 
+  rename(weight = carat)
+```
+
+
+The `select` function selects columns in the order you ask it to.
+
+```{r}
+diamonds %>% 
+  select(cut, carat, price) #these three only in this order
+diamonds %>% 
+  select(carat, price, cut) #these three only
+diamonds %>% 
+  select(-c(x, y, z)) #leave out these three
+diamonds %>% 
+  select(-x, -y, -z) #leave out these three
+```
+
+If you want to rearrange the columns, you pretend to select a subset and then ask for everything else:
+
+```{r}
+diamonds %>% 
+  select(carat, price, cut, everything()) #these three in this order first then everything else
+diamonds %>% 
+  select(-carat, everything()) #move carat last (first drop it, and then add it back in with everything)
+```
+
+
+The `arrange` method sorts the rows:
+
+```{r}
+diamonds %>%
+  arrange(carat) #default is ascending i.e. lowest first
+diamonds %>%
+  arrange(desc(carat)) #switch to descending, i.e. highest first
+diamonds %>%
+  arrange(desc(color), desc(clarity), desc(cut), desc(carat)) #multiple sorts - very powerful
+```
+
+
+
+The filter method subsets the data based on conditions:
+
+```{r}
+diamonds %>%
+  filter(cut == "Ideal")
+diamonds %>%
+  filter(cut == "Ideal") %>%
+  filter(depth < 65)
+diamonds %>%
+  filter(cut == "Ideal") %>%
+  filter(depth < 65) %>%
+  filter(x * y * z > 20)
+diamonds %>%
+  filter(cut == "Ideal" & depth < 65 & x * y * z > 20)
+diamonds %>%
+  filter((cut == "Ideal" | cut == "Premium") & depth < 65 & x * y * z > 20)
+diamonds %>%
+  filter(cut %in% c("Ideal", "Premium") & depth < 65 & x * y * z > 20)
+```
+
+How about removing all rows that are the same?
+
+```{r}
+diamonds
+diamonds %>%
+  distinct
+unique(diamonds$carat) #there's only a few weight measurements that are possible...
+diamonds %>%
+  distinct(carat, .keep_all = TRUE) #keeps the first row for each unique weight measurement
+```
+
+Sampling is easy
+
+```{r}
+diamonds %>%
+  sample_n(20)
+0.0005 * nrow(diamonds)
+diamonds %>%
+  sample_frac(0.0005)
+diamonds %>%
+  slice(5000 : 5009)
+```
+
+There are many ways to reshape a dataset. We will see two now and a few functions later when it becomes important. For instance: we can collapse columns together using the `unite` function from package `tidyr`.
+
+```{r}
+pacman::p_load(tidyr)
+diamonds2 = diamonds %>%
+  unite(dimensions, x, y, z, sep = " x ")
+diamonds2
+```
+
+We can reverse this operation by separating them out using `separate`:
+
+```{r}
+diamonds2 %>%
+  separate(dimensions, c("x", "y", "z"), sep = " x ")
+```
+
+Now for some real fun stuff. Let's create new features with the `mutate` function.
+
+```{r}
+diamonds %>%
+  mutate(volume = x * y * z) #adds a new column keeping the old ones (this was our exam problem)
+diamonds %>%
+  mutate(price_per_carat = price / carat) %>%
+  arrange(desc(price_per_carat))
+```
+
+Or rewrite old ones.
+
+```{r}
+diamonds %>%
+  mutate(cut = substr(cut, 1, 1))
+diamonds %>%
+  mutate(carat = factor(carat))
+```
+
+Here are some more ways to create new variables:
+
+```{r}
+diamonds %>%
+  mutate(carat = factor(ntile(carat, 5)))
+diamonds %>%
+  mutate(carat = percent_rank(carat))
+diamonds %>%
+  mutate(lag_price = lag(price)) #if this data was a time series
+diamonds %>%
+  mutate(cumul_price = cumsum(price)) #%>% tail
+```
+
+There are tons of package to do clever things. For instance, here's one that does dummies:
+
+```{r}
+pacman::p_load(sjmisc, snakecase)
+diamonds %>%
+  to_dummy(color, suffix = "label") %>% #this creates all the dummies
+  bind_cols(diamonds) %>% #now we have to add all the data back in
+  select(-matches("_"), everything()) %>% #this puts the dummies last
+  select(-color) #finally we can drop color
+diamonds %>% #convert all to dummies
+  select(color, cut, clarity) %>%
+  to_dummy(suffix = "label")
+```
+
+
+What if you want to create a new variable based on functions only run on subsets of the data. This is called "grouping".
+
+For instance:
+
+```{r}
+diamonds %>%
+  group_by(color) #nothing happened... this just is a directive to dplyr to do things a bit differently now
+diamonds %>%
+  group_by(color) %>%
+  mutate(price_rank_within_color = dense_rank(price)) #creates a new feature based on running the feature only within group
+diamonds %>%
+  group_by(color) %>%
+  mutate(avg_price_for_color = mean(price)) #creates a new feature based on running the feature only within group
+```
+
+How do you summarize data within group?
+
+```{r}
+diamonds %>%
+  group_by(color) %>%
+  summarize(avg_price = mean(price)) #where did all the other columns go???
+diamonds %>%
+  group_by(color) %>%
+  summarize(avg_price = mean(price), sd_price = sd(price), count = n()) #where did all the other columns go???
+diamonds %>%
+  group_by(color) %>%
+  summarize(avg_price = mean(price), avg_carat = mean(carat)) #where did all the other columns go???
+diamonds %>%
+  group_by(color) %>%
+  summarize(min_price = min(price), med_price = median(price), max_price = max(price))
+```
+
+Putting it all together: ususally you're doing this manipulation get the dataset you want. Usually you're editing the dataset for real. Let's make a copy first:
+
+```{r}
+diamonds2 = diamonds
+```
+
+We first note that if we want to overwrite we can do:
+
+```{r}
+diamonds2 = diamonds2 %>%
+  select(-x, -y, -z) %>%
+  filter(carat < 0.5)
+```
+
+Or we can use a mutate operation that reads and writes simultaneously:
+
+```{r}
+pacman::p_load(magrittr)
+diamonds2 = diamonds
+diamonds2 %<>%
+  select(-x, -y, -z) %>%
+  filter(carat < 0.5) %>%
+  arrange(carat, cut, color)
+diamonds2
+```
+
+This is as far as we can go with dplyr right now given that this dataset doesn't have datetime information, some duplication among rows, missing data and given that there's not multiple dataframes. We will return to dplyr under these situations in the future.
+
+
+
+
+# Linear Models with Interaction Terms
+
+A natural increasing relationship will likely be found between weight and price. Let's see it visually:
+
+```{r}
+base = ggplot(diamonds, aes(x = carat, y = price))
+base + geom_point()
+```
+
+Let's see a best guess linear relationship:
+
+```{r}
+mod = lm(price ~ carat, diamonds)
+b = coef(mod)
+summary(mod)$r.squared
+summary(mod)$sigma
+base + geom_point() + geom_abline(intercept = b[1], slope = b[2], col = "green")
+```
+
+Let us add a third variable to this plot, color, a metric about the "yellowness" of the diamond. This is an ordinal categorical variable ranging from D (most clear i.e. best) to J (most yellow in this dataset i.e. worst).
+
+
+```{r}
+base +
+  geom_point(aes(col = color)) + scale_color_brewer(type = "div")
+```
+
+We can look at this with faceting too:
+
+```{r}
+base +
+  geom_point() +
+  facet_wrap(~ color, ncol = 3)
+```
+
+
+What do we see here? It looks like the slope of the price vs. carat linear model is affected by color. For instance, the "D" color diamonds' price increases much faster as weight increases than the "E" color diamonds' price increases in weight, etc. Why do you think this is?
+
+We can picture two of these linear models below by fitting two submodels, one for D and one for J:
+
+```{r}
+mod_D = lm(price ~ carat, subset(diamonds, color == "D"))
+b_D = coef(mod_D)
+mod_J = lm(price ~ carat, subset(diamonds, color == "J"))
+b_J = coef(mod_J)
+
+base +
+  geom_point(aes(col = color)) + scale_color_brewer(type = "div") +
+  geom_abline(intercept = b_D[1], slope = b_D[2]) +
+  geom_abline(intercept = b_J[1], slope = b_J[2])
+```
+
+This indicates a separate intercept and carat-slope for each color. How is this done? Interacting carat and slope. The formula notation has the `*` operator for this. It is multiplication in formula land after all!
+
+```{r}
+mod = lm(price ~ carat * color, diamonds)
+coef(mod) #beware: sometimes strange naming conventions on the interaction terms but seems to work here fine
+```
+
+The reference category is color D. This means every other color should start lower and have a lower slope. This is about what we see above.
+
+How much of a better model is this than a straight linear model?
+
+```{r}
+mod_vanilla = lm(price ~ carat + color, diamonds)
+summary(mod_vanilla)$r.squared
+summary(mod_vanilla)$sigma
+summary(mod)$r.squared
+summary(mod)$sigma
+```
+
+You can get more predictive accuracy out of this. We added a degree of freedom? Is this gain real? Yes. With one more feature and $n = 54,000$ there is no chance this gain came from overfit. Add 20,000 features, yes.
+
+Let's take a look at carat with another variable, depth, a continuous predictor. High depth indicates diamonds are skinny and tall; low depth indicates diamonds are flat like a pancake.
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_point(aes(col = depth), lwd = 0.5) + scale_colour_gradientn(colours = rainbow(5))
+```
+
+It seems people like flatter diamonds and are willing to pay more per carat. Let's see this in the regression:
+
+```{r}
+mod = lm(price ~ carat * depth, diamonds)
+coef(mod)
+summary(mod)$r.squared
+summary(mod)$sigma
+```
+
+If carat increases by one unit, how much does price increase by?
+
+Is this better than the model without the interaction?
+
+```{r}
+mod = lm(price ~ carat + depth, diamonds)
+summary(mod)$r.squared
+summary(mod)$sigma
+```
+
+A tiny amount of increase.
+
+How about cut?
+
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_point(aes(col = cut), lwd = 0.5)
+```
+
+Likely something here.
+
+```{r}
+mod = lm(price ~ carat * cut, diamonds)
+coef(mod)
+summary(mod)$r.squared
+summary(mod)$sigma
+mod = lm(price ~ carat + cut, diamonds)
+summary(mod)$r.squared
+summary(mod)$sigma
+```
+
+Yes.
+
+Can we include all these interactions?
+
+```{r}
+mod = lm(price ~ carat * (color + depth + cut), diamonds)
+coef(mod)
+summary(mod)$r.squared
+summary(mod)$sigma
+mod = lm(price ~ carat + color + depth + cut, diamonds)
+summary(mod)$r.squared
+summary(mod)$sigma
+```
+
+A decent gain once again.
+
+What does the design matrix look like there? What is $p$?
+
+```{r}
+diamonds %>%
+  model.matrix(price ~ carat * (color + depth + cut), data = .) %>% #note diamonds is not the first argument of `model.matrix` so I use the dot to pass in diamonds in the appropriate position
+  head #you can see the strange naming convention here on cut for some reasons ... can't quite figure this out
+```
+
+
+Can we take a look at interactions of two categorical variables? BTW ... this is an answer to a lab question...
+
+
+```{r}
+plot1 = ggplot(diamonds, aes(x = cut, y = color)) +
+  geom_jitter(aes(col = price), lwd = 0.5) + scale_colour_gradientn(colours = rainbow(5))
+plot1
+```
+
+Cool animation possible. May not work because it needs a ton of packages...
+
+```{r}
+pacman:::p_load_gh("dgrtwo/gganimate")
+plot1 + transition_time(price)
+```
+
+Not so clear what's going on here. Let's see what the regressions say:
+
+
+```{r}
+mod = lm(price ~ color * cut, diamonds)
+coef(mod)
+summary(mod)$r.squared
+summary(mod)$sigma
+mod = lm(price ~ color + cut, diamonds)
+summary(mod)$r.squared
+summary(mod)$sigma
+```
