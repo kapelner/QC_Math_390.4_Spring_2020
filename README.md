@@ -107,7 +107,6 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 ## Exams
 
 * Midterm I is Thurs, Mar 12 (in class). 
-
 * Midterm II is Tues, May 12 (in class).
 
 
@@ -115,28 +114,28 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 
 * Midterm I
 
-[(practice exam 1)](https://github.com/kapelner/QC_Math_390.4_Spring_2019/blob/master/exams/midterm1/midterm1.pdf) [(practice exam solutions 1)](https://github.com/kapelner/QC_Math_390.4_Spring_2019/blob/master/exams/midterm1/midterm1_solutions.pdf)
+[(practice exam 1)](https://github.com/kapelner/QC_Math_390.4_Spring_2019/blob/master/exams/midterm1/midterm1.pdf) [(practice exam solutions 1)](https://github.com/kapelner/QC_Math_390.4_Spring_2019/blob/master/exams/midterm1/midterm1_solutions.pdf)\
 [(practice exam 2)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/midterm1/midterm1.pdf) [(practice exam solutions 2)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/midterm1/midterm1_solutions.pdf)
 
 * Midterm II
 
- [(practice exam 1)](https://github.com/kapelner/QC_Math_390.4_Spring_2019/blob/master/exams/midterm2/midterm2.pdf) [(practice exam solutions 1)](https://github.com/kapelner/QC_Math_390.4_Spring_2019/blob/master/exams/midterm2/midterm2_solutions.pdf)
-[(practice exam 2)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/midterm2/midterm2.pdf) [(practice exam solutions 2)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/midterm2/midterm2_solutions.pdf)
+[(practice exam 1)](https://github.com/kapelner/QC_Math_390.4_Spring_2019/blob/master/exams/midterm2/midterm2.pdf) [(practice exam solutions 1)](https://github.com/kapelner/QC_Math_390.4_Spring_2019/blob/master/exams/midterm2/midterm2_solutions.pdf)\
+[(practice exam 2)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/midterm2/midterm2.pdf) [(practice exam solutions 2)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/midterm2/midterm2_solutions.pdf)\
 [(practice exam 3)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/final/final.pdf) [(practice exam solutions)](https://github.com/kapelner/QC_Math_390.4_Spring_2018/blob/master/exams/final/final_solutions.pdf)
 
 ## Office Hours
 
 I *want* you to come to office hours! My office hours are:
 
-Time: Tues/Thurs 10:30-11AM
-Location: Kiely Hall 283 (the classroom)
-Time: Friday, 10:50-11:20AM (except April 17)
+Time: Tues/Thurs 10:30-11AM\
+Location: Kiely Hall 283 (the classroom)\
+Time: Friday, 10:50-11:20AM (except April 17)\
 Location: Kiely Hall 061
 
-<!--In addition, the TA, ***** will hold office hours as well:
+In addition, the TA, Moshe Weiss will hold office hours as well:
 
-Time: Thurs 1:45-2:45PM
-Location: Kiely Hall 5th floor math lounge-->
+Time: Wed 2-3PM\
+Location: Kiely Hall 5th floor math lounge
 
 ## Grades and Class Standing
 
