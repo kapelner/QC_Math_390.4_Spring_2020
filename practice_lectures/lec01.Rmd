@@ -1,10 +1,8 @@
 ---
 title: "Practice Lecture 1 MATH 390.4 Queens College"
 author: "Professor Adam Kapelner"
-date: "January 28, 2020"
+date: "January 30, 2020"
 ---
-
-This file type "Rmd" is "R Markdown" which allows for text and R interwoven together. 
 
 You can get started with this cheatsheet:
 https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf
@@ -27,6 +25,13 @@ What is R?
 * New stats algorithms and methodologies appear here first!
 * I joke that I'm an R developer for a living
 * History: came from Bell Labs. C --> S --> R
+
+What is RStudio? An IDE. It is not the only IDE for R, but it is the most popular at the time of this writing. It consists of the file window (what you're reading) and the console window (below) and a few other convenient windows which will be explained later.
+
+File types:
+
+* The standard R script has a .R extension
+* This file if you note has an .Rmd extension meeaning "R Markdown". Markdown is a way of typestting simple documents with basic code directives. You can read up on this by yourself. "R Markdown" is a document type that combines R code within markdown documents where the R code is in "chunks".
 
 Let's see some R! Since R is interpreted, you can run commands directly into its command line by using ctrl-enter line-by-line or ctrl-shift-enter for the entire "chunk":
 
@@ -71,40 +76,31 @@ Multiple statements per line is not generally done unless you are making a point
 You can also extend expressions for many lines if you have a dangling operator at the end of the line e.g. this plus sign:
 
 ```{r}
-5 +
-  5 +
-  5
+5+5+5
 ```
 Avoid this unless the line gets so long it's difficult to read. Note the "+" at the end of the line so the interpreter knows to keep looking to the next line.
 
 Let's take a look at how to represent numbers using scientific notation
 
 ```{R}
-3,125 #commas are illegal andnote that RStudio finds basic errors for us
+3,125 #commas are illegal and note that RStudio finds basic errors for us
 3.125e3 #scientific notation
-3.125E3 
-3.125E-3
-options(digits = 3)
-3.125E-3
-options(digits = 7) #the default
+3.125E3
 ```
 
-There are lots of options. Look at the help file by using the question mark:
 
-```{r}
-?options
-```
-
-Every language has a means of invoking functions. Here are some included famous math functions. R uses parentheses to invoke functions. The quantities within the parentheses are known as "parameters" or "arguments" to the function. Each of these functions takes in one argument:
+Every language has a means of invoking functions. Here are some included famous math functions. R uses parentheses to invoke functions. The quantities within the parentheses are known as "parameters" or "arguments" to the function.
 
 ```{r}
 sqrt(2)
 log(2)
 log(2, 2)
+log(2, base = 2) #This is preferred: specify the argument by name after the first argument.
 abs(-1)
 floor(1.2)
 ceiling(1.2)
-round(1.2)
+round(1.2345)
+round(1.2345, 2)
 log10(1000)
 sin(pi) #pi is a hard-wired numerical constant, the only one in the language (I think)
 #note the numerical error
@@ -112,16 +108,40 @@ acos(1)
 exp(1)
 ```
 
+We can control the number of digits via
+
+```{r}
+options(digits = 3)
+3.123456789E-6
+options(digits = 7) #the default
+3.123456789E-6
+```
+
+
+There are lots of options. Look at the help file for a function by using the question mark:
+
+```{r}
+?options
+```
+
 Let's talk about basic data types:
 
 ```{r}
 TRUE #logical
+FALSE
+T
+F
 class(TRUE)
 1 #numeric, think of double type in C++ or Java
 class(1)
 1L
 class(1L) #what's the L doing? It's forcing a certain type
-class(as.integer(1)) #what's the L doing? It's forcing a certain type
+```
+
+There are more formal ways to "force" AKA "cast":
+
+```{r}
+class(as.integer(1))
 class(as.numeric(1L)) #what's the L doing? It's forcing a certain type
 1.L #what's this? Not an error but a warning
 1e3 #scientific notation convenience
@@ -138,6 +158,9 @@ as.logical(1)
 as.logical(0.1) #anything else besides zero...
 as.character(1)
 as.character(0.1)
+as.logical("a") #more on this "character" later
+as.logical("FALSE") #more on this "character" later
+as.logical("T") #more on this "character" later
 ```
 
 All of the above are actually 1-dim vectors. We will explore this later.
@@ -181,11 +204,12 @@ Every language has a means to assign a piece of data to variables:
 x = 1 #I use this... only because I like using one less character and I like my code to read like other popular languages
 x
 x <- 1 #but this is actually preferred according to the the R spec
-1 -> x #maybe because you can do this?? But don't do this!!
+1 -> x #even those this is legal, please don't do this!!
 x
+T = "my string"
 x_the_number = 1 #underscored variables preferred
 xTheNumber = 1 #camel case is a different style
-x.the.number = 1 #some people like this, I don't because it is confusing with other languages
+x.the.number = 1 #some people like this but I don't because it is confusing with other languages e.g. Java
 ```
 
 And a means to see what variables have been assigned and remove these variables:
@@ -207,8 +231,6 @@ cat(x); cat(x) #it prints without a line break
 cat(x, "\n") #you can have many arguments to cat and it will concatenate them
 cat("x is", x, "\n"); cat("x is", x, "\n")
 ```
-
-
 There is a means to use logical comparisons:
 
 ```{r}
@@ -226,8 +248,7 @@ x & y #AND
 x | y #OR
 ```
 
-
-Let's talk about some simple operations on vectors:
+Previously, we used vector types without even knowing. Let's talk about some simple operations on vectors:
 
 ```{r}
 x = seq(1, 100) 
@@ -236,7 +257,7 @@ head(x) #the first elements
 tail(x) #the last elements
 head(x, 11) #the first 11 elements
 tail(x, 13) #the last 13 elements
-x[1] #R has one-based indexing while C, C++, Python, Java, have zero-based indexing
+x[1] #R has one-based indexing while C, C++, Python, Java, have zero-based indexing. Get used to it. SORRY!!!
 x[6]
 x[length(x)] #unfortunately no "-1" last index convenience...
 x[c(2, 77)]
@@ -258,7 +279,7 @@ x == y
 all.equal(x, y)
 ```
 
-Most operations in R are vector-operations:
+Most operations in R are vector-operations and these are preferred because they are optimized:
 
 ```{r}
 x = 1 : 5
@@ -266,8 +287,6 @@ x + 2
 x * 2
 x^2
 ```
-
-
 A note about logical vectors:
 
 ```{r}
@@ -290,7 +309,6 @@ xor(TRUE, TRUE)
 xor(FALSE, FALSE)
 ```
 
-
 Sampling is very important:
 
 ```{r}
@@ -298,7 +316,7 @@ x = 1 : 100
 sample(x, 3)
 sample(x, 101)
 sample(x, 3, replace = TRUE)
-sample(x, 101, replace = TRUE)
+sort(sample(x, 101, replace = TRUE))
 sample(x) #default is length of the vector i.e. just shuffles
 ```
 
@@ -322,7 +340,7 @@ log(-1)
 sqrt(-1)
 ```
 
-There are a couple more "illegalish" values: NA, NULL, empty vectors
+There are a couple more "illegalish" values that are non-computational: NA, NULL, empty vectors
 
 ```{r}
 NA #this is the value of missing
@@ -341,6 +359,7 @@ c() #remarkably... not what we expect...
 x[NA]
 x[NaN]
 x[Inf]
+x[4]
 ```
 
 Now let's look at data types again. These types are the data types we learned in class.
@@ -365,6 +384,8 @@ levels = c("low", "medium", "high")
 x_char = sample(rep(levels, 10))
 x = factor(x_char)
 x #nominal categorical variable
+x = factor(x_char, levels = levels)
+x
 x = factor(x_char, levels = levels, ordered = TRUE)
 x #ordinal categorical variable
 as.numeric(x) #coerce this variable to a number... result makes sense
