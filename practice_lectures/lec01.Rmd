@@ -4,8 +4,6 @@ author: "Professor Adam Kapelner"
 date: "January 30, 2020"
 ---
 
-This file type "Rmd" is "R Markdown" which allows for text and R interwoven together. 
-
 You can get started with this cheatsheet:
 https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf
 
@@ -78,9 +76,7 @@ Multiple statements per line is not generally done unless you are making a point
 You can also extend expressions for many lines if you have a dangling operator at the end of the line e.g. this plus sign:
 
 ```{r}
-5 +
-  5 +
-  5
+5+5+5
 ```
 Avoid this unless the line gets so long it's difficult to read. Note the "+" at the end of the line so the interpreter knows to keep looking to the next line.
 
@@ -103,7 +99,8 @@ log(2, base = 2) #This is preferred: specify the argument by name after the firs
 abs(-1)
 floor(1.2)
 ceiling(1.2)
-round(1.2)
+round(1.2345)
+round(1.2345, 2)
 log10(1000)
 sin(pi) #pi is a hard-wired numerical constant, the only one in the language (I think)
 #note the numerical error
@@ -131,6 +128,9 @@ Let's talk about basic data types:
 
 ```{r}
 TRUE #logical
+FALSE
+T
+F
 class(TRUE)
 1 #numeric, think of double type in C++ or Java
 class(1)
@@ -159,6 +159,8 @@ as.logical(0.1) #anything else besides zero...
 as.character(1)
 as.character(0.1)
 as.logical("a") #more on this "character" later
+as.logical("FALSE") #more on this "character" later
+as.logical("T") #more on this "character" later
 ```
 
 All of the above are actually 1-dim vectors. We will explore this later.
@@ -204,6 +206,7 @@ x
 x <- 1 #but this is actually preferred according to the the R spec
 1 -> x #even those this is legal, please don't do this!!
 x
+T = "my string"
 x_the_number = 1 #underscored variables preferred
 xTheNumber = 1 #camel case is a different style
 x.the.number = 1 #some people like this but I don't because it is confusing with other languages e.g. Java
@@ -313,7 +316,7 @@ x = 1 : 100
 sample(x, 3)
 sample(x, 101)
 sample(x, 3, replace = TRUE)
-sample(x, 101, replace = TRUE)
+sort(sample(x, 101, replace = TRUE))
 sample(x) #default is length of the vector i.e. just shuffles
 ```
 
@@ -356,6 +359,7 @@ c() #remarkably... not what we expect...
 x[NA]
 x[NaN]
 x[Inf]
+x[4]
 ```
 
 Now let's look at data types again. These types are the data types we learned in class.
@@ -380,6 +384,8 @@ levels = c("low", "medium", "high")
 x_char = sample(rep(levels, 10))
 x = factor(x_char)
 x #nominal categorical variable
+x = factor(x_char, levels = levels)
+x
 x = factor(x_char, levels = levels, ordered = TRUE)
 x #ordinal categorical variable
 as.numeric(x) #coerce this variable to a number... result makes sense
