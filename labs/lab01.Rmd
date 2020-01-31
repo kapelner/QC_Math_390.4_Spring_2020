@@ -1,0 +1,162 @@
+---
+title: "Lab 1"
+author: "Your Name Here"
+output: pdf_document
+date: "11:59PM February 8, 2020"
+---
+
+You should have RStudio installed to edit this file. You will write code in places marked "TO-DO" to complete the problems. Some of this will be a pure programming assignment. The tools for the solutions to these problems can be found in the class practice lectures. I want you to use the methods I taught you, not for you to google and come up with whatever works. You won't learn that way.
+
+To "hand in" the homework, you should compile or publish this file into a PDF that includes output of your code. Once it's done, push by the deadline to your repository in a directory called "labs".
+
+* Print out the numerical constant pi with ten digits after the decimal point using the internal constant `pi`.
+
+```{r}
+#TO-DO
+```
+
+* Sum up the first 100 terms of the series 1 + 1/2 + 1/4 + 1/8 + ...
+
+```{r}
+#TO-DO
+```
+
+* Find the product of the first 20 terms of `1 * 1/3 * 1/6 * 1/9 *` ...
+
+```{r}
+#TO-DO
+```
+
+
+* Find the product of the first 500 terms of `1 * 1/2 * 1/4 * 1/8 *` ...
+
+```{r}
+#TO-DO
+```
+
+Is this answer *exactly* correct? 
+
+#TO-DO
+
+* Figure out a means to express the answer more exactly. Not compute exactly, but express more exactly.
+
+```{r}
+#TO-DO
+```
+
+* Create the sequence `x = [Inf, 20, 18, ..., -20]`.
+
+```{r}
+#TO-DO
+```
+
+Create the sequence `x = [log_3(Inf), log_3(100), log_3(98), ... log_3(-20)]`.
+
+```{r}
+#TO-DO
+```
+
+Comment on the appropriateness of the non-numeric values.
+
+#TO-DO
+
+
+* Create a vector of booleans where the entry is true if `x[i]` is positive and finite.
+
+```{r}
+#TO-DO
+```
+
+* Locate the indices of the non-numbers in this vector. Hint: use the `which` function.
+
+```{r}
+#TO-DO
+```
+
+* Locate the indices of the infinite quantities in this vector. Hint: use the `which` function.
+
+```{r}
+#TO-DO
+```
+
+* Locate the indices of the min and max in this vector. Hint: use the `which.min` and `which.max` functions.
+
+```{r}
+#TO-DO
+```
+
+* Count the number of unique values in `x`.
+
+```{r}
+#TO-DO
+```
+
+* Cast `x` to a factor. Do the number of levels make sense?
+
+```{r}
+#TO-DO
+```
+
+* Cast `x` to integers. What do we learn about R's infinity representation in the integer data type?
+
+```{r}
+#TO-DO
+```
+
+* Use `x` to create a new vector `y` containing only real numbers.
+
+```{r}
+#TO-DO
+```
+
+* Use the left rectangle method to numerically integrate x^2 from 0 to 1 with rectangle size 1e-6.
+
+```{r}
+#TO-DO
+```
+
+
+* Calculate the average of 100 realizations of standard Bernoullis in one line using the `sample` function.
+
+```{r}
+#TO-DO
+```
+
+
+* Calculate the average of 500 realizations of Bernoullis with p = 0.9 in one line using the `sample` function.
+
+```{r}
+#TO-DO
+```
+
+
+* Calculate the average of 1000 realizations of Bernoullis with p = 0.9 in one line using `rbinom`.
+
+```{r}
+#TO-DO
+```
+
+* Use the `strsplit` function and `sample` to put the sentences below in random order.
+
+```{r}
+lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi posuere varius volutpat. Morbi faucibus ligula id massa ultricies viverra. Donec vehicula sagittis nisi non semper. Donec at tempor erat. Integer dapibus mi lectus, eu posuere arcu ultricies in. Cras suscipit id nibh lacinia elementum. Curabitur est augue, congue eget quam in, scelerisque semper magna. Aenean nulla ante, iaculis sed vehicula ac, finibus vel arcu. Mauris at sodales augue. "
+#TO-DO
+```
+
+* In class we considered a variable `x_3` which measured "criminality". We imagined L = 4 levels "none", "infraction", "misdimeanor" and "felony". Create a variable `x3` here with 100 random elements (equally probable). Create it as a nominal (i.e. unordered) factor.
+
+```{r}
+#TO-DO
+```
+
+* Use `x_3` to create `x_3_bin`, a binary feature where 0 is no crime and 1 is any crime.
+
+```{r}
+#TO-DO
+```
+
+* Use `x_3` to create `x_3_ord`, an ordered, nominal factor variable. Ensure the proper ordinal ordering.
+
+```{r}
+#TO-DO
+```
