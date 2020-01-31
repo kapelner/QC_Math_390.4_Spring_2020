@@ -84,8 +84,8 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 * [(Review Lab 1, not due)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/reviewlab1.Rmd)
 * [(Lab 4, due 3/09)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab04.Rmd)
 * [(Lab 3, due 2/24)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab03.Rmd)
-* [(Lab 2, due 2/17)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab02.Rmd)
-* [(Lab 1, due 2/09)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab01.Rmd)-->
+* [(Lab 2, due 2/17)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab02.Rmd)-->
+* [(Lab 1, due 2/08)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab01.Rmd)
 
 ## Theory Homeworks
 
