@@ -390,3 +390,6 @@ x = factor(x_char, levels = levels, ordered = TRUE)
 x #ordinal categorical variable
 as.numeric(x) #coerce this variable to a number... result makes sense
 ```
+
+
+Data which is of class factor can be used in mathematical models that we build just like numeric. It will, by default be reduced to binary variables.
