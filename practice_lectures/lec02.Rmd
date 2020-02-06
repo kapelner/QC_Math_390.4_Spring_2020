@@ -19,6 +19,9 @@ Let's now do some probability a la Math 241. Let's realize a few iid random vari
 n = 10 #good programming practice to declare shared data
 
 x = rbinom(n, size = 5, prob = 0.1)
+dbinom(1, size = 5, p = 0.1)
+pbinom(3, size = 5, p = 0.1)
+qbinom(.75, size = 3, p = 0.1)
 x #returns as a vector
 ?rbinom
 x = rgeom(n, prob = 0.1)
@@ -69,6 +72,11 @@ X[, 1] #first column
 class(X[, 1]) #note: not matrix anymore
 X[, 1, drop = FALSE]
 class(X[, 1, drop = FALSE])
+
+X[1 : 4, ]
+X[, 2 : 3]
+X[, c(1, 3)]
+X[seq(1, n, by = 2), ]
 ```
 
 A few handy functions for numerical matrices:
@@ -114,8 +122,9 @@ if (x > 0){
 There is a one line convenience function called ifelse:
 
 ```{r}
-x = 3
-a = ifelse(x > 0, 1, -1)
+x = -10 : 10
+b = -10 : 10
+a = ifelse(x > 0, b, -1)
 a
 x = -5 : 5
 a = ifelse(x > 0, 1, -1)
@@ -127,7 +136,7 @@ a
 There is also a switch in R. It is _not_ an official keyword (despite RStudio's endorsement), but it is useful for non-vector character expressions:
 
 ```{r}
-ch = "one"
+ch = "four"
 # ch = c("one", "two")
 switch(ch,
    "one" = 1,
@@ -143,6 +152,7 @@ switch(ch,
 A for loop contains three ingredients: (a) a looping variable joined with keyword "in" to a (b) vector or list (which we will discuss later) and executes over an (c) expression recommended to be enclosed in curly braces:
 
 ```{r}
+
 for (i in 1 : 10){
   j = i
   print(j)
@@ -267,6 +277,8 @@ dict #default keys are the numbers 1, 2, ...
 dict[[1]]
 dict = list("a" = "first", "b" = "second", "c" = "third") #key => value
 dict
+dict = list(a = "first", b = "second", c = "third") #key => value
+dict
 ```
 
 Lists conveniently allow all sorts of data types (as values only).
@@ -330,9 +342,10 @@ my_function = function(x){
   x
 }
 ##You may be used to:
-#int my_function(int x){ 
+# int my_function(int x){
+#  //something
 #  return x;
-#}
+# }
 ```
 
 * Functions are objects in R. This is why you are actually assigning the function to an object.
@@ -343,6 +356,7 @@ Let's make sure this works:
 
 ```{r}
 my_function(3)
+my_function("asd")
 my_function(x = 3) #you can specify that 3 is the value for argument "x"
 my_function(y = 3) #illegal argument
 ```
@@ -357,11 +371,11 @@ my_function() #default execution
 my_function(p = 0) #one optional argument specified, others defaulted
 my_function(y = -2, q = 0) #two optional arguments specified, others defaulted
 
-my_function = function(x, y = 2, z = 3, p = 4, q = 5, r = 6){
+my_function = function(x = 1, y, z = 3, p = 4, q = 5, r = 6){
   (x + y + z) / (p + q + r)
 }
 my_function() #no dice
-my_function(0) #required argument specified
+my_function(1, 0) #required argument specified
 my_function(0, q = 7) #required argument specified and one optional argument
 rm(my_function) #can be deleted since it's an object
 ```
@@ -387,7 +401,7 @@ nrow(X)
 ncol(X)
 dim(X)
 length(X) #countless bugs!
-c(X) #vectorizes / flattens a matrix (sometimes useful)
+c(X)
 ```
 
 Why should we fill up this matrix with NA's? No technical reason; it is done for a practical reason. Every value is currently "missing" until it's filled in i.e. it will let you know if you didn't fill any of the values.
@@ -440,10 +454,10 @@ A quick sidebar about vectors within matrices with row or column names:
 salaries = X[, 1] 
 salaries #it's a vector with names
 names(salaries) #access to its names
-names(salaries)[3] = "Kapelner"
+names(salaries)[3] = "Adam"
 salaries
 salaries[3]
-salaries["Kapelner"]
+salaries["Adam"]
 sort(salaries)
 #how do we sort salaries by name?
 salaries[order(names(salaries))]
@@ -475,8 +489,8 @@ IQR(X[, "salary"])
 There is also the convenient quantile and inverse quantile function
 
 ```{r}
-quantile(X[, "salary"], probs = 0.5) 
-quantile(X[, "salary"], probs = c(.1, .9))  
+quantile(X[, "salary"], probs = 0.5)
+quantile(X[, "salary"], probs = c(.1, .9))
 inverse_quantile_obj = ecdf(X[, "salary"]) #the "empirical" CDF
 inverse_quantile_obj(50000)
 inverse_quantile_obj(70000)
@@ -529,7 +543,7 @@ X = data.frame(
     prob = c(.50, .40, .08, .02)
   )
 )
-row.names(X) = fake_first_names
+rownames(X) = fake_first_names
 X
 ```
 
@@ -560,7 +574,7 @@ Now that we have two categorical variables, we can do a "cross tab":
 ```{r}
 table(X$has_past_unpaid_loan)
 table(X$past_crime_severity)
-table(X$has_past_unpaid_loan, X$past_crime_severity)
+table(X$has_past_unpaid_loan, X$past_crime_severity) / 100
 #to avoid needing the "X$" over and over, use the convenience "with"
 with(X,
   table(has_past_unpaid_loan, past_crime_severity)
