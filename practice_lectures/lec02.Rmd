@@ -72,7 +72,7 @@ X[, 1] #first column
 class(X[, 1]) #note: not matrix anymore
 X[, 1, drop = FALSE]
 class(X[, 1, drop = FALSE])
-
+#other ways of subsetting matrices
 X[1 : 4, ]
 X[, 2 : 3]
 X[, c(1, 3)]
@@ -152,19 +152,30 @@ switch(ch,
 A for loop contains three ingredients: (a) a looping variable joined with keyword "in" to a (b) vector or list (which we will discuss later) and executes over an (c) expression recommended to be enclosed in curly braces:
 
 ```{r}
-
 for (i in 1 : 10){
   j = i
   print(j)
 }
 ```
 
-Note that the looping variable i still exists but the variable within the looped expression j does not:
+Note that both the looping variable i still exists and the variable within the looped expression j still exists:
 
 ```{r}
 i
 j
 ```
+
+Be careful of scoping in R. You may want to "clean up your namespace" whenever you can.
+
+```{r}
+for (i in 1 : 10){
+  j = i
+  print(j)
+}
+rm(i, j)
+```
+
+There is no need to save the values of the temp variables i, j going forward. They would vanish in C++ / Java when the for loop ended as it goes out of scope.
 
 You can iterate over a vector as well Python-style or Java-generic-style:
 
@@ -590,312 +601,3 @@ summary(X) #much better now!
 ```
 
 Conceptually - why does this make no sense at all??? y is independent of X --- what happens then? No function f can ever have any predictive / explanatory power! This is just a silly example to show you the data types. We will work with real data soon. Don't worry.
-
-## Libraries in R
-
-So far we've only made use of "base R". This is the funcionality included from a vanilla installation of R. 
-
-R has a huge worldwide community of contributors. Some contribute to newer version of base R, but most create open-source "R packages" or "libraries". Many libraries come preinstalled. For instance, the MASS library which stands for "Modern Applied Statistics with S" (a famous textbook of R). We can call a function from the MASS library via the following:
-
-```{r}
-MASS::as.fractions(0.99)
-MASS::as.fractions(pi)
-```
-
-Note we cannot just
-
-```{r}
-as.fractions(pi)
-```
-
-We made use of the scope operator "::" to access a namespace beyond the usual "global namespace" which we've been used to. 
-
-If we are using the MASS library a lot, using the scope operator may get annoying. So similar to the "with" command, we can call
-
-```{r}
-library(MASS)
-```
-
-which loads all public methods (aka "exported" functions) into the public namespace. Bonus: you can use the ":::" to access the private / internal functions and variables. Java developers would cringe!
-
-Now, after the library invocation we can do the following and treat it as a normal function:
-
-```{r}
-as.fractions(pi)
-```
-
-The content for the MASS package was sitting on the hard drive since it comes with R. But what if you want to use a package that does not come with R? We'll have to install the package just like pip for Python, Rubygems for Ruby, R has a package management system built in. For example, here's a useful package for time series / finance stuff:
-
-```{r}
-install.packages("tseries")
-```
-
-Note that it knew where to go online - it went to a CRAN mirror. CRAN is the official repository for R packages.
-
-Might as well load it:
-
-```{r}
-library(tseries)
-```
-This is its welcome message.
-
-This library is really cool e.g.
-
-```{r}
-ibm_stock_history = get.hist.quote(instrument = "IBM", start = "2018-01-01", end = "2018-02-01")
-ibm_stock_history
-```
-
-Is this a data frame?
-
-```{r}
-class(ibm_stock_history)
-```
-
-Nope - they made their own data type. We will get there if I choose to do the unit on "writing your own R packages".
-
-Let's say you're sharing your code with someone and one of your lines is loading a library e.g.
-
-```{r}
-library(doParallel)
-```
-
-And my computer doesn't have this library. Then we need to stop what we're doing and install. This could be annoying. Here is a convenience: use the pacman package that installs if necessary:
-
-```{r}
-if (!require("pacman")){install.packages("pacman")} #installs pacman if necessary but does not load it!
-pacman::p_load(devtools) #ensures that devtools gets installed and loaded into the workspace but pacman does not (very tidy)!
-```
-
-It is typical to then have a few lines declaring all packages on top of your R/Rmd script file. Here is an example header from one of my projects:
-
-```{r}
-#if (!require("pacman")){install.packages("pacman")}
-#pacman::p_load(knitr, randomForest, dplyr, tidyverse, doParallel, xtable, pracma, yaml)
-```
-
-I'm going to require this for HW / projects, etc.
-
-The devtools package is important for modern R usage. It allows downloading R packages directly from source that are not even on CRAN. This allows you to get "bleeding edge" features. For example:
-
-```{r}
-install_github("yihui/knitr")
-```
-
-However this doesn't always work!
-
-```{r}
-install_github("hadley/ggplot2")
-```
-
-Why did this fail? Because this computer is not setup for compiling C++. This is one of the big advantages of using Linux and MAC over Windows - Windows just is more buggy when it comes to "real coding" and it gets in the way when you're out there trying to get stuff done.
-
-Note, you can use the pacman library for this type of installation too. So your header becomes:
-
-```{r}
-if (!require("pacman")){install.packages("pacman")}
-pacman::p_load(devtools)
-pacman::p_load_gh("hadley/ggplot2")
-```
-
-
-## Loading datasets from R packages
-
-Since R is a language built for data and statistics, it has a ton of interesting data sets by default and even more that are contained in packages. There is really just one command to know:
-
-```{r}
-rm(list = ls())
-data(iris) #load the iris dataset (as a data frame)
-class(iris)
-#3 things I always do immediately upon getting a dataset
-head(iris)
-str(iris)
-summary(iris)
-```
-
-R has so many datasets. Here they all are by package installed:
-
-```{r}
-data(package = .packages(all.available = TRUE))
-```
-
-## Continue discussion concerning data frames and the modeling from class
-
-We quickly recreate our data frame from last class:
-
-```{r}
-n = 100
-X = data.frame(
-  salary = round(rnorm(n, 50000, 20000)),
-  has_past_unpaid_loan = rbinom(n, size = 1, prob = 0.2),
-  past_crime_severity = sample(
-    c("no crime", "infraction", "misdimeanor", "felony"),
-    size = n,
-    replace = TRUE,
-    prob = c(.50, .40, .08, .02)
-  )
-)
-row.names(X) = c(
-  "Sophia", "Emma", "Olivia", "Ava", "Mia", "Isabella", "Riley", 
-  "Aria", "Zoe", "Charlotte", "Lily", "Layla", "Amelia", "Emily", 
-  "Madelyn", "Aubrey", "Adalyn", "Madison", "Chloe", "Harper", 
-  "Abigail", "Aaliyah", "Avery", "Evelyn", "Kaylee", "Ella", "Ellie", 
-  "Scarlett", "Arianna", "Hailey", "Nora", "Addison", "Brooklyn", 
-  "Hannah", "Mila", "Leah", "Elizabeth", "Sarah", "Eliana", "Mackenzie", 
-  "Peyton", "Maria", "Grace", "Adeline", "Elena", "Anna", "Victoria", 
-  "Camilla", "Lillian", "Natalie", "Jackson", "Aiden", "Lucas", 
-  "Liam", "Noah", "Ethan", "Mason", "Caden", "Oliver", "Elijah", 
-  "Grayson", "Jacob", "Michael", "Benjamin", "Carter", "James", 
-  "Jayden", "Logan", "Alexander", "Caleb", "Ryan", "Luke", "Daniel", 
-  "Jack", "William", "Owen", "Gabriel", "Matthew", "Connor", "Jayce", 
-  "Isaac", "Sebastian", "Henry", "Muhammad", "Cameron", "Wyatt", 
-  "Dylan", "Nathan", "Nicholas", "Julian", "Eli", "Levi", "Isaiah", 
-  "Landon", "David", "Christian", "Andrew", "Brayden", "John", 
-  "Lincoln"
-)
-X
-```
-
-Remember our cross tab? Now we can get fancier using our new libary skills. Any Stata fans out there?
-
-```{r}
-pacman::p_load(gmodels)
-CrossTable(X$has_past_unpaid_loan, X$past_crime_severity, chisq = TRUE)
-```
-
-
-And add a new variable, the response to the data frame:
-
-```{r}
-X$paid_back_loan = factor(rbinom(n, size = 1, prob = 0.9), labels = c("No", "Yes"))
-```
-
-Note that our matrix is now no longer just $X$; it includes $y$. I could make a renamed copy, but I want to show off dropping this column and create a new object that's both features and response column-binded together:
-
-```{r}
-y = X$paid_back_loan
-X$paid_back_loan = NULL #drop column
-Xy = cbind(X, y) #an aside: what do you think the "rbind" function does?
-head(Xy) #make sure that worked
-summary(Xy) #much better now!
-#Note: Xy = X; rm(X) would've been easier
-```
-
-I prefer calling the full training set ${X, y}$ a data frame called $Xy$. 
-
-Most data sets are names some descriptive name like "loandata" or "cars". Here are undoubtedly some of the most famous datasets:
-
-```{r}
-data(Boston, package = "MASS") #package argument not needed if package loaded 
-head(Boston)
-data(iris)
-head(iris)
-```
-
-
-The object $X$ is now extraneous, so we should clean up our workspace now.
-
-```{r}
-rm(list = setdiff(ls(), "Xy"))
-```
-
-
-## The Null Model
-
-```{r}
-g = function(x){
-  #return mode regardless of x
-} 
-
-g(5000)
-```
-
-
-## The Threshold Model
-
-Let's compute the threshold model and see what happens. Here's an inefficent but quite pedagogical way to do this:
-
-```{r}
-n = nrow(Xy)
-num_errors_by_parameter = matrix(NA, nrow = n, ncol = 2)
-colnames(num_errors_by_parameter) = c("threshold_param", "num_errors")
-y_logical = Xy$y == "Yes"
-for (i in 1 : n){
-  threshold = Xy$salary[i]
-  num_errors = sum((Xy$salary > threshold) != y_logical)
-  num_errors_by_parameter[i, ] = c(threshold, num_errors)
-}
-num_errors_by_parameter
-
-#now grab the smallest num errors
-best_row = order(num_errors_by_parameter[, "num_errors"])[1]
-x_star = c(num_errors_by_parameter[best_row, "threshold_param"], use.names = FALSE)
-x_star
-```
-
-Let's program `g`, the model that is shipped as the prediction function for future `x_*`
-
-```{r}
-g = function(x){
-  ifelse(x > x_star, 1, 0)
-} 
-
-g(5000)
-```
-
-
-## The Perceptron
-
-Time for some new data first... we are bored of the fabricated creditworthiness data.
-
-```{r}
-Xy = na.omit(MASS::biopsy) #The "breast cancer" data
-?MASS::biopsy
-head(Xy)
-X = Xy[, 2 : 10] #V1, V2, ..., V9
-head(X)
-y_binary = as.numeric(Xy$class == "malignant")
-table(y_binary)
-```
-
-First question. Let $\mathcal{H}$ be the set $\{0, 1\}$ meaning $g = 0$ or $g = 1$. What are the error rates then on $\mathbb{D}$? 
-
-```{r}
-#If always 0, all the 1's are errors
-239 / (444 + 239)
-#If always 1, all the 0's are errors
-444 / (444 + 239)
-```
-
-If your $g$ can't beat that, either your features $x_1, \ldots, x_p$ are terrible, and/or $\mathcal{H}$ was a terrible choice and/or $\mathcal{A}$ can't pull its weight.
-
-Okay... back to the "perceptron learning algorithm".
-
-Let's do so for one dimension - just "V1" in the breast cancer data. You will do an example with more features for homework.
-
-```{r}
-y_binary = ifelse(y_binary == 1, 0, 1)
-MAX_ITER = 1000
-w_vec = rep(0, 2) #intialize a 2-dim vector
-
-X1 = as.matrix(cbind(1, X[, 1, drop = FALSE]))
-
-for (iter in 1 : MAX_ITER){  
-  for (i in 1 : nrow(X1)){
-    x_i = X1[i, ]
-    yhat_i = ifelse(sum(x_i * w_vec) > 0, 1, 0)
-    y_i = y_binary[i]
-    w_vec[1] = w_vec[1] + (y_i - yhat_i) * x_i[1]
-    w_vec[2] = w_vec[2] + (y_i - yhat_i) * x_i[2]
-  }
-}
-w_vec
-```
-
-What is our error rate?
-
-```{r}
-yhat = ifelse(X1 %*% w_vec > 0, 1, 0)
-sum(y_binary != yhat) / length(y_binary)
-```
-
