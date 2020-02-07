@@ -40,59 +40,54 @@ date: "11:59PM February 17, 2020"
 #TO-DO
 ```
 
-* Generate a matrix with 100 rows where the first column is realization from a normal with mean 17 and variance 38, the second column is uniform between -10 and 10, the third column is poisson with mean 6, the fourth column in exponential with lambda of 9, the fifth column is binomial with n = 20 and p = 0.12 and the sixth column is a binary variable with 24% 1's.
+* Generate a matrix with 100 rows where the first column is realization from a normal with mean 17 and variance 38, the second column is uniform between -10 and 10, the third column is poisson with mean 6, the fourth column in exponential with lambda of 9, the fifth column is binomial with n = 20 and p = 0.12 and the sixth column is a binary variable with exactly 24% 1's dispersed randomly. Name the columns based on the r.v. Name the rows the entries of the `fake_first_names` vector.
 
+
+```{r}
+#TO-DO
+
+fake_first_names = c(
+  "Sophia", "Emma", "Olivia", "Ava", "Mia", "Isabella", "Riley", 
+  "Aria", "Zoe", "Charlotte", "Lily", "Layla", "Amelia", "Emily", 
+  "Madelyn", "Aubrey", "Adalyn", "Madison", "Chloe", "Harper", 
+  "Abigail", "Aaliyah", "Avery", "Evelyn", "Kaylee", "Ella", "Ellie", 
+  "Scarlett", "Arianna", "Hailey", "Nora", "Addison", "Brooklyn", 
+  "Hannah", "Mila", "Leah", "Elizabeth", "Sarah", "Eliana", "Mackenzie", 
+  "Peyton", "Maria", "Grace", "Adeline", "Elena", "Anna", "Victoria", 
+  "Camilla", "Lillian", "Natalie", "Jackson", "Aiden", "Lucas", 
+  "Liam", "Noah", "Ethan", "Mason", "Caden", "Oliver", "Elijah", 
+  "Grayson", "Jacob", "Michael", "Benjamin", "Carter", "James", 
+  "Jayden", "Logan", "Alexander", "Caleb", "Ryan", "Luke", "Daniel", 
+  "Jack", "William", "Owen", "Gabriel", "Matthew", "Connor", "Jayce", 
+  "Isaac", "Sebastian", "Henry", "Muhammad", "Cameron", "Wyatt", 
+  "Dylan", "Nathan", "Nicholas", "Julian", "Eli", "Levi", "Isaiah", 
+  "Landon", "David", "Christian", "Andrew", "Brayden", "John", 
+  "Lincoln"
+)
+```
+
+* Create a data frame of the same data as above except make the binary variable a factor "DOMESTIC" vs "FOREIGN" for 0 and 1 respectively. Print out the top few rows to check this worked correctly.
 
 ```{r}
 #TO-DO
 ```
 
-First, install the package `testthat` (a widely accepted testing suite for R) from https://github.com/r-lib/testthat using `pacman`. If you are using Windows, this will be a long install, but you have to go through it for some of the stuff we are doing in class. LINUX (or MAC) is preferred for coding. If you can't get it to work, install this package from CRAN (still using `pacman`), but this is not recommended long term.
+* Print out a table of the binary variable. Then print out the proportions of "DOMESTIC" vs "FOREIGN".
+
+```{r}
+#TO-DO
+```
+Print out a summary of the whole dataframe.
 
 ```{r}
 #TO-DO
 ```
 
-* Use the `seq` function to create vector `v` consisting of all numbers from -100 to 100. 
-
-```{r}
-#TO-DO
-```
-
-Test using the following code:
-
-```{r}
-expect_equal(v, -100 : 100)
-```
-
-If there are any errors, the `expect_equal` function will tell you about them. If there are no errors, then it will be silent.
-
-* Create a function `my_reverse` which takes as required input a vector and returns the vector in reverse where the first entry is the last entry, etc. No function calls are allowed inside your function (otherwise that would defeat the purpose of the exercise).
-
-```{r}
-#TO-DO
-```
-
-Test using the following code:
-
-```{r}
-expect_equal(my_reverse(c("A", "B", "C")), c("C", "B", "A"))
-expect_equal(my_reverse(v), rev(v))
-```
-
-* Let `n = 50`. Create a nxn matrix `R` of exactly 50% entries 0's, 25% 1's 25% 2's in random locations.
+* Let `n = 50`. Create a n x n matrix `R` of exactly 50% entries 0's, 25% 1's 25% 2's. These values should be in random locations.
 
 ```{r}
 n = 50
 #TO-DO
-```
-
-Test using the following and write two more tests as specified below:
-
-```{r}
-expect_equal(dim(R), c(n, n))
-#TO-DO test that the only unique values are 0, 1, 2
-#TO-DO test that there are exactly 625 2's
 ```
 
 * Randomly punch holes (i.e. `NA`) values in this matrix so that approximately 30% of the entries are missing.
@@ -101,33 +96,19 @@ expect_equal(dim(R), c(n, n))
 #TO-DO
 ```
 
-Use the testthat library to test that this worked correctly by ensuring the number of missing entries is between the 0.5%ile and 99.5%ile of the appropriate binomial.
+* Sort the rows in matrix `R` by the largest row sum to lowest. Be careful about the NA's!
 
 ```{r}
 #TO-DO
 ```
 
-* Sort the rows matrix `R` by the largest row sum to lowest. Be careful about the NA's!
+* We will now learn the `apply` function. This is a handy function that saves writing for loops which should be eschewed in R. Use the apply function to compute a vector whose entries are the standard deviation of each row. Use the apply function to compute a vector whose entries are the standard deviation of each column. Be careful about the NA's! This should be one line.
 
 ```{r}
 #TO-DO
 ```
 
-Test using the following code.
-
-```{r}
-for (i in 2 : n){
-  expect_gte(sum(R[i - 1, ], na.rm = TRUE), sum(R[i, ], na.rm = TRUE))  
-}
-```
-
-* We will now learn the `apply` function. This is a handy function that saves writing for loops which should be eschewed in R. Use the apply function to compute a vector whose entries are the standard deviation of each row. Use the apply function to compute a vector whose entries are the standard deviation of each column. Be careful about the NA's!
-
-```{r}
-#TO-DO
-```
-
-* Use the `apply` function to compute a vector whose entries are the count of entries that are 1 or 2 in each column. Try to do this in one line.
+* Use the `apply` function to compute a vector whose entries are the count of entries that are 1 or 2 in each column. This should be one line.
 
 ```{r}
 #TO-DO
@@ -139,14 +120,27 @@ for (i in 2 : n){
 #TO-DO
 ```
 
-* In one statement, use the `lapply` function to create a list whose keys are the column number and values are themselves a list with keys: "min" whose value is the minimum of the column, "max" whose value is the maximum of the column, "pct_missing" is the proportion of missingness in the column and "first_NA" whose value is the row number of the first time the NA appears. Use the `which` function.
+* In one statement, use the `lapply` function to create a list whose keys are the column number and values are themselves a list with keys: "min" whose value is the minimum of the column, "max" whose value is the maximum of the column, "pct_missing" is the proportion of missingness in the column and "first_NA" whose value is the row number of the first time the NA appears.
+
+```{r}
+#TO-DO
+```
+
+* Create a vector `v` consisting of a sample of 1,000 iid normal realizations with mean -10 and variance 100.
 
 ```{r}
 #TO-DO
 ```
 
 
-* Create a vector `v` consisting of a sample of 1,000 iid normal realizations with mean -10 and variance 10.
+* Create a function `my_reverse` which takes as required input a vector and returns the vector in reverse where the first entry is the last entry, etc. No function calls are allowed inside your function otherwise that would defeat the purpose of the exercise! (Yes, there is a base R function that does this called `rev`). Use `head` on `v` and `tail` on `my_reverse(v)` to verify it works.
+
+```{r}
+#TO-DO
+```
+
+
+* Create a function `flip_matrix` which takes as required input a matrix, an argument `dim_to_rev` that returns the matrix with the rows in reverse order or the columns in reverse order depending on the `dim_to_rev` argument. Let the default be the dimension of the matrix that is greater.
 
 ```{r}
 #TO-DO
@@ -158,27 +152,23 @@ for (i in 2 : n){
 #TO-DO
 ```
 
-* Find the 5%ile of `v` and use the `qnorm` function to compute what it theoretically should be.
+* Find the 5%ile of `v` and use the `qnorm` function to compute what it theoretically should be. Is the estimate about what is expected by theory?
 
 ```{r}
 #TO-DO
 ```
 
+* What is the percentile of `v` that corresponds to the value 0? What should it be theoretically? Is the estimate about what is expected by theory?
+
+```{r}
+#TO-DO
+```
 
 * Create a list named `my_list` with keys "A", "B", ... where the entries are arrays of size 1, 2 x 2, 3 x 3 x 3, etc. Fill the array with the numbers 1, 2, 3, etc. Make 8 entries.
 
 
 ```{r}
 #TO-DO
-```
-
-Test with the following uncomprehensive tests:
-
-
-```{r}
-expect_equal(my_list$A, 1)
-expect_equal(my_list[[2]][, 1], 1 : 2)
-expect_equal(dim(my_list[["H"]]), rep(8, 8))
 ```
 
 Run the following code:
@@ -189,7 +179,7 @@ lapply(my_list, object.size)
 
 Use `?object.size` to read about what these functions do. Then explain the output you see above. For the later arrays, does it make sense given the dimensions of the arrays?
 
-Answer here in English.
+#TO-DO
 
 Now cleanup the namespace by deleting all stored objects and functions:
 
@@ -199,55 +189,12 @@ Now cleanup the namespace by deleting all stored objects and functions:
 
 ## A little about strings
 
-* Use the `strsplit` function and `sample` to put the sentences below in random order.
+* Use the `strsplit` function and `sample` to put the sentences in the string `lorem` below in random order. You will also need to manipulate the output of `strsplit` which is a list. You may need to learn basic concepts of regular expressions.
 
 ```{r}
 lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi posuere varius volutpat. Morbi faucibus ligula id massa ultricies viverra. Donec vehicula sagittis nisi non semper. Donec at tempor erat. Integer dapibus mi lectus, eu posuere arcu ultricies in. Cras suscipit id nibh lacinia elementum. Curabitur est augue, congue eget quam in, scelerisque semper magna. Aenean nulla ante, iaculis sed vehicula ac, finibus vel arcu. Mauris at sodales augue. "
-sample(strsplit(lorem, '\\.'))
 ```
 
 
 
-## Basic Binary Classification Modeling
-
-* Load the famous `iris` data frame into the namespace. Provide a summary of the columns and write a few descriptive sentences about the distributions using the code below and in English.
-
-```{r}
-#TO-DO
-```
-
-The outcome metric is `Species`. This is what we will be trying to predict. However, we have only done binary classification in class (i.e. two classes). Thus the first order of business is to drop one class. Let's drop the level "virginica" from the data frame.
-
-```{r}
-#TO-DO
-```
-
-Now create a vector `y` that is length the number of remaining rows in the data frame whose entries are 0 if "setosa" and 1 if "versicolor".
-
-```{r}
-#TO-DO
-```
-
-* Fit a threshold model to `y` using the feature `Sepal.Length`. Try to write your own code to do this. What is the estimated value of the threshold parameter? What is the total number of errors this model makes?
-
-```{r}
-#TO-DO
-```
-
-Does this make sense given the following summaries:
-
-```{r}
-summary(iris[iris$Species == "setosa", "Sepal.Length"])
-summary(iris[iris$Species == "virginica", "Sepal.Length"])
-```
-
-Write your answer here in English.
-
-TO-DO
-
-* What is the total number of errors this model makes (in-sample)?
-
-```{r}
-#TO-DO
-```
 

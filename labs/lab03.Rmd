@@ -5,6 +5,79 @@ output: pdf_document
 date: "11:59PM February 24, 2019"
 ---
 
+
+First, install the package `testthat` (a widely accepted testing suite for R) from https://github.com/r-lib/testthat using `pacman`. If you are using Windows, this will be a long install, but you have to go through it for some of the stuff we are doing in class. LINUX (or MAC) is preferred for coding. If you can't get it to work, install this package from CRAN (still using `pacman`), but this is not recommended long term.
+
+```{r}
+#TO-DO
+```
+
+
+* Use the `seq` function to create vector `v` consisting of all numbers from -100 to 100. 
+
+```{r}
+#TO-DO
+```
+
+Test using the following code:
+
+```{r}
+expect_equal(v, -100 : 100)
+```
+
+If there are any errors, the `expect_equal` function will tell you about them. If there are no errors, then it will be silent.
+
+Test the `my_reverse` function from lab2 using the following code:
+
+```{r}
+expect_equal(my_reverse(v), rev(v))
+#expect_equal(my_reverse(c("A", "B", "C")), #TODO)
+```
+
+## Basic Binary Classification Modeling
+
+* Load the famous `iris` data frame into the namespace. Provide a summary of the columns and write a few descriptive sentences about the distributions using the code below and in English.
+
+```{r}
+#TO-DO
+```
+
+The outcome metric is `Species`. This is what we will be trying to predict. However, we have only done binary classification in class (i.e. two classes). Thus the first order of business is to drop one class. Let's drop the level "virginica" from the data frame.
+
+```{r}
+#TO-DO
+```
+
+Now create a vector `y` that is length the number of remaining rows in the data frame whose entries are 0 if "setosa" and 1 if "versicolor".
+
+```{r}
+#TO-DO
+```
+
+* Fit a threshold model to `y` using the feature `Sepal.Length`. Try to write your own code to do this. What is the estimated value of the threshold parameter? What is the total number of errors this model makes?
+
+```{r}
+#TO-DO
+```
+
+Does this make sense given the following summaries:
+
+```{r}
+summary(iris[iris$Species == "setosa", "Sepal.Length"])
+summary(iris[iris$Species == "virginica", "Sepal.Length"])
+```
+
+Write your answer here in English.
+
+TO-DO
+
+* What is the total number of errors this model makes (in-sample)?
+
+```{r}
+#TO-DO
+```
+
+
 ## Perceptron
 
 You will code the "perceptron learning algorithm". Take a look at the comments above the function. This is standard "Roxygen" format for documentation. Hopefully, we will get to packages at some point and we will go over this again. It is your job also to fill in this documentation.
