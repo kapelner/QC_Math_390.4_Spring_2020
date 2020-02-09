@@ -11,40 +11,62 @@ date: "11:59PM February 17, 2020"
 * Calculate the average of 1000 realizations of Bernoullis with p = 0.9 in one line using `rbinom`.
 
 ```{r}
-#TO-DO
+mean(rbinom(1000, size = 1, prob = 0.9))
 ```
 
 * In class we considered a variable `x_3` which measured "criminality". We imagined L = 4 levels "none", "infraction", "misdimeanor" and "felony". Create a variable `x3` here with 100 random elements (equally probable). Create it as a nominal (i.e. unordered) factor.
 
 ```{r}
-#TO-DO
+x3 = factor(sample(c("none", "infraction", "misdimeanor", "felony"), size = 100, replace = TRUE))
+x3
 ```
 
 * Convert this variable into three binary variables without any information loss and put them into a data matrix.
 
 ```{r}
-#TO-DO
+X = matrix(NA, nrow = length(x3), ncol = 3)
+X[ ,1] = as.numeric(x3=="infraction")
+X[ ,2] = as.numeric(x3=="felony")
+X[ ,3] = as.numeric(x3=="misdimeanor")
+colnames(X) = c("is_infraction", "is_felony", "is_misdimeanor")
+X
 ```
 
-* What should the sum of each row be (in English)? Verify that. 
+* What should the sum of each row be (in English)? 
+
+It should be either 1 or 0 because categories are mutually exclusive. We can only put an object into 1 category. None = 0
+
+Verify that. 
 
 
 ```{r}
-#TO-DO
+# rowSums(X)
+table(rowSums(X))
 ```
 
-* How should the column sum look (in English)? Verify that.
+* How should the column sum look (in English)? 
+
+The sums should be around the expectation, 25 since they are uniformly distributed.
+
+Verify that.
 
 
 ```{r}
-#TO-DO
+colSums(X)
 ```
 
-* Generate a matrix with 100 rows where the first column is realization from a normal with mean 17 and variance 38, the second column is uniform between -10 and 10, the third column is poisson with mean 6, the fourth column in exponential with lambda of 9, the fifth column is binomial with n = 20 and p = 0.12 and the sixth column is a binary variable with exactly 24% 1's dispersed randomly. Name the columns based on the r.v. Name the rows the entries of the `fake_first_names` vector.
+* Generate a matrix with 100 rows where the first column is realization from a normal with mean 17 and variance 38, the second column is uniform between -10 and 10, the third column is poisson with mean 6, the fourth column in exponential with lambda of 9, the fifth column is binomial with n = 20 and p = 0.12 and the sixth column is a binary variable with exactly 24% 1's dispersed randomly. Name the rows the entries of the `fake_first_names` vector.
 
 
 ```{r}
-#TO-DO
+n = 100
+X = matrix(data = NA, nrow = n, ncol = 6)
+X[, 1] = rnorm(n = n, mean = 17, sd = sqrt(38))
+X[, 2] = runif(n = n, min = -10, max = 10)
+X[, 3] = rpois(n, lambda = 6)
+X[, 4] = rexp(n, rate = 9)
+X[, 5] = rbinom(n, size = 20, prob = 0.12)
+X[, 6] = sample(c(rep(1, n * .24), rep(0, n * .76)))
 
 fake_first_names = c(
   "Sophia", "Emma", "Olivia", "Ava", "Mia", "Isabella", "Riley", 
@@ -64,42 +86,56 @@ fake_first_names = c(
   "Landon", "David", "Christian", "Andrew", "Brayden", "John", 
   "Lincoln"
 )
+
+rownames(X) = fake_first_names
+X
 ```
 
-* Create a data frame of the same data as above except make the binary variable a factor "DOMESTIC" vs "FOREIGN" for 0 and 1 respectively. Print out the top few rows to check this worked correctly.
+* Create a data frame of the same data as above except make the binary variable a factor "DOMESTIC" vs "FOREIGN" for 0 and 1 respectively. Print out the top few rows to check if this worked correctly.
 
 ```{r}
-#TO-DO
+df = data.frame(X)
+df$X6 = factor(df$X6, levels = c(0, 1), labels = c("DOMESTIC", "FOREIGN"))
+df
 ```
 
 * Print out a table of the binary variable. Then print out the proportions of "DOMESTIC" vs "FOREIGN".
 
 ```{r}
-#TO-DO
+table(df$X6)
+table(df$X6)/n
 ```
 Print out a summary of the whole dataframe.
 
 ```{r}
-#TO-DO
+summary(df)
 ```
 
 * Let `n = 50`. Create a n x n matrix `R` of exactly 50% entries 0's, 25% 1's 25% 2's. These values should be in random locations.
 
 ```{r}
 n = 50
-#TO-DO
+X = matrix(sample(c(rep(0, n^2*.5),rep(1, n^2*.25), rep(2,n^2*.25))), nrow = n, ncol = n)
+table(X)
 ```
 
-* Randomly punch holes (i.e. `NA`) values in this matrix so that approximately 30% of the entries are missing.
+* Randomly punch holes (i.e. `NA`) values in this matrix so that an each entry is missing with probability 30%.
 
 ```{r}
-#TO-DO
+for(i in 1 : n){
+  for(j in 1 : n) {
+    if(runif(1) < 0.3) {
+      X[i, j] = NA
+    }
+  }
+}
+sum(is.na(X)) / n^2
 ```
 
 * Sort the rows in matrix `R` by the largest row sum to lowest. Be careful about the NA's!
 
 ```{r}
-#TO-DO
+X[order(rowSums(X, na.rm = TRUE), decreasing = TRUE), ]
 ```
 
 * We will now learn the `apply` function. This is a handy function that saves writing for loops which should be eschewed in R. Use the apply function to compute a vector whose entries are the standard deviation of each row. Use the apply function to compute a vector whose entries are the standard deviation of each column. Be careful about the NA's! This should be one line.
