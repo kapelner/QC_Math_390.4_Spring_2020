@@ -59,13 +59,12 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec04.Rmd) 
   - Theory Notes [(Juan Astudillo)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec06astudillo.pdf) [(Adriana Sham)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec06sham.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec06kap.pdf)
 * Lecture 5 [(audio)](https://youtu.be/x2OCEAxIWvw)
-  - Theory Notes [(Juan Astudillo)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05astudillo.pdf) [(Adriana Sham)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05sham.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05kap.pdf)
-* Lecture 4 [(audio)](https://youtu.be/2GfCHfuv4ao)
-  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec03.Rmd) 
-  - Theory Notes [(Juan Astudillo)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec04astudillo.pdf) [(Adriana Sham)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec04sham.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec04kap.pdf)
-* Lecture 3 [(audio)](https://youtu.be/g7nHg-GkQYI)
+  - Theory Notes [(Juan Astudillo)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05astudillo.pdf) [(Adriana Sham)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05sham.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05kap.pdf)-->
+* Lecture 4 [(audio)](https://youtu.be/)
+  - Theory Notes [(Rameasa Arna)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec04arna.pdf) [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec04eng.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec04grgas.pdf) 
+* Lecture 3 [(audio)](https://youtu.be/)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec02.Rmd)
-  - Theory Notes [(Adriana Sham)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec03sham.pdf) [(Juan Astudillo)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec03astudillo.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec03kap.pdf)-->
+  - Theory Notes [(Rameasa Arna)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec03arna.pdf) [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec03eng.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec03grgas.pdf) 
 * Lecture 2 [(audio)](https://youtu.be/)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec01.Rmd)
   - Theory Notes [(Pizon Shetu)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec02shetu.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec02grgas.pdf) [(Rameasa Arna)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec02arna.pdf) [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec02eng.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec02nissanthan.pdf) 
