@@ -2,25 +2,19 @@
 title: "Lab 3"
 author: "Your Name Here"
 output: pdf_document
-date: "11:59PM Saturday, February 22, 2019"
+date: "11:59PM Saturday, February 22, 2020"
 ---
 
 ## Review from Lab 2
 
 You have set of names divided by gender (M / F) and generation (Boomer / GenX / Millenial):
 
-M / Boomer
-"Theodore, Bernard, Gene, Herbert, Ray, Tom, Lee, Alfred, Leroy, Eddie"
-M / GenX
-"Marc, Jamie, Greg, Darryl, Tim, Dean, Jon, Chris, Troy, Jeff"
-M / Millennial
-"Zachary, Dylan, Christian, Wesley, Seth, Austin, Gabriel, Evan, Casey, Luis"
-F / Boomer
-"Gloria, Joan, Dorothy, Shirley, Betty, Dianne, Kay, Marjorie, Lorraine, Mildred"
-F / GenX
-"Tracy, Dawn, Tina, Tammy, Melinda, Tamara, Tracey, Colleen, Sherri, Heidi"
-F / Millennial
-"Samantha, Alexis, Brittany, Lauren, Taylor, Bethany, Latoya, Candice, Brittney, Cheyenne"
+* M / Boomer      "Theodore, Bernard, Gene, Herbert, Ray, Tom, Lee, Alfred, Leroy, Eddie"
+* M / GenX        "Marc, Jamie, Greg, Darryl, Tim, Dean, Jon, Chris, Troy, Jeff"
+* M / Millennial  "Zachary, Dylan, Christian, Wesley, Seth, Austin, Gabriel, Evan, Casey, Luis"
+* F / Boomer      "Gloria, Joan, Dorothy, Shirley, Betty, Dianne, Kay, Marjorie, Lorraine, Mildred"
+* F / GenX        "Tracy, Dawn, Tina, Tammy, Melinda, Tamara, Tracey, Colleen, Sherri, Heidi"
+* F / Millennial  "Samantha, Alexis, Brittany, Lauren, Taylor, Bethany, Latoya, Candice, Brittney, Cheyenne"
 
 Create a list-within-a-list that will intelligently store this data.
 
@@ -51,15 +45,10 @@ First, install the package `testthat` (a widely accepted testing suite for R) fr
 ```
 
 
-* Use the `seq` function to create vector `v` consisting of all numbers from -100 to 100. 
+* Create vector `v` consisting of all numbers from -100 to 100 and test using the second line of code:
 
 ```{r}
 #TO-DO
-```
-
-Test using the following code:
-
-```{r}
 expect_equal(v, -100 : 100)
 ```
 
@@ -80,7 +69,7 @@ expect_equal(my_reverse(v), rev(v))
 #TO-DO
 ```
 
-The outcome metric is `Species`. This is what we will be trying to predict. However, we have only done binary classification in class (i.e. two classes). Thus the first order of business is to drop one class. Let's drop the level "virginica" from the data frame.
+The outcome metric is `Species`. This is what we will be trying to predict. However, we only care about binary classification between "setosa" and "versicolor" now. Thus the first order of business is to drop one class. Let's drop the data for the level "virginica" from the data frame.
 
 ```{r}
 #TO-DO
@@ -92,12 +81,11 @@ Now create a vector `y` that is length the number of remaining rows in the data 
 #TO-DO
 ```
 
-* Fit a threshold model to `y` using the feature `Sepal.Length`. Try to write your own code to do this. What is the estimated value of the threshold parameter? What is the total number of errors this model makes?
+* Fit a threshold model to `y` using the feature `Sepal.Length`. Write your own code to do this. What is the estimated value of the threshold parameter? What is the total number of errors this model makes?
 
 ```{r}
 #TO-DO
 ```
-
 Does this make sense given the following summaries:
 
 ```{r}
@@ -109,7 +97,14 @@ Write your answer here in English.
 
 TO-DO
 
-* What is the total number of errors this model makes (in-sample)?
+
+Create the function `g` explicitly that can predict `y` from `x` being a new `Sepal.Length`.
+
+```{r}
+#TO-DO
+```
+
+* What is the total number of errors this model makes in the dataset $\mathbb{D}$?
 
 ```{r}
 #TO-DO
@@ -149,7 +144,7 @@ Xy_simple = data.frame(
 )
 ```
 
-We haven't spoken about visualization yet, but it is important we do some of it now. First we load the visualization library we're going to use:
+We haven't spoken about visualization yet, but it is important we do some of it now. Thus, I will write this code for you and you will just run it. First we load the visualization library we're going to use:
 
 ```{r}
 pacman::p_load(ggplot2)
@@ -176,7 +171,10 @@ w_vec_simple_per = perceptron_learning_algorithm(
 w_vec_simple_per
 ```
 
-TO-DO: Explain this output. What do the numbers mean? What is the intercept of this line and the slope? You will have to do some algebra.
+Explain this output. What do the numbers mean? What is the intercept of this line and the slope? You will have to do some algebra.
+
+TO-DO
+
 
 ```{r}
 simple_perceptron_line = geom_abline(
@@ -186,8 +184,16 @@ simple_perceptron_line = geom_abline(
 simple_viz_obj + simple_perceptron_line
 ```
 
+Explain this picture. Why is this line of separation not "satisfying" to you?
 
-TO-DO: Explain this picture. Why is this line of separation not "satisfying" to you?
+TO-DO 
+
+For extra credit, program the maximum-margin hyperplane perceptron that provides the best linear discrimination model for linearly separable data. Make sure you provide ROxygen documentation for this function.
+
+```{r}
+#TO-DO
+```
+
 
 ## Support Vector Machine
 
@@ -221,7 +227,7 @@ Is this SVM line a better fit than the perceptron?
 
 TO-DO
 
-3. Now write pseuocode for your own implementation of the linear support vector machine algorithm respecting the following spec making use of the nelder mead `optimx` function from lecture 5p. It turns out you do not need to load the package `neldermead` to use this function. You can feel free to define a function within this function if you wish. 
+3. Now write pseuocode for your own implementation of the linear support vector machine algorithm using the Vapnik objective function we discussed.
 
 Note there are differences between this spec and the perceptron learning algorithm spec in question \#1. You should figure out a way to respect the `MAX_ITER` argument value. 
 
@@ -243,7 +249,7 @@ linear_svm_learning_algorithm = function(Xinput, y_binary, MAX_ITER = 5000, lamb
 ```
 
 
-If you are enrolled in 390 the following is extra credit but if you're enrolled in 650, the following is required. Write the actual code. You may want to take a look at the `optimx` package we discussed in class.
+If you are enrolled in 390 the following is extra credit but if you're enrolled in 650, the following is required. Write the actual code. You may want to take a look at the `optimx` package we discussed in class. You can feel free to define another function (a "private" function) in this chunk if you wish. R has a way to create public and private functions, but I believe you need to create a package to do that (beyond the scope of this course).
 
 ```{r}
 #' This function implements the hinge-loss + maximum margin linear support vector machine algorithm of Vladimir Vapnik (1963).
@@ -291,7 +297,6 @@ Write a few tests to ensure it actually works:
 ```{r}
 #TO-DO
 ```
-
 
 We now add an argument `d` representing any legal distance function to the `nn_algorithm_predict` function. Update the implementation so it performs NN using that distance function. Set the default function to be the Euclidean distance in the original function. Also, alter the documentation in the appropriate places.
 
