@@ -622,7 +622,7 @@ Strange that this takes so long? So it doesn't help... it hurts.
 
 How much faster in C++ should this be?
 
-Enter the `Rcpp` package - a way to compile little bits of C++ on the fly.
+Enter the `Rcpp` package - a way to compile little bits (or lotta bits) of C++ on the fly.
 
 ```{r}
 pacman::p_load(Rcpp)
@@ -665,10 +665,11 @@ WOW. 10x!!! Can't beat that with a stick...
 
 Let's do a not-so-contrived example...
 
-Matrix distance... Let's compute the distances of all pairs of rows in a dataset.
+Matrix distance... Let's compute the distances of all pairs of rows in a dataset. I will try to code the R as efficiently as possible by using vector subtraction so there is only two for loops. The C++ function will have an additional loop to iterate over the features in the observations.
 
 ```{r}
-X_boston = as.matrix(MASS::Boston[, 1 : 13])
+#a subset of the diamonds data
+X_diamonds = as.matrix(ggplot2::diamonds[1 : 3000, c("carat", "depth", "table", "x", "y", "z")])
 
 compute_distance_matrix = function(X){
   n = nrow(X)
@@ -689,7 +690,7 @@ cppFunction('
     std::fill(D.begin(), D.end(), NA_REAL);
 
     for (int i_1 = 0; i_1 < (n - 1); i_1++){
-      Rcout << "computing for row #: " << (i_1 + 1) << "\\n";
+      //Rcout << "computing for row #: " << (i_1 + 1) << "\\n";
       for (int i_2 = i_1 + 1; i_2 < n; i_2++){
         int sqd_diff = 0;
         for (int j = 0; j < p; j++){
@@ -705,7 +706,7 @@ cppFunction('
 
 ```{r}
 system.time({
-  D = compute_distance_matrix(X_boston)
+  D = compute_distance_matrix(X_diamonds)
 })
 round(D[1 : 5, 1 : 5], 2)
 ```
@@ -714,12 +715,12 @@ Slow...
 
 ```{r}
 system.time({
-  D = compute_distance_matrix_cpp(X_boston)
+  D = compute_distance_matrix_cpp(X_diamonds)
 })
 round(D[1 : 5, 1 : 5], 2)
 ```
 
-Lightning...
+Absolutely lightning... 100x faster on my laptop than R's runtime.
 
 Writing functions as strings that compile is annoying. It is better to have separate files. For instance...
 
