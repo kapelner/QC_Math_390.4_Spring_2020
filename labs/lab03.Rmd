@@ -44,7 +44,6 @@ First, install the package `testthat` (a widely accepted testing suite for R) fr
 #TO-DO
 ```
 
-
 * Create vector `v` consisting of all numbers from -100 to 100 and test using the second line of code:
 
 ```{r}
@@ -69,7 +68,9 @@ expect_equal(my_reverse(v), rev(v))
 #TO-DO
 ```
 
-The outcome metric is `Species`. This is what we will be trying to predict. However, we only care about binary classification between "setosa" and "versicolor" now. Thus the first order of business is to drop one class. Let's drop the data for the level "virginica" from the data frame.
+TO-DO
+
+The outcome metric is `Species`. This is what we will be trying to predict. However, we only care about binary classification between "setosa" and "versicolor" for the purposes of this exercise. Thus the first order of business is to drop one class. Let's drop the data for the level "virginica" from the data frame.
 
 ```{r}
 #TO-DO
@@ -96,7 +97,6 @@ summary(iris[iris$Species == "virginica", "Sepal.Length"])
 Write your answer here in English.
 
 TO-DO
-
 
 Create the function `g` explicitly that can predict `y` from `x` being a new `Sepal.Length`.
 
