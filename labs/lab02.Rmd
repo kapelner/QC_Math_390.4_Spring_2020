@@ -172,7 +172,15 @@ X[order(rowSums(X, na.rm = TRUE), decreasing = TRUE), ]
 * Create a function `my_reverse` which takes as required input a vector and returns the vector in reverse where the first entry is the last entry, etc. No function calls are allowed inside your function otherwise that would defeat the purpose of the exercise! (Yes, there is a base R function that does this called `rev`). Use `head` on `v` and `tail` on `my_reverse(v)` to verify it works.
 
 ```{r}
-#TO-DO
+my_reverse = function(v){
+  n = length(v)
+  rev_v = array(NA, n)
+  for (i in 1 : n){
+    rev_v[i] = v[n - i + 1]
+  }
+  rev_v
+}
+
 ```
 
 
