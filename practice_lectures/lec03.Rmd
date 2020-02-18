@@ -22,7 +22,7 @@ Note we cannot just
 as.fractions(pi)
 ```
 
-We made use of the scope operator "::" to access a namespace beyond the usual "global namespace" which we've been used to. 
+We made use of the scope operator "::" to access a namespace beyond the usual "global namespace" which we've been used to. Parenthetically, you can use the ":::" to access the private / internal functions and variables. Anyone who understands object-oriented programming with public interfaces / APIs would cringe at this!!!
 
 If we are using the MASS library a lot, using the scope operator may get annoying. So similar to the "with" command, we can call
 
@@ -30,7 +30,7 @@ If we are using the MASS library a lot, using the scope operator may get annoyin
 library(MASS)
 ```
 
-which loads all public methods (aka "exported" functions) into the public namespace. Bonus: you can use the ":::" to access the private / internal functions and variables. Java developers would cringe!
+which loads all public methods (aka "exported" functions) into the public namespace. 
 
 Now, after the library invocation we can do the following and treat it as a normal function:
 
@@ -38,7 +38,33 @@ Now, after the library invocation we can do the following and treat it as a norm
 as.fractions(pi)
 ```
 
-The content for the MASS package was sitting on the hard drive since it comes with R. But what if you want to use a package that does not come with R? We'll have to install the package just like pip for Python, Rubygems for Ruby, R has a package management system built in. For example, here's a useful package for time series / finance stuff:
+Is this always a good idea? No... everytime you call `library` it "dirties" the namespace by putting all the functions there and rewriting over functions there previously. This is bad because you are more likely to get namespace conflicts. For instance. Let's say package `kapelner` had a weird `sample` function. This would be clear:
+
+```{r}
+v = rnorm(100)
+kapelner::sample(v)
+sample(v)
+```
+
+The first line is doing the special sample function and the second is using base R's sample. But if I do this:
+
+```{r}
+library(kapelner)
+###10,000 lines of code in which you forget about the fact that the kapelner library is loaded
+sample(v)
+```
+
+You may think you're getting base R sample function, but you're not and it's bug-city. You would have to do the following to be explicit:
+
+```{r}
+library(kapelner)
+sample(v)
+base::sample(v)
+```
+
+This is not a recommended thing to do. It's also not recommended for package developers to name functions the same as common base R functions. But this doesn't stop them!
+
+Back to real packages... the content for the MASS package was sitting on the hard drive since it comes with R. But what if you want to use a package that does not come with R? We'll have to install the package just like pip for Python, Rubygems for Ruby, R has a package management system built in. For example, here's a useful package for time series / finance stuff:
 
 ```{r}
 install.packages("tseries")
