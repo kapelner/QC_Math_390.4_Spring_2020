@@ -65,10 +65,10 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 * Lecture 3 [(audio)](https://youtu.be/)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec02.Rmd)
   - Theory Notes [(Rameasa Arna)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec03arna.pdf) [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec03eng.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec03grgas.pdf) 
-* Lecture 2 [(audio)](https://youtu.be/)
+* Lecture 2 [(audio)](https://youtu.be/cUHxlgIZ5tQ)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec01.Rmd)
   - Theory Notes [(Pizon Shetu)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec02shetu.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec02grgas.pdf) [(Rameasa Arna)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec02arna.pdf) [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec02eng.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec02nissanthan.pdf) 
-* Lecture 1 [(audio)](https://youtu.be/) 
+* Lecture 1 [(partial audio)](https://youtu.be/9cQ8NU-wKgU) 
   - Theory Notes [(Pizon Shetu)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec01shetu.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec01grgas.pdf) [(Rameasa Arna)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec01arna.pdf) [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec01eng.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec01nissanthan.pdf)
 
 ## Labs
