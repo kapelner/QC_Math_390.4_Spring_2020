@@ -57,9 +57,9 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
   - Theory Notes -->
 * Lecture 6 [(audio)](https://youtu.be/)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec03.Rmd) 
-  - Theory Notes [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec06nissanthan.pdf) [(Shakif Shadman)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec06shadman.pdf)
+  - Theory Notes [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec06nissanthan.pdf) [(Shakif Shadman)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec06shadman.pdf) [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec06eng.pdf) [(Rameasa Arna)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec06arna.pdf)
 * Lecture 5 [(audio)](https://youtu.be/)
-  - Theory Notes [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05nissanthan.pdf) [(Shakif Shadman)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05shadman.pdf)
+  - Theory Notes [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05nissanthan.pdf) [(Shakif Shadman)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05shadman.pdf) [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec05eng.pdf)
 * Lecture 4 [(audio)](https://youtu.be/)
   - Theory Notes [(Rameasa Arna)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec04arna.pdf) [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec04eng.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec04grgas.pdf) 
 * Lecture 3 [(audio)](https://youtu.be/)
@@ -100,7 +100,7 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 ## Writing Assignments
 <!--
 * Final Project [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/final_project.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/final_project.pdf) (due 5/23 by email)-->
-* Modeling Essay [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/modeling_essay.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/modeling_essay.pdf) (due 3/30)
+* Modeling Essay [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/modeling_essay.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/modeling_essay.pdf) (due 3/30) [(example essay)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/modeling_essay_example.pdf)
 
 
 ## Exams
