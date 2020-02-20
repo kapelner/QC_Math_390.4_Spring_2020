@@ -2,7 +2,7 @@
 title: "Lab 4"
 author: "Your Name Here"
 output: pdf_document
-date: "11:59PM March 9, 2019"
+date: "11:59PM Feb 29, 2020"
 ---
 
 Note: the content of this lab is on the midterm exam (March 5) even though the lab itself is due after the midterm exam.
@@ -20,23 +20,119 @@ beta_1 = -2
 y = beta_0 + beta_1 * x + rnorm(n, mean = 0, sd = 0.33)
 ```
 
-Solve for the least squares line by computing $b_0$ and $b_1$ _without_ using the functions `mean`, `cor`, `cov`, `var`, `sd` but instead computing it from the $x$ and $y$ quantities manually using base function such as `sum` and other basic operators. See the class notes.
+Rewrite the computation of y so that it is h*(x) + epsilon.
 
 ```{r}
 #TO-DO
 ```
 
-Verify your computations are correct using the `lm` function in R:
+Graph the data by running the following chunk:
+
+```{r}
+pacman::p_load(ggplot2)
+simple_df = data.frame(x = x, y = y)
+simple_viz_obj = ggplot(simple_df, aes(x, y)) + 
+  geom_point(size = 2)
+simple_viz_obj
+```
+
+Does this make sense given the values of $beta_0$ and $beta_1$?
+
+TODO
+
+Write a function `my_simple_ols` that takes in a vector `x` and vector `y` and returns a list that contains the `b_0` (intercept), `b_1` (slope), `yhat` (the predictions), `e` (the residuals), `SSE`, `SST`, `MSE`, `RMSE` and `Rsq` (for the R-squared metric). Internally, you can only use the functions `sum` and `length` and other basic arithmetic operations. You should throw errors if the inputs are non-numeric and not the same length. You should also name the class of the return value 'my_simple_ols_obj` by using the `class` function as a setter. No need to create ROxygen documentation here.
+
+```{r}
+#TO-DO
+```
+
+Verify your computations are correct for the vectors `x` and `y` from the first chunk using the `lm` function in R:
 
 ```{r}
 lm_mod = #TO-DO
-b_vec = coef(lm_mod)
+my_lm_mod = my_simple_ols(x, y)
+#run the tests to ensure the function is up to spec
 pacman::p_load(testthat)
-expect_equal(b_0, as.numeric(b_vec[1]), tol = 1e-4)
-expect_equal(b_1, as.numeric(b_vec[2]), tol = 1e-4)
+expect_equal(my_lm_mod$b_0, as.numeric(coef(lm_mod)[1]), tol = 1e-4)
+expect_equal(my_lm_mod$b_1, as.numeric(coef(lm_mod)[2]), tol = 1e-4)
+expect_equal(my_lm_mod$RMSE, summary(lm_mod)$sigma, tol = 1e-4)
+expect_equal(my_lm_mod$Rsq, summary(lm_mod)$R.squared, tol = 1e-4)
 ```
 
-6. We are now going to repeat one of the first linear model building exercises in history --- that of Sir Francis Galton in 1886. First load up package `HistData`.
+Verify that the average of the residuals is 0.
+
+```{r}
+#TO-DO
+```
+
+Create the $X$ matrix for this data example.
+
+```{r}
+#TO-DO
+```
+
+Use the `model.matrix` function to compute the matrix `X` and verify it is the same as your manual construction.
+
+```{r}
+#TO-DO
+```
+
+Using matrix algebra, verify the OLS estimate is the same as you computed from the `my_simple_ols` function. 
+
+```{r}
+#TO-DO
+```
+
+Find the hat matrix $H$.
+
+```{r}
+#TO-DO
+```
+
+Verify that this specific hat matrix is symmetric.
+
+```{r}
+#TO-DO
+```
+
+
+Using the `diag` function, find the trace of the hat matrix.
+
+```{r}
+#TO-DO
+```
+
+
+Create a prediction method `g` that takes in a vector `x_future` and `my_simple_ols_obj`, an object of type `my_simple_ols_obj` and predicts y values for each entry in `x_future`. 
+
+```{r}
+g = function(x_future, my_simple_ols_obj){
+  #TO-DO
+}
+```
+
+Use this function to verify that when predicting for the average x, you get the average y.
+
+```{r}
+#TO-DO
+```
+
+Create a prediction method `g` that takes in a vector `x_future` and the dataset $\mathbb{D}$ i.e. `X` where the first column is the one vector and `y` and returns the OLS predictions.
+
+```{r}
+g = function(x_future, X, y){
+  #TO-DO
+}
+```
+
+In class we spoke about error due to ignorance, misspecification error and estimation error. Show that as n grows, estimation error shrinks. Let us define an error metric that is the difference between $b_0$ and $b_1$ and $\beta_0$ and $\beta_1$. How about $h = ||b - \beta||^2$ where the quantities are now the vectors of size two. Show as n increases, this shrinks. 
+
+```{r}
+#TO-DO
+```
+
+
+We are now going to repeat one of the first linear model building exercises in history --- that of Sir Francis Galton in 1886. First load up package `HistData`.
 
 ```{r}
 #TO-DO
@@ -59,7 +155,7 @@ TO-DO
 Find the average height (include both parents and children in this computation).
 
 ```{r}
-avg_height = #TO-DO
+#TO-DO
 ```
 
 If you were to use the null model, what would the RMSE be of this model be?
@@ -139,22 +235,33 @@ y = #TO-DO
 Xy = data.frame(x = x, y = y)
 ```
 
-Load up the famous iris dataset and drop the data for Species "virginica".
+Extra credit: create a dataset $\mathbb{D}$ and a model (hint: not a lienar model) that can give you $R^2$ arbitrarily close to 1 but RMSE arbitrarily high.
 
 ```{r}
 #TO-DO
 ```
 
-If the only input x is  Species and you are trying to predict y which is Petal.Length, what would a reasonable, naive prediction be under both Species? Hint: it's what we did in class.
+Load up the famous iris dataset. We are going to do a different prediction problem. Imagine the only input x is Species and you are trying to predict y which is Petal.Length. What would a reasonable, naive prediction be under all Species? Hint: it's what we did in class.
 
 ```{r}
 #TO-DO
 ```
 
-Prove that this is the OLS model by fitting an appropriate `lm` and then using the predict function to verify you get the same answers as you wrote previously.
+Prove that this is the OLS model by fitting an appropriate `lm` and then using the predict function to verify you get the same answers as you wrote previously. Show this by doing a linear regression with and without the intercept.
 
 ```{r}
 #TO-DO
 ```
+
+Use the `model.matrix` function to compute the matrix `X` for the regression with the intercept and without the intercept. What is different?
+
+```{r}
+#TO-DO
+```
+
+
+
+
+
 
 
