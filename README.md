@@ -80,11 +80,10 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 * [(Lab 8, due 4/07)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab08.Rmd)
 * [(Lab 7, due 3/31)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab07.Rmd)
 * [(Lab 6, due 3/24)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab06.Rmd)
-* [(Lab 5, due 3/16)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab05.Rmd)
-* [(Review Lab 1, not due)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/reviewlab1.Rmd)
-* [(Lab 4, due 3/09)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab04.Rmd)
-* [(Lab 3, due 2/24)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab03.Rmd)
-* [(Lab 2, due 2/17)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab02.Rmd)-->
+* [(Lab 5, due 3/16)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab05.Rmd)-->
+* [(Lab 4, due 2/29)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab04.Rmd)
+* [(Lab 3, due 2/22)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab03.Rmd)
+* [(Lab 2, due 2/17)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab02.Rmd)
 * [(Lab 1, due 2/08)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab01.Rmd)
 
 ## Theory Homeworks
@@ -93,8 +92,8 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 * Homework 5t [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf) (due 5/18)
 * Homework 4t [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw04/hw04t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw04/hw04t.pdf) (due 5/7)
 * Homework 3p [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03p.Rmd) (due 4/13)
-* Homework 3 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf) (due 4/1)
-* Homework 2 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw02/hw02t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw02/hw02t.pdf) (due 3/6)-->
+* Homework 3 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf) (due 4/1)-->
+* Homework 2 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw02/hw02t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw02/hw02t.pdf) (due 2/24)
 * Homework 1 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw01/hw01t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw01/hw01t.pdf) (due 2/11)
 * Homework 0 [(syllabus, page 7)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/syllabus/syllabus.pdf?raw=true) (due 1/31)
 
