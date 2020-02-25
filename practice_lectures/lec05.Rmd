@@ -4,8 +4,6 @@ author: "Professor Adam Kapelner"
 date: "February 26, 2019"
 ---
 
-
-
 ## Multivariate linear regression
 
 We want to run a multivariate linear regression $\mathcal{H}$ employing the least squares $\mathcal{A}$ manually using our derived linear algebra. Let us first pull out $\mathbb{D}$ as $y$ and $X$.
