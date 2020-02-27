@@ -5,9 +5,6 @@ output: pdf_document
 date: "11:59PM Feb 29, 2020"
 ---
 
-Note: the content of this lab is on the midterm exam (March 5) even though the lab itself is due after the midterm exam.
-
-
 We now move on to simple linear modeling using the ordinary least squares algorithm.
 
 Let's quickly recreate the sample data set from practice lecture 7:
@@ -23,7 +20,9 @@ y = beta_0 + beta_1 * x + rnorm(n, mean = 0, sd = 0.33)
 Rewrite the computation of y so that it is h*(x) + epsilon.
 
 ```{r}
-#TO-DO
+h_star_x = beta_0 + beta_1 * x 
+epsilon = rnorm(n, mean = 0, sd = 0.33)
+y = h_star_x + epsilon
 ```
 
 Graph the data by running the following chunk:
@@ -38,68 +37,97 @@ simple_viz_obj
 
 Does this make sense given the values of $beta_0$ and $beta_1$?
 
-TODO
+Yes.
 
 Write a function `my_simple_ols` that takes in a vector `x` and vector `y` and returns a list that contains the `b_0` (intercept), `b_1` (slope), `yhat` (the predictions), `e` (the residuals), `SSE`, `SST`, `MSE`, `RMSE` and `Rsq` (for the R-squared metric). Internally, you can only use the functions `sum` and `length` and other basic arithmetic operations. You should throw errors if the inputs are non-numeric and not the same length. You should also name the class of the return value 'my_simple_ols_obj` by using the `class` function as a setter. No need to create ROxygen documentation here.
 
 ```{r}
-#TO-DO
+my_simple_ols = function(x,y){
+ if (class(x) != "numeric" | class(y) != "numeric") {stop("argument x or y is not numeric")}
+ n = length(x)
+  if (n != length(y)){stop("x and y must be same length")}
+ 
+  y_bar = sum(y)/length(y)
+  x_bar = sum(x)/length(x)
+  s_x_squared = (1/(n-1) * sum((x - x_bar)^2))
+  s_xy = (1/(n-1)) * sum((x - x_bar)*(y - y_bar))
+  b1= s_xy/s_x_squared
+  b0= y_bar - b1*x_bar
+  y_hat = b0 + b1*x
+  
+  e = y - y_hat
+  SSE = sum(e^2)
+  SST = sum((y-y_bar)^2)
+  Rsq = 1 - SSE/SST # 1 - NA
+  MSE = SSE / (n-2)
+  RMSE = sqrt(MSE)
+  
+  mod = list(b_0 = b0, b_1 = b1, y_hat = y_hat, e = e, SSE = SSE, SST = SST, Rsq = Rsq, MSE = MSE, RMSE = RMSE)
+  class(mod) = "my_simple_ols_obj"
+  mod
+}
 ```
 
 Verify your computations are correct for the vectors `x` and `y` from the first chunk using the `lm` function in R:
 
 ```{r}
-lm_mod = #TO-DO
+lm_mod = lm(y ~ x)
 my_lm_mod = my_simple_ols(x, y)
 #run the tests to ensure the function is up to spec
 pacman::p_load(testthat)
 expect_equal(my_lm_mod$b_0, as.numeric(coef(lm_mod)[1]), tol = 1e-4)
 expect_equal(my_lm_mod$b_1, as.numeric(coef(lm_mod)[2]), tol = 1e-4)
 expect_equal(my_lm_mod$RMSE, summary(lm_mod)$sigma, tol = 1e-4)
-expect_equal(my_lm_mod$Rsq, summary(lm_mod)$R.squared, tol = 1e-4)
+expect_equal(my_lm_mod$Rsq, summary(lm_mod)$r.squared, tol = 1e-4)
 ```
 
 Verify that the average of the residuals is 0.
 
 ```{r}
-#TO-DO
+expect_equal(mean(my_lm_mod$e), 0, tol = 1e-4)
 ```
 
 Create the $X$ matrix for this data example.
 
 ```{r}
-#TO-DO
+X = cbind(1, x)
+X
 ```
 
 Use the `model.matrix` function to compute the matrix `X` and verify it is the same as your manual construction.
 
 ```{r}
-#TO-DO
+model.matrix(~ x)
 ```
 
 Using matrix algebra, verify the OLS estimate is the same as you computed from the `my_simple_ols` function. 
 
 ```{r}
-#TO-DO
+XtXinvX = solve(t(X) %*% X) %*% t(X)
+b = XtXinvX %*% y
+b
 ```
 
 Find the hat matrix $H$.
 
 ```{r}
-#TO-DO
+H = X %*% XtXinvX
+H
 ```
 
 Verify that this specific hat matrix is symmetric.
 
 ```{r}
-#TO-DO
+expect_equal(H, t(H))
+
 ```
 
 
 Using the `diag` function, find the trace of the hat matrix.
 
 ```{r}
-#TO-DO
+diag(H)
+sum(diag(H))
 ```
 
 
@@ -107,47 +135,63 @@ Create a prediction method `g` that takes in a vector `x_future` and `my_simple_
 
 ```{r}
 g = function(x_future, my_simple_ols_obj){
-  #TO-DO
+  my_simple_ols_obj$b_0 + my_simple_ols_obj$b_1 * x_future
 }
 ```
 
 Use this function to verify that when predicting for the average x, you get the average y.
 
 ```{r}
-#TO-DO
+expect_equal(g(mean(x), my_lm_mod), mean(y))
 ```
 
 Create a prediction method `g` that takes in a vector `x_future` and the dataset $\mathbb{D}$ i.e. `X` where the first column is the one vector and `y` and returns the OLS predictions.
 
 ```{r}
 g = function(x_future, X, y){
-  #TO-DO
+b = solve(t(X) %*% X) %*% t(X) %*% y
+b[1] +b[2]*x_future
 }
 ```
 
 In class we spoke about error due to ignorance, misspecification error and estimation error. Show that as n grows, estimation error shrinks. Let us define an error metric that is the difference between $b_0$ and $b_1$ and $\beta_0$ and $\beta_1$. How about $h = ||b - \beta||^2$ where the quantities are now the vectors of size two. Show as n increases, this shrinks. 
 
 ```{r}
-#TO-DO
+ns = 10^(1:7)
+errors = array(dim=length(ns))
+beta = c(beta_0, beta_1)
+for (i in 1:length(ns)) {
+  n = ns[i]
+  x = runif(n)
+  h_star_x = beta_0 + beta_1 * x 
+  epsilon = rnorm(n, mean = 0, sd = 0.33)
+  y = h_star_x + epsilon
+  
+  mod = lm(y ~ x)
+  b = coef(mod)
+  errors[i] = sum((beta - b)^2)
+}
+errors
 ```
 
 
 We are now going to repeat one of the first linear model building exercises in history --- that of Sir Francis Galton in 1886. First load up package `HistData`.
 
 ```{r}
-#TO-DO
+pacman::p_load(HistData)
 ```
 
 In it, there is a dataset called `Galton`. Load it up.
 
 ```{r}
-#TO-DO
+data(Galton)
 ```
 
 You now should have a data frame in your workspace called `Galton`. Summarize this data frame and write a few sentences about what you see. Make sure you report $n$, $p$ and a bit about what the columns represent and how the data was measured. See the help file `?Galton`.
+p is 1 and n is 928 the number of observations  
 
 ```{r}
-#TO-DO
+Galton
 ```
 
 TO-DO
@@ -155,13 +199,13 @@ TO-DO
 Find the average height (include both parents and children in this computation).
 
 ```{r}
-#TO-DO
+avg_height = (mean(Galton$parent) + mean(Galton$child)) / 2
 ```
 
 If you were to use the null model, what would the RMSE be of this model be?
 
 ```{r}
-#TO-DO
+rmse_null = sqrt(mean((Galton$child - avg_height) ^ 2))
 ```
 
 Note that in Math 241 you learned that the sample average is an estimate of the "mean", the population expected value of height. We will call the average the "mean" going forward since it is probably correct to the nearest tenth of an inch with this amount of data.
@@ -169,7 +213,13 @@ Note that in Math 241 you learned that the sample average is an estimate of the 
 Run a linear model attempting to explain the childrens' height using the parents' height. Use `lm` and use the R formula notation. Compute and report $b_0$, $b_1$, RMSE and $R^2$. Use the correct units to report these quantities.
 
 ```{r}
-#TO-DO
+mod = lm(child ~ parent, Galton)
+b_0 = mod$coefficients[1]
+b_1 = mod$coefficients[2]
+b_0
+b_1
+summary(mod)$sigma
+summary(mod)$r.sq
 ```
 
 Interpret all four quantities: $b_0$, $b_1$, RMSE and $R^2$.
