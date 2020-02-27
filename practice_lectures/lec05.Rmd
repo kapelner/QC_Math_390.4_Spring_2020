@@ -11,6 +11,7 @@ We want to run a multivariate linear regression $\mathcal{H}$ employing the leas
 Let's ensure we augment the `X` to include the 1 vector in front. We need this for the intercept in the $w$ vector in our spec, $\mathcal{H}$.
 
 ```{r}
+library(MASS)
 y = boston$medv
 X = cbind(1, boston[, 1: 13])
 ```
@@ -18,7 +19,7 @@ X = cbind(1, boston[, 1: 13])
 Can we find $X^\top X$?
 
 ```{r}
-# XtX = t(X) %*% X
+XtX = t(X) %*% X
 ```
 
 The data frame is great, but unfortunately R does not allow us to use matrix algebra on it.
@@ -90,7 +91,7 @@ We can compute all predictions:
 yhat = X %*% b
 ```
 
-Can you tell this is projected onto a 13 dimensionsal space from a 506 dimensional space? Not really... but it is...
+Can you tell this is projected onto a 14 dimensionsal space from a 506 dimensional space? Not really... but it is...
 
 We can calculate the residuals:
 
@@ -103,7 +104,7 @@ What is RMSE?
 
 ```{r}
 SSE = t(e) %*% e
-MSE = 1 / (ncol(X)) * SSE
+MSE = 1 / (nrow(X) - ncol(X)) * SSE
 RMSE = sqrt(MSE)
 SSE
 MSE

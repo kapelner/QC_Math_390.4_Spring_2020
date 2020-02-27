@@ -20,6 +20,7 @@ lambdas
 lambda1 = lambdas[1]
 lambda2 = lambdas[2]
 
+v1
 B %*% v1
 lambda1 * v1
 
@@ -75,17 +76,19 @@ We can compute all predictions:
 
 ```{r}
 H = X %*% XtXinv %*% t(X)
+H[1:5,1:5]
 yhat = X %*% b
+head(yhat)
 yhat = H %*% y
 head(yhat)
 ```
 
-Can you tell this is projected onto a 13 dimensionsal space from a 506 dimensional space? Not really... but it is...
+Can you tell this is projected onto a 14 dimensionsal space from a 506 dimensional space? Not really... but it is...
 
 Now let's project over and over...
 
 ```{r}
-head(H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% y)
+head(H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% H %*% y)
 ```
 
 Same thing! Once you project, you're there. That's the idempotency of $H$.
@@ -214,7 +217,7 @@ cars = MASS::Cars93
 str(cars)
 ```
 
-Let's try to model `Type`, a factor with 6 levels.
+Let's try to model `Price` with `Type`, a factor with 6 levels.
 
 ```{r}
 table(cars$Type)
@@ -233,6 +236,7 @@ What's going on here? This one categorical variable got blown up into 5 features
 ```{r}
 Xmm = model.matrix(Price ~ Type, cars)
 head(Xmm, 20)
+unique(rowSums(Xmm))
 ```
 
 The predictor `Type` got "dummified". (Remember we spoke about this in lecture 2)? There are now 5 dummy variables each representing one of the levels and the reference level is omitted because it is accounted for in the intercept. Let's make sure this is exactly what's going on.
@@ -283,6 +287,7 @@ What does the design matrx (model matrix) look like?
 ```{r}
 Xmm = model.matrix(Price ~ 0 + Type, cars)
 head(Xmm, 20)
+rowSums(Xmm)
 ```
 
 Very similar. 
@@ -319,7 +324,7 @@ we only get $\bar{y}$'s for the first factor predictor crossed with the referenc
 
 Now let's create a linear model using one categorical predictor and one continuous predictor. The combination is called for historical reasons "Analysis of Covariance" or "ANCOVA" for short.
 
-Let's use `Tyoe` and `Horsepower`:
+Let's use `Type` and `Horsepower`:
 
 ```{r}
 ancova_mod = lm(Price ~ Type + Horsepower, cars)
