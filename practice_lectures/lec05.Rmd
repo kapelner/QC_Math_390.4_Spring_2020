@@ -192,9 +192,8 @@ We want to run a multivariate linear regression $\mathcal{H}$ employing the leas
 Let's ensure we augment the `X` to include the 1 vector in front. We need this for the intercept in the $w$ vector in our spec, $\mathcal{H}$.
 
 ```{r}
-library(MASS)
-y = boston$medv
-X = cbind(1, boston[, 1: 13])
+y = MASS::Boston$medv
+X = cbind(1, MASS::Boston[, 1: 13])
 ```
 
 Can we find $X^\top X$?
@@ -208,7 +207,7 @@ The data frame is great, but unfortunately R does not allow us to use matrix alg
 So let's create a matrix. Note: there are no factor variables with more than one level. `chas` is a binary variable and that's okay. If there were factors with more than level, the following will not work. We will explore this later.
 
 ```{r}
-X = as.matrix(cbind(1, boston[, 1: 13]))
+X = as.matrix(cbind(1, MASS::Boston[, 1: 13]))
 ```
 
 So $p = 12$ and $p + 1 = 14$.
@@ -325,7 +324,7 @@ What does this tell you about $R^2$?
 Now, of course, R has its own function to do all this. We've already seen them! To run a multivariate least squares linear model,
 
 ```{r}
-mult_lin_mod = lm(medv ~ ., boston)
+mult_lin_mod = lm(medv ~ ., MASS::Boston)
 ```
 
 No need to (a) create a matrix from the data frame (b) append a 1's column (c) do the linear algebra. It's all done for you. What is this formula `medv ~ .`? Previously we've seen `medv ~ rm` to indicate "fit phenomenon `medv` using predictor `rm`". Here, it's "fit phenomenon `medv` using all available predictors in the data frame". This is a very powerful formula!
@@ -341,7 +340,7 @@ summary(mult_lin_mod)$sigma
 Does R offer a simple way to do $g$? Sure...
 
 ```{r}
-x_star = boston[7, ]
+x_star = MASS::Boston[7, ]
 y_hat_star = predict(mult_lin_mod, newdata = x_star)
 y_hat_star
 y[7]
@@ -350,7 +349,7 @@ y[7]
 If you care about the internals of what R is doing, it retraces our steps perfectly. It first creates the "model matrix" we called the "design matrix" and denoted it X:
 
 ```{r}
-Xmm = model.matrix(medv ~ ., boston)
+Xmm = model.matrix(medv ~ ., MASS::Boston)
 head(Xmm)
 head(X) #same
 ```
