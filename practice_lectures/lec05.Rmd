@@ -1,8 +1,31 @@
 ---
 title: "Practice Lecture 5 MATH 390.4 Queens College"
 author: "Professor Adam Kapelner"
-date: "February 25, 2020"
+date: "February 27, 2020"
 ---
+
+## Eigendecomposition in R
+
+```{r}
+B = array(seq(1, 4), dim = c(2, 2))
+B
+eigen_decomp = eigen(B)
+V = eigen_decomp$vectors
+V
+v1 = V[, 1, drop = FALSE]
+v2 = V[, 2, drop = FALSE]
+lambdas = eigen_decomp$values
+lambdas
+lambda1 = lambdas[1]
+lambda2 = lambdas[2]
+B %*% v1
+lambda1 * v1
+B %*% v2 
+lambda2 * v2
+B %*% v2 == lambda2 * v2 #why not?
+#diagonolization
+V %*% diag(lambdas) %*% solve(V)
+```
 
 ## OLS using categorical predictors
 
@@ -169,6 +192,7 @@ We want to run a multivariate linear regression $\mathcal{H}$ employing the leas
 Let's ensure we augment the `X` to include the 1 vector in front. We need this for the intercept in the $w$ vector in our spec, $\mathcal{H}$.
 
 ```{r}
+library(MASS)
 y = boston$medv
 X = cbind(1, boston[, 1: 13])
 ```
@@ -176,7 +200,7 @@ X = cbind(1, boston[, 1: 13])
 Can we find $X^\top X$?
 
 ```{r}
-# XtX = t(X) %*% X
+XtX = t(X) %*% X
 ```
 
 The data frame is great, but unfortunately R does not allow us to use matrix algebra on it.
@@ -248,7 +272,7 @@ We can compute all predictions:
 yhat = X %*% b
 ```
 
-Can you tell this is projected onto a 13 dimensionsal space from a 506 dimensional space? Not really... but it is...
+Can you tell this is projected onto a 14 dimensionsal space from a 506 dimensional space? Not really... but it is...
 
 We can calculate the residuals:
 
@@ -261,7 +285,7 @@ What is RMSE?
 
 ```{r}
 SSE = t(e) %*% e
-MSE = 1 / (ncol(X)) * SSE
+MSE = 1 / (nrow(X) - ncol(X)) * SSE
 RMSE = sqrt(MSE)
 SSE
 MSE
@@ -389,7 +413,7 @@ We can compute all predictions:
 
 ```{r}
 H = X %*% XtXinv %*% t(X)
-yhat = X %*% b
+
 yhat = H %*% y
 head(yhat)
 ```
