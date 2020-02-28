@@ -82,7 +82,7 @@ length(eigenvals_Hcomp)
 dim(eigenvecs_Hcomp)
 ```
 
-The eigendecomposition suffers from numerical error which is making them become imaginary. We can coerce imaginary numbers back to real by using the `as.numeric` function. There is also lots of numerical error. Use the `as.numeric` function to coerce to real and the `round` function to round all four objects to the nearest 10 digits.
+The eigendecomposition suffers from numerical error which is making them become imaginary. We can coerce imaginary numbers back to real by using the `Re` function. There is also lots of numerical error. Use the `Re` function to coerce to real and the `round` function to round all four objects to the nearest 10 digits.
 
 ```{r, warning = FALSE, message = FALSE}
 eigenvals_H = round(as.numeric(eigenvals_H), 10)
