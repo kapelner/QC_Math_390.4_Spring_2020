@@ -44,7 +44,7 @@ NAME: \line(1,0){380}
 
 
 
-\problem{These are questions about Silver's book, chapters ...  For all parts in this question, answer using notation from class (i.e. $t ,f, g, h^*, \delta, \epsilon, e, t, z_1, \ldots, z_t, \mathbb{D}, \mathcal{H}, \mathcal{A}, \mathcal{X}, \mathcal{Y}, X, y, n, p, x_{\cdot 1}, \ldots, x_{\cdot p}$, $x_{1 \cdot}, \ldots, x_{n \cdot}$, etc. and also we now have $f_{pr}, h^*_{pr}, g_{pr}, p_{th}$, etc from probabilistic classification as well as different types of validation schemes). }
+\problem{These are questions about Silver's book, chapters 3-6.  For all parts in this question, answer using notation from class (i.e. $t ,f, g, h^*, \delta, \epsilon, e, t, z_1, \ldots, z_t, \mathbb{D}, \mathcal{H}, \mathcal{A}, \mathcal{X}, \mathcal{Y}, X, y, n, p, x_{\cdot 1}, \ldots, x_{\cdot p}$, $x_{1 \cdot}, \ldots, x_{n \cdot}$, etc.} % and also we now have $f_{pr}, h^*_{pr}, g_{pr}, p_{th}$, etc from probabilistic classification as well as different types of validation schemes)
 
 \begin{enumerate}
 
@@ -139,11 +139,14 @@ NAME: \line(1,0){380}
 
 \end{enumerate}
 
-\problem{All of these are extra credit. This is for students who want to get a taste of a first year linear model theory class at the graduate level. The prereq to do these problems is Math 368/621. Only attempt these if you have time!}
+\problem{All of these are extra credit. This is for students who want to get a taste of a first year linear model theory class at the graduate level. The prereq to do these problems is Math 368/621. Only attempt these if you have time!
+
+In linear modeling, $\mathcal{H} = \braces{\x \w~:~\w \in \reals^{p+1}}$ where $\x = \bracks{1~x_1~\ldots~x_p}$, a row vector. Thus, there is a best function $h^*(\x) = \x\bbeta$ where $\bbeta = \bracks{\beta_0~\beta_1~\ldots~\beta_p}^\top$, a column vector and $y = h^*(\x) = \x\bbeta + \mathcal{E}$. Imagine that for all $n$ observations in $\mathbb{D}$, the $\Y = X\bbeta + \bv{\mathcal{E}}$ where $\bv{\mathcal{E}} \sim \multnormnot{n}{\zerovec_n}{\sigsq\I_n}$ and $\Y$ is a random vector with dimension $n$ modeling the responses of which $\y$ is a random realization. Assume $\sigsq$ is known. 
+}
 
 \begin{enumerate}
 
-\extracreditsubproblem{In OLS, $\mathcal{H} = \braces{\x \w~:~\w \in \reals^{p+1}}$. Thus, there is a best function $h^*(\x) = \x\bbeta$ and $y = h^*(\x) = \x\bbeta + \mathcal{E}$. Imagine that for all $n$ observations in $\mathbb{D}$, the $\Y = X\bbeta + \bv{\mathcal{E}}$ where $\bv{\mathcal{E}} \sim \multnormnot{n}{\zerovec_n}{\sigsq\I_n}$. Assume $\sigsq$ is known. Show that $\Y\sim \multnormnot{n}{X\bbeta}{\sigsq\I_n}$.}\spc{3}
+\extracreditsubproblem{Show that $\Y\sim \multnormnot{n}{X\bbeta}{\sigsq\I_n}$.}\spc{3}
 
 \extracreditsubproblem{Let $\B = \XtXinv\Xt\Y$, i.e. the r.v. that represents the OLS estimator of which $\b$ is one realization which changes based on the realizations of the error-vector r.v. $\bv{\mathcal{E}}$. Find the distribution of $\B$ and once this is done, its expectation and variance-covariance matrix. Do the entries in $\B$ have dependence?}\spc{3}
 
@@ -159,6 +162,12 @@ NAME: \line(1,0){380}
 
 
 \extracreditsubproblem{Find the distribution of $R^2$.}\spc{3}
+
+\extracreditsubproblem{Now let $\sigsq$ be unknown. Use the MSE as its estimate. What is the distribution of $\B$ now?}\spc{3}
+
+\extracreditsubproblem{What is the distribution of MSE?}\spc{3}
+
+\extracreditsubproblem{What is the distribution of $R^2$?}\spc{3}
 
 \extracreditsubproblem{Let $\U \sim \multnormnot{n}{\zerovec_n}{\I_n}$ independent of $\V \sim \multnormnot{n}{\zerovec_n}{\I_n}$. Let $\theta$ be the r.v. model of the angle between $\U$ and $\V$. How is $\theta$ distributed?}\spc{3}
 
