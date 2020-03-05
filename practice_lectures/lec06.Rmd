@@ -36,16 +36,21 @@ Now let's do the QR decomposition and see if the projections work.
 qrX = qr(X)
 Q = qr.Q(qrX)
 R = qr.R(qrX)
+dim(Q)
+dim(R)
+Matrix::rankMatrix(Q)
+Matrix::rankMatrix(R)
 
 sum(Q[, 1]^2) #normalized?
 sum(Q[, 2]^2) #normalized?
 Q[, 1] %*% Q[, 2] #orthogonal?
-Q[, 2] %*% Q[, 3] #orthogonal?
+Q[, 7] %*% Q[, 13] #orthogonal?
 
 Qt = t(Q)
 yhat_via_Q = Q %*% Qt %*% y
 head(yhat)
 head(yhat_via_Q)
+testthat::expect_equal(c(yhat), c(yhat_via_Q)) #needed to vectorize to make dimensions equal
 ```
 
 Can we get the $b$ vector from the $Q$ matrix?
