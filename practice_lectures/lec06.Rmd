@@ -98,8 +98,8 @@ partial_Rsqs_sorted_cumul
 #sort Q by Rsq
 Qsorted = Q[, order(partial_Rsqs, na.last = FALSE)]
 #let's take the first 8
-Qreduced = Qsorted[, 2 : 9]
-mod = lm(y ~ Qsorted)
+Qreduced = Qsorted[, 6 : 14]
+mod = lm(y ~ Qreduced)
 summary(mod)
 ```
 
@@ -160,12 +160,17 @@ In this setup, $x$ and $y$ are centered Gaussian random vectors. Are they orthog
 x %*% y
 theta_in_rad = acos(x %*% y / sqrt(sum(x^2) * sum(y^2)))
 theta_in_rad * 180 / pi
+
+
+theta_in_rad = acos(X[, 65] %*% y / sqrt(sum(X[, 65]^2) * sum(y^2)))
+theta_in_rad * 180 / pi
 ```
 
 Nope... what about correlated?
 
 ```{r}
 cor(x, y)
+cor(x, y)^2
 ```
 
 They *nearly* uncorrelated but they still have some correlation. How is this possible? 
@@ -255,11 +260,12 @@ bbeta = c(1, 2, 3, 4)
 n = 100
 X = cbind(1, rnorm(n), rnorm(n), rnorm(n))
 y = X %*% bbeta + rnorm(n, 0, 0.3)
+#\amthbb{D}
 
 #build test data
 n_star = 100
-X_star = cbind(1, rnorm(n), rnorm(n), rnorm(n_star))
-y_star = X_star %*% bbeta + rnorm(n, 0, 0.3)
+X_star = cbind(1, rnorm(n_star), rnorm(n_star), rnorm(n_star))
+y_star = X_star %*% bbeta + rnorm(n_star, 0, 0.3)
 
 all_betas = matrix(NA, n, n)
 all_betas[4, 1 : 4] = coef(lm(y ~ 0 + X))
@@ -269,9 +275,10 @@ for (j in 5 : n){
   lm_mod = lm(y ~ 0 + X)
   all_betas[j, 1 : j] = coef(lm_mod)
   y_hat = X %*% all_betas[j, 1 : j]
-  in_sample_rmse_by_p[j] = sqrt(sum((y - y_hat)^2))
+  in_sample_rmse_by_p[j] = sqrt(mean((y - y_hat)^2))
 }
 plot(1 : n, in_sample_rmse_by_p)
+
 
 all_betas[4 : n, 1 : 4]
 b_error_by_p = rowSums((all_betas[, 1 : 4] - matrix(rep(bbeta, n), nrow = n, byrow = TRUE))^2)
@@ -281,7 +288,7 @@ plot(1 : n, b_error_by_p)
 oos_rmse_by_p = array(NA, n)
 for (j in 4 : n){
   y_hat_star = X_star %*% all_betas[j, 1 : 4]
-  oos_rmse_by_p[j] = sqrt(sum((y_star - y_hat_star)^2))
+  oos_rmse_by_p[j] = sqrt(mean((y_star - y_hat_star)^2))
 }
 plot(1 : n, oos_rmse_by_p)
 
@@ -290,7 +297,7 @@ oos_rmse_by_p = array(NA, n)
 for (j in 5 : n){
   X_star = cbind(X_star, rnorm(n))
   y_hat_star = X_star %*% all_betas[j, 1 : j]
-  oos_rmse_by_p[j] = sqrt(sum((y_star - y_hat_star)^2))
+  oos_rmse_by_p[j] = sqrt(mean((y_star - y_hat_star)^2))
 }
-plot(1 : n, oos_rmse_by_p)
+plot(1 : n, oos_rmse_by_p, ylim = c(0, 2))
 ```
