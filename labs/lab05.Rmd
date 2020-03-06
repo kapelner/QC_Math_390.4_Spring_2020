@@ -199,7 +199,7 @@ Examine this matrix. Why are the estimates changing from row to row as you add i
 Clear the workspace and load the diamonds dataset in the package `ggplot2`.
 
 ```{r}
-#TO-DO
+#TODO
 ```
 
 Extract $y$, the price variable and `col`, the nominal variable "color" as vectors.
