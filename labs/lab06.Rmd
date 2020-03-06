@@ -97,7 +97,7 @@ Verify $Q^T$ is the inverse of $Q$ i.e. a unitary matrix.
 ```
 
 
-Project $Y$ onto $Q$ and verify it is the same as the OLS fit.
+Project $Y$ onto $colsp[Q]$ and verify it is the same as the OLS fit.
 
 ```{r}
 #TODO
@@ -141,12 +141,60 @@ Using `Xjunk` from above, divide the data into training and testing sets. Fit th
 
 Do the same thing but now calculate oos$s_e$. Does this go to zero? What is the index corresponding to the best model?
 
+```{r}
+#TODO
+```
+
+Beginning with the Boston Housing Data matrix `X`, pull out the second column, the `crim` feature and call it `x2`. Then, use the `cut` function to bin each of its $n$ values into two bins: the first is all values <= the median of `crim` and the second is all values > median of `crim`. Call it `x2bin`. Use the `table` function to ensure that half of the values are in the first group and half in the second group. This requires reading the documentation for `cut` carefully and using the `quantile` function carefully.
 
 ```{r}
 #TODO
+```
+
+Now convert the factor variable `x2bin` to two dummies, `X2dummy`, a matrix of $n \times 2$ and verify the rowsums are all 1. They must be 1 because either the value is <= median or > median.
+
+```{r}
+#TODO
+```
+
+Drop the first column of this matrix to arrive at `X2dummyfeatures`.
+
+```{r}
+#TODO
+```
 
 
+What you did with `crim`, do for all 13 variables in the Boston housing data, ie create `X2dummyfeatures` for all and then column bind them all together into a massive `Xdummy` matrix. Then run a regression of $y$ on those features and report $R^2$.
 
+
+```{r}
+#TODO
+```
+
+Create a new `Xdummy` matrix. This time with two dummies for each variable: (1) between the 33%ile and 66%ile and (2) greater than the 66%ile. Run the regression and report $R^2$.
+
+
+```{r}
+#TODO
+```
+
+Keep doing this until each variable has 31 dummies for a total of $p = 403 + 1$ variables. Report all $R^2$;s. Why is it increasing and why is the last one so high?
+
+```{r}
+#TODO
+```
+
+Repeat this exercise with a 20% test set held out. Record in sample $s_e$'s and oos$s_e$'s. Do we see the canonical picture?
+
+```{r}
+#TODO
+```
+
+What is the optimal number of bins for each feature? That is what is the optimal complexity model of this set of models?
+
+```{r}
+#TODO
+```
 
 
 
