@@ -692,7 +692,7 @@ cppFunction('
     for (int i_1 = 0; i_1 < (n - 1); i_1++){
       //Rcout << "computing for row #: " << (i_1 + 1) << "\\n";
       for (int i_2 = i_1 + 1; i_2 < n; i_2++){
-        int sqd_diff = 0;
+        double sqd_diff = 0;
         for (int j = 0; j < p; j++){
           sqd_diff += pow(X(i_1, j) - X(i_2, j), 2); //by default the cmath library in std is loaded
         }
@@ -863,7 +863,7 @@ mean(head(round(sample(x + 1), digits = 2)))
 We first load the piping library:
 
 ```{r}
-pacman::p_load(magrittr) #the package is named after René Magritte, the artist
+pacman::p_load(magrittr) #the package is named after RenÃ© Magritte, the artist
 ```
 
 In pipe format this would look like
