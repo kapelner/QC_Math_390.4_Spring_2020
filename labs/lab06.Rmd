@@ -188,7 +188,7 @@ table(x2_bin)
 Now convert the factor variable `x2bin` to two dummies, `X2dummy`, a matrix of $n \times 2$ and verify the rowsums are all 1. They must be 1 because either the value is <= median or > median.
 
 ```{r}
-X2dummy = model.matrix(~0+., data.frame(x2_bin))
+X2dummy = model.matrix(~ 0 + ., data.frame(x2_bin))
 table(rowSums(X2dummy))
 ```
 
@@ -206,8 +206,7 @@ What you did with `crim`, do for all 13 variables in the Boston housing data, ie
 #TODO
 ```
 
-Create a new `Xdummy` matrix. This time with two dummies for each variable: (1) between the 33%ile and 66%ile and (2) greater than the 66%ile. Run the regression and report $R^2$.
-
+This time create two dummies for each variable: (1) between the 33%ile and 66%ile and (2) greater than the 66%ile. Run the regression on all dummies for all variables and report $R^2$. Hint: you do not need to go through the exercise of creating the dummy columns manually; use `factor` instead. Then use `lm` to run the regression (do not do it manually using the $X$ matrices).
 
 ```{r}
 #TODO
@@ -225,7 +224,7 @@ Repeat this exercise with a 20% test set held out. Record in sample $s_e$'s and 
 #TODO
 ```
 
-What is the optimal number of bins for each feature? That is what is the optimal complexity model of this set of models?
+What is the optimal number of bins (dummies) for each feature? Worded another way, what is the optimal complexity model among this set modeling strategy (binning)?
 
 ```{r}
 #TODO
