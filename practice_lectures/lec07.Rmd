@@ -60,7 +60,7 @@ And let's plot the true function $h^*$ below as well in green:
 
 ```{r}
 basic_and_lines = basic + 
-  geom_abline(intercept = b_0, slope = b_1, col = "grey") +
+  geom_abline(intercept = b_0, slope = b_1, col = "blue") +
   geom_abline(intercept = beta_0, slope = beta_1, col = "green") + 
   geom_segment(aes(x = x, y = h_star_x, xend = x, yend = y), col = "red")
 basic_and_lines
@@ -172,10 +172,11 @@ Now what happens if we add a random predictor?
 Okay - but how bad? It only depends on how much $g$ diverges from $h^*$. Let's look at this divergence slowly. We create a new oos data set made from evenly spaced $x$ values across its range and random values of the nonsense predictors. We use this to calculated oos $s_e$.
 
 ```{r}
-p_fake = 97
+p_fake = 98
 set.seed(1984)
 X = data.frame(matrix(c(x, rnorm(n * p_fake)), ncol = 1 + p_fake, nrow = n))
 mod = lm(y ~ ., X)
+coef(mod)
 y_hat = predict(mod, X)
 s_e_in_sample = sd(y - y_hat)
 
@@ -308,6 +309,7 @@ Now let's do a polynomial regression of degree two. Let's do so manually:
 X = as.matrix(cbind(1, x, x^2))
 b = solve(t(X) %*% X) %*% t(X) %*% y
 b
+c(beta_0, beta_1, beta_2)
 ```
 
 These are about the same as the $\beta_0, \beta_1$ and $\beta_2$ as defined in $f(x)$ the true model. In order to graph this, we can no longer use the routine `geom_abline`, we need to use `stat_function`.
@@ -366,7 +368,7 @@ summary(degree_2_poly_mod)$r.squared
 Let's go on a slight tangent. And look at this regression without using the raw polynomial.
 
 ```{r}
-Xmm = model.matrix(~ poly(x, 2))
+Xmm = model.matrix(~ poly(x, 10))
 head(Xmm) #the model matrix for this regression - just to check
 Xmm[, 1] %*% Xmm[, 2]
 Xmm[, 2] %*% Xmm[, 2]
@@ -397,7 +399,7 @@ plot_function_degree_13 = function(x, b){
   b[1] + b[2] * x + b[3] * x^2 + b[4] * x^3 + b[5] * x^4 + b[6] * x^5 + b[7] * x^6 + b[8] * x^7 + b[9] * x^8 + b[10] * x^9  + b[11] * x^10 + b[12] * x^11 + b[13] * x^12 + b[14] * x^13
 }
 
-basic + stat_function(fun = plot_function_degree_13, args = list(b = b_poly_13), col = "purple") #+ xlim(c(-2, 5.2))
+basic + stat_function(fun = plot_function_degree_13, args = list(b = b_poly_13), col = "purple")# + ylim(c(0, 25)) #+ xlim(c(-2, 5.2))
 ```
 
 What's happening for small values of $x$ (and a bit for large values)? This is called [Runge's Phenomenon](https://en.wikipedia.org/wiki/Runge%27s_phenomenon) meaning that the boundary activity of high-order polynomials has very large derivatives. Let's go back to the same scale as before and see what's happening:
@@ -408,66 +410,4 @@ basic +
   stat_function(fun = plot_function_degree_13, args = list(b = b_poly_13), col = "purple")
 ```
 
-#Extrapolation vs Interpolation
-
-Interpolation is essentially the type of "prediction" we've been talking about this whole class. Extrapoliation is totally different. It's what happens when you predict outside of the range of the covariate data you've seen in $\mathbb{D}$.
-
-What happens during extrapolation? Let's look at the (a) linear model, (b) polynomial model with degree 2 and (c) polynomial with degree 13.
-
-```{r}
-xmin = -10
-xmax = 8
-basic + 
-  coord_cartesian(xlim = c(xmin, xmax), ylim = c(-10, 35)) + 
-  geom_abline(intercept = b_linear[1], slope = b_linear[2], col = "red") + 
-  stat_function(fun = plot_function_degree_2, args = list(b = b_poly_2), col = "blue", xlim = c(xmin, xmax)) +
-  stat_function(fun = plot_function_degree_13, args = list(b = b_poly_13), col = "purple", xlim = c(xmin, xmax))
-```
-
-Polynomial models have *TERRIBLE* extrapolation ability - totally unpredictable.
-
-# Overfitting with Polynomials
-
-Can we achieve $R^2 = 100\%$ using polynomial regression? Yes. Here's an example in one dimension. These are called "interpolation polynomials". In one dimension, as long as the $x$ values are distinct, $n$ data point can be fit by a $n - 1$ degree polynomial. Here's an example with a few data points:
-
-```{r}
-set.seed(1003)
-n = 5
-beta_0 = 1
-beta_1 = 0
-beta_2 = 1
-x = runif(n)
-y = runif(n)
-
-#scatterplot it
-df = data.frame(x = x, y = y, h_star_x = h_star_x)
-basic = ggplot(df, aes(x, y)) +
-  geom_point()
-basic
-```
-
-Now fit polynomial models:
-
-```{r}
-degree_4_poly_mod = lm(y ~ poly(x, 4, raw = TRUE))
-b_poly_4 = coef(degree_4_poly_mod)
-
-plot_function_degree_4 = function(x, b){
-  b[1] + b[2] * x + b[3] * x^2 + b[4] * x^3 + b[5] * x^4
-}
-
-basic + stat_function(fun = plot_function_degree_4, args = list(b = b_poly_4), col = "purple")
-```
-
-Perfect fit!
-
-```{r}
-summary(degree_4_poly_mod)$r.squared
-```
-
-This is the same thing we've seen before! If $n = p + 1$, then the design matrix is square and there is no need to project onto a lower dimensional subspace. To estimate the linear model, one only needs to solve $n$ equations with $n$ unknowns.
-
-My recommendations:
-1) Keep polynomial degree low. Preferably 2. Anything past 2 is not interpretable anyway. We didn't talk about "interpretability" of models yet, but you get the idea.
-2) Be very careful not to extrapolate: make sure future predictions have the measurements within range of the training data $\mathbb{D}$. Extrapolations are going to be very, very inaccurate. Polynomial regressions I'm sure have gotten data scientists fired before.
 

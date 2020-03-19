@@ -4,6 +4,70 @@ author: "Professor Adam Kapelner"
 date: "March 20, 2020"
 ---
 
+#Extrapolation vs Interpolation
+
+Interpolation is essentially the type of "prediction" we've been talking about this whole class. Extrapoliation is totally different. It's what happens when you predict outside of the range of the covariate data you've seen in $\mathbb{D}$.
+
+What happens during extrapolation? Let's look at the (a) linear model, (b) polynomial model with degree 2 and (c) polynomial with degree 13.
+
+```{r}
+xmin = -10
+xmax = 8
+basic + 
+  coord_cartesian(xlim = c(xmin, xmax), ylim = c(-10, 35)) + 
+  geom_abline(intercept = b_linear[1], slope = b_linear[2], col = "red") + 
+  stat_function(fun = plot_function_degree_2, args = list(b = b_poly_2), col = "blue", xlim = c(xmin, xmax)) +
+  stat_function(fun = plot_function_degree_13, args = list(b = b_poly_13), col = "purple", xlim = c(xmin, xmax))
+```
+
+Polynomial models have *TERRIBLE* extrapolation ability - totally unpredictable.
+
+# Overfitting with Polynomials
+
+Can we achieve $R^2 = 100\%$ using polynomial regression? Yes. Here's an example in one dimension. These are called "interpolation polynomials". In one dimension, as long as the $x$ values are distinct, $n$ data point can be fit by a $n - 1$ degree polynomial. Here's an example with a few data points:
+
+```{r}
+set.seed(1003)
+n = 5
+beta_0 = 1
+beta_1 = 0
+beta_2 = 1
+x = runif(n)
+y = runif(n)
+
+#scatterplot it
+df = data.frame(x = x, y = y, h_star_x = h_star_x)
+basic = ggplot(df, aes(x, y)) +
+  geom_point()
+basic
+```
+
+Now fit polynomial models:
+
+```{r}
+degree_4_poly_mod = lm(y ~ poly(x, 4, raw = TRUE))
+b_poly_4 = coef(degree_4_poly_mod)
+
+plot_function_degree_4 = function(x, b){
+  b[1] + b[2] * x + b[3] * x^2 + b[4] * x^3 + b[5] * x^4
+}
+
+basic + stat_function(fun = plot_function_degree_4, args = list(b = b_poly_4), col = "purple")
+```
+
+Perfect fit!
+
+```{r}
+summary(degree_4_poly_mod)$r.squared
+```
+
+This is the same thing we've seen before! If $n = p + 1$, then the design matrix is square and there is no need to project onto a lower dimensional subspace. To estimate the linear model, one only needs to solve $n$ equations with $n$ unknowns.
+
+My recommendations:
+1) Keep polynomial degree low. Preferably 2. Anything past 2 is not interpretable anyway. We didn't talk about "interpretability" of models yet, but you get the idea.
+2) Be very careful not to extrapolate: make sure future predictions have the measurements within range of the training data $\mathbb{D}$. Extrapolations are going to be very, very inaccurate. Polynomial regressions I'm sure have gotten data scientists fired before.
+
+
 # The Grammar of graphics and ggplot
 
 First load the package and the dataset of interest as a dataframe:
