@@ -811,27 +811,41 @@ Here are the places where Rcpp should be used (from https://teuder.github.io/rcp
 
 ## Piping
 
-Idea taken from unix / linux. Output of one function is input to next function. It is the inverse of the usual "order of operations". For example, the usual is:
+Take a look at this one-liner:
 
 ```{r}
-x = rnorm(1000)
 set.seed(1984)
-mean(head(round(sample(x + 1), digits = 2)))
+mean(head(round(sample(rnorm(1000)), digits = 2)))
 ```
+
+This is hard to read. Of course we can make it easier by using breaklines e.g.
+
+```{r}
+mean(
+  head(
+    round(
+      sample(
+        rnorm(1000)
+      ), digits = 2)
+    )
+)
+```
+
+But it doesn't make it much easier to read. And it probably makes it harder to write.
+
+Enter an idea taken from unix / linux. Output of one function is input to next function. It is the inverse of the usual "order of operations". Let's see how this works.
 
 We first load the piping library:
 
 ```{r}
-pacman::p_load(magrittr) #the package is named after René Magritte, the artist
+pacman::p_load(magrittr) #the package is named after Rene Magritte, the artist
 ```
 
-In pipe format this would look like
-
+In pipe format this would look like:
 
 ```{r}
 set.seed(1984)
-x %>%
-  add(1) %>% #special function that allows piping to take place
+rnorm(1000) %>% #the pipe operator
   sample %>% 
   round(digits = 2) %>% #the first argument is passed in automatically.
   head %>%
@@ -840,9 +854,19 @@ x %>%
 
 That's it! There's nothing more to it other than a gain in readability.
 
-Unfortunately... the world at large hasn't completely accepted this as a way to write R. So feel free to use for yourself. But be carefuly when using this style with others.
+What if we wanted to do something like `mean(rnorm(1000) + 1)`? This `rnorm(1000) %>% +1 %>% mean` doesn't work because I imagine because the basic arithmetic operators couldn't be parsed like normal while there was a pipe. So they invented special pipe functions for this:
 
-## Dplyr
+```{r}
+rnorm(1000) %>% add(1) %>% mean
+```
+
+There are other exceptions to the rule too which you'll figure out if you adopt the pipe.
+
+Unfortunately... the world at large hasn't completely accepted this as a way to write R. So feel free to use for yourself. But be carefuly when using this style with others. 
+
+Also note the code you write with pipes will be slower than the normal syntax.
+
+## Data Munging with Dplyr
 
 Now that we know piping, we can start adding some nice functions that manipulate data frames. Let's look at the diamonds dataset and load the dplyr library.
 
