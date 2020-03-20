@@ -212,7 +212,7 @@ This time create two dummies for each variable: (1) between the 33%ile and 66%il
 #TODO
 ```
 
-Keep doing this until each variable has 31 dummies for a total of $p = 403 + 1$ variables. Report all $R^2$;s. Why is it increasing and why is the last one so high?
+Keep doing this until each continuous variable has 31 dummies for a large final $p$. Report all $R^2$;s. Why is it increasing and why is the last one so high?
 
 ```{r}
 #TODO
