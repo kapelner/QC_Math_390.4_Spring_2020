@@ -2,7 +2,7 @@
 title: "Lab 6"
 author: "Your Name Here"
 output: pdf_document
-date: "11:59PM March 18, 2020"
+date: "11:59PM March 21, 2020"
 ---
 
 Load the Boston Housing data and create the vector `y`, design matrix `X` and let `n` and `p_plus_one` be the number of rows and columns.

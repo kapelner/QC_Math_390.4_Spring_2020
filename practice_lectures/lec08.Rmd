@@ -6,21 +6,91 @@ date: "March 20, 2020"
 
 #Extrapolation vs Interpolation
 
-Interpolation is essentially the type of "prediction" we've been talking about this whole class. Extrapoliation is totally different. It's what happens when you predict outside of the range of the covariate data you've seen in $\mathbb{D}$.
+Let's take a look at the Galton Data again.
+
+```{r}
+pacman::p_load(HistData, ggplot2)
+data(Galton)
+mod = lm(child ~ parent, Galton)
+b_0 = mod$coefficients[1]
+b_1 = mod$coefficients[2]
+ggplot(Galton, aes(x = parent, y = child)) + 
+  geom_point() + 
+  geom_jitter() +
+  geom_abline(intercept = b_0, slope = b_1, color = "blue", size = 1) +
+  xlim(63.5, 72.5) + 
+  ylim(63.5, 72.5) +
+  coord_equal(ratio = 1)
+```
+
+Let's say I want to predict child's height for parents' average height of 70in. All I do is:
+
+```{r}
+predict(mod, data.frame(parent = 70))
+```
+
+What if I want to predict for a parents' height of 5in. Is there any 12in tall human being? No... it is absurd. But nothing stops you from doing:
+
+```{r}
+predict(mod, data.frame(parent = 5))
+```
+
+That's [actually possible](https://www.guinnessworldrecords.com/news/2012/2/shortest-man-world-record-its-official!-chandra-bahadur-dangi-is-smallest-adult-of-all-time/).
+
+Look at our linear model from Euclid's perspective:
+
+```{r}
+ggplot(Galton, aes(x = parent, y = child)) + 
+  geom_point() + 
+  geom_jitter() +
+  geom_abline(intercept = b_0, slope = b_1, color = "blue", size = 1) +
+  xlim(-20, 120) + 
+  ylim(-20, 120) +
+  coord_equal(ratio = 1)
+```
+
+What is a linear model with $p + 1 = 2$. It's just a line. When geometry was first formalised by Euclid in the Elements, he defined a line to have "breadthless length" with a straight line being a line "which lies evenly with the points on itself". By "breadthless" he meant infinite in either direction. There is no mathematical problem with predicting childrens' heights using negative parents' heights e.g.
+
+```{r}
+predict(mod, data.frame(parent = -5))
+```
+
+But this is absurd. So now we need to talk about a fundamental concept in data science we've been kind of avoiding and one that most people ignore. There are two types of prediction: interpolation and extrapolation. Interpolation is essentially the type of "prediction" we've been talking about this whole class. 
+
+Extrapolation is totally different. It's what happens when you predict outside of the range of the covariate data you've seen in $\mathbb{D}$. Extrapolation is very dangerous - your models only work based on $\mathbb{D}$. Extrapolation is prediction outside of the range you've seen before which means. You better have a good theoretical reason as to why your $\mathbb{H}$ function class will extend outside that range. Because each $\mathbb{H}$ function class will extrapolate very very differently.
+
+
 
 What happens during extrapolation? Let's look at the (a) linear model, (b) polynomial model with degree 2 and (c) polynomial with degree 13.
 
 ```{r}
-xmin = -10
-xmax = 8
-basic + 
-  coord_cartesian(xlim = c(xmin, xmax), ylim = c(-10, 35)) + 
-  geom_abline(intercept = b_linear[1], slope = b_linear[2], col = "red") + 
-  stat_function(fun = plot_function_degree_2, args = list(b = b_poly_2), col = "blue", xlim = c(xmin, xmax)) +
-  stat_function(fun = plot_function_degree_13, args = list(b = b_poly_13), col = "purple", xlim = c(xmin, xmax))
+degree_2_poly_mod = lm(child ~ poly(parent, 2, raw = TRUE), Galton)
+b_poly_2 = coef(degree_2_poly_mod)
+degree_13_poly_mod = lm(child ~ poly(parent, 13, raw = TRUE), Galton)
+b_poly_13 = coef(degree_13_poly_mod)
+b_poly_13[is.na(b_poly_13)] = 0
+
+plot_function_degree_2 = function(x, b){
+  b[1] + b[2] * x + b[3] * x^2
+}
+plot_function_degree_13 = function(x, b){
+  b[1] + b[2] * x + b[3] * x^2 + b[4] * x^3 + b[5] * x^4 + b[6] * x^5 + b[7] * x^6 + b[8] * x^7 + b[9] * x^8 + b[10] * x^9  + b[11] * x^10 + b[12] * x^11 + b[13] * x^12 + b[14] * x^13
+}
+
+xymin = 65
+xymax = 71
+# xymin = 50
+# xymax = 90
+ggplot(Galton, aes(x = parent, y = child)) + 
+  geom_point() + 
+  geom_jitter() +
+  geom_abline(intercept = b_0, slope = b_1, color = "blue") +
+  coord_cartesian(xlim = c(xymin, xymax), ylim = c(xymin, xymax)) +
+  stat_function(fun = plot_function_degree_2, args = list(b = b_poly_2), col = "red", xlim = c(xymin, xymax)) +
+  stat_function(fun = plot_function_degree_13, args = list(b = b_poly_13), col = "green", xlim = c(xymin, xymax))
 ```
 
-Polynomial models have *TERRIBLE* extrapolation ability - totally unpredictable.
+Polynomial models have *TERRIBLE* extrapolation risk - totally unpredictable.
 
 # Overfitting with Polynomials
 
