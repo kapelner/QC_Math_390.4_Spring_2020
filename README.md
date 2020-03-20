@@ -41,17 +41,17 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
   - Theory Notes  
 * Lecture 13 [(video)](https://youtu.be/)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec07.Rmd)
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec13kap.pdf) 
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec13kap.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec13grgas.pdf)
 * Lecture 12 [(audio)](https://youtu.be/nwOlnK1VE00)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec06.Rmd) 
-  - Theory Notes
+  - Theory Notes [(Nabila Ahmed)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec12ahmed.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec12nissanthan.pdf)
 * Lecture 11 [(audio)](https://youtu.be/feuRfBxttmk)
-  - Theory Notes
+  - Theory Notes [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec11nissanthan.pdf)
 * Lecture 10 [(audio)](https://youtu.be/bK8pP0dFZZc)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec05.Rmd) 
-  - Theory Notes [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec10eng.pdf)
+  - Theory Notes [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec10eng.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec10nissanthan.pdf)
 * Lecture 9 [(audio)](https://youtu.be/xRs2vQFlxGQ)
-  - Theory Notes [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec09eng.pdf)
+  - Theory Notes [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec09eng.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec09nissanthan.pdf)
 * Lecture 8 [(audio)](https://youtu.be/BYtJhksHKuk) 
   - Theory Notes [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec08nissanthan.pdf) [(Shakif Shadman)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec08shadman.pdf) [(Rameasa Arna)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec08arna.pdf) [(Jonathan Eng)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec08eng.pdf)
 * Lecture 7 [(audio)](https://youtu.be/VwDSYOSSlak)
