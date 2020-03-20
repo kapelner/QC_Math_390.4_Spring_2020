@@ -1,6 +1,6 @@
 # MATH 390.4 Intro to Data Science Spring 2020
 
-This is the course homepage for Math 390.4 (and Masters level 650.3) at Queens College, City University of New York taught by Professor Adam Kapelner. The course syllabus can be found [here](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/syllabus/syllabus.pdf).
+This is the course homepage for Math 390.4 (and Masters level 650.3) at Queens College, City University of New York taught by Professor Adam Kapelner. The course syllabus can be found [here](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/syllabus/syllabus.pdf). We are now using [slack](https://qcmath342.slack.com/) for class discussions and vidoes.
 
 ## Lectures
 
@@ -35,11 +35,10 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 * Lecture 16 [(audio)](https://youtu.be/)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec09.Rmd) 
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec16kap.pdf)
-* Lecture 15 [(audio)](https://youtu.be/)-->
-* Lecture 14 [(video)](https://youtu.be/)
+* Lecture 15 [(audio)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010ECRJB96)-->
+* Lecture 14 [(video)](https://app.slack.com/client/TVD8N4FTM/browse-files/files/F010DUWDE4U)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec08.Rmd)
-  - Theory Notes  
-* Lecture 13 [(video)](https://youtu.be/)
+* Lecture 13 [(video)](https://app.slack.com/client/TVD8N4FTM/browse-files/files/F010DUWDE4U)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec07.Rmd)
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec13kap.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec13grgas.pdf)
 * Lecture 12 [(audio)](https://youtu.be/nwOlnK1VE00)
