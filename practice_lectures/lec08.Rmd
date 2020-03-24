@@ -692,8 +692,6 @@ Writing functions as strings that compile is annoying. It is better to have sepa
 sourceCpp("distance_matrix.cpp")
 ```
 
-###########################################
-
 Here are a list of the data structures in Rcpp: https://teuder.github.io/rcpp4everyone_en/070_data_types.html#vector-and-matrix
 
 Another place where C++ pays the rent is recursion. Here is a quicksort implementation in R taken from 
@@ -718,11 +716,11 @@ quicksort_R <- function(arr) {
   })
   
   if (length(left) > 1) {
-    left <- quickSort(left)
+    left <- quicksort_R(left)
   }
   
   if (length(right) > 1) {
-    right <- quickSort(right)
+    right <- quicksort_R(right)
   }
   
   # Finally, return the sorted values.
@@ -733,7 +731,7 @@ quicksort_R <- function(arr) {
 Let's create a random array to test these sorts on:
 
 ```{r}
-n = 5e4
+n = 5e5
 x = rnorm(n)
 ```
 
@@ -788,7 +786,7 @@ Can you call R from Rcpp? You bet:
 
 ```{r}
 cppFunction('
-  NumericVector rnorm_cpp_R(int n, double sd, double mean){
+  NumericVector rnorm_cpp_R(int n, double mean, double sd){
       // get a pointer to R\'s rnorm() function
       Function f("rnorm");   
   
@@ -797,7 +795,7 @@ cppFunction('
   }
 ')
 
-rnorm_cpp_R(5, 1, 1)
+rnorm_cpp_R(5, 1, .01)
 ```
 
 There are many common functions that are already wrapped for you (see https://teuder.github.io/rcpp4everyone_en/300_Rmath.html)
