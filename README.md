@@ -89,9 +89,9 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 ## Theory Homeworks
 
 <!--
-* Homework 6t [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf) (due 5/18)
-* Homework 5t [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf) (due 4/18)
-* Homework 4t [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw04/hw04t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw04/hw04t.pdf) (due 4/7)-->
+* Homework 6 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf) (due 5/18)
+* Homework 5 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf) (due 4/18)
+* Homework 4 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw04/hw04t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw04/hw04t.pdf) (due 4/7)-->
 * Homework 3 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf) (due 3/18)
 * Homework 2 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw02/hw02t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw02/hw02t.pdf) (due 2/24)
 * Homework 1 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw01/hw01t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw01/hw01t.pdf) (due 2/11)
@@ -105,8 +105,8 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 
 ## Exams
 
-* Midterm I is Thurs, Mar 12 (in class). 
-* Midterm II is Tues, May 12 (in class).
+* Midterm I is Thurs, Mar 26 (in "class"). 
+* Midterm II is Tues, May 12 (in "class").
 
 
 ## Practice Exams
@@ -126,15 +126,14 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 
 I *want* you to come to office hours! My office hours are:
 
-Time: Tues/Thurs 10:30-11AM\
-Location: Kiely Hall 283 (the classroom)\
-Time: Friday, 10:50-11:20AM (except April 17)\
-Location: Kiely Hall 061
+Time: Tues/Thurs 11:10-11:40AM\
+Time: Friday, 11AM-noon (except April 17)\
+Location: on Zoom\
 
-In addition, the TA, Moshe Weiss will hold office hours as well:
+<!--In addition, the TA, Moshe Weiss will hold office hours as well:
 
 Time: Wed 2-3PM\
-Location: Kiely Hall 5th floor math lounge
+Location: Kiely Hall 5th floor math lounge-->
 
 ## Grades and Class Standing
 
