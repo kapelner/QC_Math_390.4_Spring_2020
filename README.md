@@ -107,7 +107,7 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 
 ## Exams
 
-* Midterm I is Thurs, Mar 26 (in "class") [(exam)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/exams/midterm1/midterm1.pdf) [(exam solutions)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/exams/midterm1/midterm1_solutions.pdf)\
+* Midterm I is Thurs, Mar 26 (in "class") [(exam)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/exams/midterm1/midterm1.pdf) [(exam solutions)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/exams/midterm1/midterm1_solutions.pdf)
 * Midterm II is xxxx, May xx (in "class").
 
 
