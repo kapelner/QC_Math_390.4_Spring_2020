@@ -1,0 +1,22 @@
+```{r}
+n = 200
+x = seq(from = -2, to = 2, length.out = n)
+y = 2 + 3 * x^2 + rnorm(n)
+pacman::p_load(ggplot2)
+ggplot(data.frame(x = x, y = y)) + aes(x = x, y = y) + geom_point()
+```
+
+```{r}
+n = 20
+x = c(rep(1, n), rep(0, n))
+y = 2 + 3 * x + rnorm(n)
+df = data.frame(x = as.factor(x), y = y)
+summary(df)
+ggplot(df) + aes(x = x, y = y) + geom_point()
+
+round(summary(y[x == 0]), 2)
+round(summary(y[x == 1]), 2)
+mod = lm(y ~ x)
+coef(mod)
+```
+
