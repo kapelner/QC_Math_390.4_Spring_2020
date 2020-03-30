@@ -2,184 +2,196 @@
 title: "Lab 7"
 author: "Your Name Here"
 output: pdf_document
-date: "11:59PM March 31, 2019"
+date: "7:09PM April 8, 2020"
 ---
 
-Generate $\mathbb{D}$ with $n = 100$ and $p = 1$ where $x$ is created from iid realizations from a standard uniform, $y$ comes from $f(x) = 3 - 4x$ and $\delta$ are iid realizations from a T distribution with 10 degrees of freedom.
+Run three OLS models on the boston housing data using all available features: 
 
-```{r}
-set.seed(1997)
-n = 100
-p = 1
-X = matrix(runif(n) , ncol = 1)
-f_x = 3 - 4 * X
-y = f_x + rt(n, df = 10)
-```
+(1) where the response is medv, 
+(2) where the response is the log base 10 of medv and
+(3) where the response is the square root of medv. 
 
-Run the linear model using `lm` and compute b, RMSE and $R^2$.
-
-```{r}
-linear_mod = lm(y ~ X)
-coef(linear_mod)
-summary(linear_mod)$sigma
-summary(linear_mod)$r.squared
-```
-
-Progressively add columns of x (as draws from a standard uniform), run the linear model, and show $R^2$ goes to 1 and $s_e$ goes to zero. Save the $s_e$ in a vector called `in_sample_s_e`.
-
-```{r}
-in_sample_s_e = array(NA, n - 2)
-linear_mods = list()
-
-for (j in 1 : (n - 2)){
-  X = cbind(X, runif(n))
-  linear_mods[[j]] = lm(y ~ ., data.frame(X))
-  in_sample_s_e[j] = sd(linear_mods[[j]]$residuals)
-}
-dim(X)
-
-summary(linear_mods[[j]])$r.squared
-
-in_sample_s_e
-
-d = diff(in_sample_s_e)
-all(d < 0)
-```
-
-Compute a corresponding vector `oos_s_e` and show that it is increasing (for the most part) in degrees of freedom.
-
-```{r}
-
-n_star = 1e5
-p = 1
-X_star = matrix(runif(n_star) , ncol = 1)
-f_x_star = 3 - 4 * X_star
-y_star = f_x_star + rt(n_star, df = 10)
-
-oos_s_e = array(NA, n - 2)
-
-for (j in 1 : (n - 2)){
-  X_star = cbind(X_star, runif(n_star))
-  y_hat_star = predict(linear_mods[[j]], data.frame(X_star)) 
-  oos_s_e[j] = sd(y_star - y_hat_star)
-}
-
-oos_s_e
-d = diff(oos_s_e)
-all(d > 0)
-
-
-```
-
-Validate the linear model for the Boston housing data.
-
-```{r}
-Xy = MASS::Boston
-K = 10
-test_indices = sample(1 : nrow(Xy), 1 / K * nrow(Xy))
-train_indices = setdiff(1 : nrow(Xy), test_indices)
-
-Xy_train = Xy[train_indices, ]
-Xy_test = Xy[test_indices, ]
-
-lin_mod = lm(medv ~ ., Xy_train)
-lin_mod
-sd(lin_mod$residuals)
-y_hat_test = predict(lin_mod, Xy_test)
-sd(Xy_test$medv - y_hat_test)
-dim(Xy)
-```
-
-
-Let $x$ be iid realizations from a $U(0, 5)$, $y$ comes from $f(x) = 3 - 4x + 2x^2$ and $\epsilon$ are iid realizations from a standard normal distribution. With no limit on the number of samples you cant take, use regular OLS _without a quadratic term_, find the true $h^*(x)$ (there will be no sampling variability at $n \rightarrow \infty$ and find the oos variance of the residuals.
-
-```{r}
-
-
-
-
-
-```
-
-Was there any overfitting in the previous exercise?
-
-#TO-DO
-
-Find the error due to misspecification and due to ignorance expressed as variance of components of the residuals.
+Compare the two models on oos se of the residuals. Use K = 5 to create a training-test split. Which model is better? 
 
 ```{r}
 #TO-DO
 ```
 
-At $n = 100$, find the error due to estimation, due to misspecification and due to ignorance expressed as variance of components of the residuals.
-
+When evaluating the models out of sample, did you ever extrapolate? Which predictions specifically in your test set were extrapolations? How "bad" were the exrapolations? 
 
 ```{r}
 #TO-DO
 ```
 
-Do the variances add up to the total variance of the residual?
+Regardless of the model that came out better, let's consider the response to be raw medv i.e. without taking a transformation. Run a model that includes all squared features (except `chas` which is binary). Does this model do better than vanilla OLS from question 1?
 
+```{r}
+#TO-DO
+```
+
+Run a model that includes all polynomail functions of degree 3 of all features (except `chas` which is binary). Does this model do better than the degree 2 polynomial function of the previous question?
+
+```{r}
+#TO-DO
+```
+
+Use polynomial regression to perfectly fitting the following data:
+
+```{r}
+n = 10
+set.seed(1984)
+x = runif(n, 0, 10)
+y = 5 + 2 * x + rnorm(n)
+
+#TO-DO
+```
+
+Illustrate Runge's phenomenon in this model by scatterplotting the data with $g(x)$ overlaid in green.
+
+```{r}
+#TO-DO
+```
+
+For the rest of this assignment, I highly recommend using the [ggplot cheat sheet](https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) as a reference resource. You will see questions that say "Create the best-looking plot". Among other things you may choose to do, remember to label the axes using real English, provide a title, subtitle. You may want to pick a theme and color scheme that you like and keep that constant throughout this lab. The default is fine if you are running short of time.
+
+Load up the `GSSvocab` dataset in package `carData` as `X` and drop all observations with missing measurements. Briefly summarize the documentation on this dataset. What is the data type of each variable? What is the response variable?
+
+```{r}
+#TO-DO
+```
+
+Create two different plots and identify the best-looking plot you can to examine the `age` variable. Save the best looking plot as an appropriately-named PDF.
+
+```{r}
+#TO-DO
+```
+
+Create two different plots and identify the best looking plot you can to examine the `vocab` variable. Save the best looking plot as an appropriately-named PDF.
+
+```{r}
+#TO-DO
+```
+
+Create the best-looking plot you can to examine the `ageGroup` variable by `gender`. Does there appear to be an association? There are many ways to do this.
+
+```{r}
+#TO-DO
+```
+
+Create the best-looking plot you can to examine the `vocab` variable by `age`. Does there appear to be an association?
+
+```{r}
+#TO-DO
+```
+
+Add an estimate of $f(x)$ using the smoothing geometry to the previous plot. Does there appear to be an association now?
+
+```{r}
+#TO-DO
+```
+
+Using the plot from the previous question, create the best looking overloading with variable `gender`. Does there appear to be an interaction of `gender` and `age`?
 
 ```{r}
 #TO-DO
 ```
 
 
-Validate the linear model for the Boston housing data where each feature is also modeled with a squared feature.
-
-```{r}
-X = MASS::Boston
-y = X$medv
-X$medv = NULL
-X = cbind(X, X^2)
-colnames(X)[14 : 26] = paste(colnames(X)[1 : 13], "_sq", sep = "") 
-X$chas_sq = NULL
-
-K = 10
-test_indices = sample(1 : nrow(Xy), 1 / K * nrow(Xy))
-train_indices = setdiff(1 : nrow(Xy), test_indices)
-
-X_train = X[train_indices, ]
-y_train = y[train_indices]
-X_test = X[test_indices, ]
-y_test = y[test_indices]
-
-lin_mod = lm(y_train ~ ., X_train)
-#lin_mod
-sd(lin_mod$residuals)
-y_hat_test = predict(lin_mod, X_test)
-sd(y_test - y_hat_test)
-
-```
-
-Validate the linear model for the Boston housing data where each feature is also modeled with a squared feature and a cubed feature.
-
-```{r}
-
-```
-
-Validate the linear model for the Boston housing data where each feature is also modeled with a squared feature and a cubed feature and a log(x + 1) feature and an exponential feature. 
+Using the plot from the previous question, create the best looking overloading with variable `nativeBorn`. Does there appear to be an interaction of `nativeBorn` and `age`?
 
 ```{r}
 #TO-DO
 ```
 
-Why do we need to log $x + 1$? Why not use log(x)?
+Create two different plots and identify the best-looking plot you can to examine the `vocab` variable by `educGroup`. Does there appear to be an association?
 
+```{r}
 #TO-DO
+```
 
+Using the best-looking plot from the previous question, create the best looking overloading with variable `gender`. Does there appear to be an interaction of `gender` and `educGroup`?
 
+```{r}
+#TO-DO
+```
 
+Using facets, examine the relationship between `vocab` and `ageGroup`. You can drop year level `(Other)`. Are we getting dumber?
 
+```{r}
+#TO-DO
+```
 
+We will now be getting some experience with speeding up R code using C++ via the `Rcpp` package.
 
+First, clear the workspace and load the `Rcpp` package.
 
+```{r}
+#TO-DO
+```
 
+Create a variable `n` to be 10 and a vaiable `Nvec` to be 100 initially. Create a random vector via `rnorm` `Nvec` times and load it into a `Nvec` x `n` dimensional matrix.
 
+```{r}
+#TO-DO
+```
 
+Write a function `all_angles` that measures the angle between each of the pairs of vectors. You should measure the vector on a scale of 0 to 180 degrees with negative angles coerced to be positive.
 
+```{r}
+#TO-DO
+```
 
+Plot the density of these angles.
 
+```{r}
+#TO-DO
+```
 
+Write an Rcpp function `all_angles_cpp` that does the same thing. Use an IDE if ou want, but write it below in-line.
+
+```{r}
+#TO-DO
+```
+
+Test the time difference between these functions for `n = 1000` and `Nvec = 100, 500, 1000, 5000`.  Store the results in a matrix.
+
+```{r}
+#TO-DO
+```
+
+Plot the divergence of performance (in log seconds) over n using a line geometry. Use two different colors for the R and CPP functions. Make sure there's a color legend on your plot.
+
+```{r}
+#TO-DO
+```
+
+Let `Nvec = 10000` and vary `n` to be 10, 100, 1000. Plot the density of angles for all three values of `n` on one plot using color to signify `n`. Make sure you have a color legend. This is not easy.
+
+```{r}
+#TO-DO
+```
+
+Write an R function `nth_fibonnaci` that finds the nth Fibonnaci number via recursion but allows you to specify the starting number. For instance, if the sequency started at 1, you get the familiar 1, 1, 2, 3, 5, etc. But if it started at 0.01, you would get 0.01, 0.01, 0.02, 0.03, 0.05, etc.
+
+```{r}
+#TO-DO
+```
+
+Write an Rcpp function `nth_fibonnaci_cpp` that does the same thing. Use an IDE if ou want, but write it below in-line.
+
+```{r}
+#TO-DO
+```
+
+Time the difference in these functions for n = 100, 200, ...., 1500 while starting the sequence at the smallest possible floating point value in R. Store the results in a matrix.
+
+```{r}
+#TO-DO
+```
+
+Plot the divergence of performance (in log seconds) over n using a line geometry. Use two different colors for the R and CPP functions. Make sure there's a color legend on your plot.
+
+```{r}
+#TO-DO
+```
 
