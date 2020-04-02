@@ -798,11 +798,47 @@ cppFunction('
 rnorm_cpp_R(5, 1, .01)
 ```
 
-There are many common functions that are already wrapped for you (see https://teuder.github.io/rcpp4everyone_en/300_Rmath.html)
+A few math functions are implemented for you already:
 
 ```{r}
 evalCpp('R::qnorm(0.5, 0, 1, 1, 0)')
 ```
+
+Further, there are many common functions that are already wrapped for you via "Rcpp-sugar" which was the Rcpp's author's attempt to make Rcpp a whole lot easier, see [here](http://dirk.eddelbuettel.com/code/rcpp/Rcpp-sugar.pdf).
+
+```{r}
+evalCpp('rnorm(10, 100, 3)')
+```
+
+If you want blazing fast linear algebra, check out package `RcppArmadillo` which is a wrapper around Apache's Armadillo (namespace is "arma" in the code), an optimized linear algebra package in C++. Here is an example taken from [here](https://scholar.princeton.edu/sites/default/files/q-aps/files/slides_day4_am.pdf):
+
+```{r}
+pacman::p_load(RcppArmadillo, microbenchmark, testthat)
+
+cppFunction('
+  arma::mat ols_cpp(arma::mat X, arma::mat y){
+    arma::mat Xt = X.t();
+    return solve(Xt * X, Xt * y);
+  }
+', depends = "RcppArmadillo")
+
+n = 500
+D = data.frame(int = rep(1, n), x1 = rnorm(n), x2 = rnorm(n), x3 = rnorm(n), y = rnorm(n))
+X = as.matrix(D[, 1 : 4])
+y = as.matrix(D[, 5])
+
+#does the function work?
+expect_equal(as.numeric(ols_cpp(X, y)), as.numeric(solve(t(X) %*% X) %*% t(X) %*% y))
+
+microbenchmark(
+  R_via_lm = lm(y ~ 0 + ., data = D),
+  R_matrix_multiplication = solve(t(X) %*% X) %*% t(X) %*% y,
+  cpp = ols_cpp(X, y),
+    times = 100
+)
+
+```
+About 4x faster than R's optimized linear algebra routines. Supposedly it can go even faster if you enable parallelization within Armadillo.
 
 
 Here are the places where Rcpp should be used (from https://teuder.github.io/rcpp4everyone_en/010_Rcpp_merit.html)
