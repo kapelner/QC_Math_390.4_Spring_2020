@@ -836,7 +836,6 @@ microbenchmark(
   cpp = ols_cpp(X, y),
     times = 100
 )
-
 ```
 About 4x faster than R's optimized linear algebra routines. Supposedly it can go even faster if you enable parallelization within Armadillo.
 

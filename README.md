@@ -7,42 +7,42 @@ This is the course homepage for Math 390.4 (and Masters level 650.3) at Queens C
 My lectures can be listened to as youtube tracks and lecture notes are also scanned in as PDF files contributed by students and myself.
 
 <!-- 
-* Lecture 26 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
+* Lecture 26 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec14.Rmd)
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec26kap.pdf)
-* Lecture 25 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
+* Lecture 25 video on slack
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec25kap.pdf)
-* Lecture 24 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
+* Lecture 24 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec13.Rmd) 
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec24kap.pdf) 
-* Lecture 23 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
+* Lecture 23 video on slack
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec23kap.pdf)
-* Lecture 22 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
+* Lecture 22 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec12.Rmd)
   - Theory Notes [(Jan Bazant)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec22bazant.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec22kap.pdf)
-* Lecture 21 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
+* Lecture 21 video on slack
   - Theory Notes [(Jan Bazant)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec21bazant.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec21kap.pdf)
 * Lecture 20
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec11.Rmd) 
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec20kap.pdf)
-* Lecture 19 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
+* Lecture 19 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec10.Rmd) 
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec19kap.pdf)
-* Lecture 18 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
+* Lecture 18 video on slack
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec18kap.pdf)
-* Lecture 17 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec17kap.pdf)
-* Lecture 16 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
+* Lecture 17 video on slack
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec17kap.pdf)-->
+* Lecture 16 video on slack
+  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec10.Rmd) 
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec16kap.pdf)
+* Lecture 15 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec09.Rmd) 
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec16kap.pdf)-->
-* Lecture 15 [(video)](https://app.slack.com/client/TVD92E9RR/browse-files/files/F010DUWDE4U)
-  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec09.Rmd) 
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec15kap.pdf)
-* Lecture 14 [(video)](https://app.slack.com/client/TVD8N4FTM/browse-files/files/F010DUWDE4U)
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec15kap.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec15grgas.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec15nissanthan.pdf)
+* Lecture 14 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec08.Rmd)
-* Lecture 13 [(video)](https://app.slack.com/client/TVD8N4FTM/browse-files/files/F010DUWDE4U)
+* Lecture 13 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec07.Rmd)
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec13kap.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec13grgas.pdf)
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec13kap.pdf) [(Steven Grgas)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec13grgas.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec13nissanthan.pdf)
 * Lecture 12 [(audio)](https://youtu.be/nwOlnK1VE00)
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec06.Rmd) 
   - Theory Notes [(Nabila Ahmed)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec12ahmed.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec12nissanthan.pdf)
