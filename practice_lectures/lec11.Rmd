@@ -71,7 +71,7 @@ For all labs and the final project, you are recommended to pick one you want to 
 Here is a nice [translation guide](https://atrebas.github.io/post/2019-03-03-datatable-dplyr/) between `dplyr` and `data.table`. We will be learning them in tandem. I could've split this into two units but I decided against it because (1) it is good to see the same functionality side-by-side and (2) this is really just one concept.
 
 ```{r}
-pacman::p_load(tidyverse) #This is shorthard for dplyr, ggplot2, tidyr, readr, magrittr and a bunch of other packages recommended for the "full" dplyr experience
+pacman::p_load(tidyverse, magrittr) #tidyverse is shorthard for dplyr, ggplot2, tidyr, readr and a bunch of other packages recommended for the "full" dplyr experience. I'm using magrittr for special pipe operations later.
 pacman::p_load(data.table)
 ```
 
@@ -564,160 +564,11 @@ microbenchmark(
 
 We still have to learn how to reshape tables and join multiple tables together. We will do that later.
 
-Let's now fulfill a promise from a previous lecture:
+# Model Selection and Three Data Splits
 
-# Log transformation Reprise
+This unit is split into three use cases (1) Selection among M explicit models (2) Hyperparameter Selection within one algorithm (3) Stepwise Model Construction
 
-Last time we looked at `log(price)`, we left out a critical first step - examine the univariate data!
-
-```{r}
-pacman::p_load(ggplot2)
-ggplot(diamonds) + geom_histogram(aes(price), binwidth = 200)
-mean(diamonds$price)
-sd(diamonds$price)
-```
-
-Look at the long tail here. Popular wisdom says to log this type of distribution as a log transform on the y variable would possibly make the model more linear in x. It would be easier to catch the long tail. It would also prevent observations with large y's becoming "leverage points" i.e. points that influence the model. If we have time later in the semester, we can learn about leverage points, but not now. This is a "trick of the trade". Let's take a look at the distributiona after logging:
-
-```{r}
-ggplot(diamonds) + geom_histogram(aes(log(price)), binwidth = 0.01)
-```
-
-Some strange artifacts appear. Why the gap? Why is it "cut" at a maximum. These are questions to ask the one who collected the data.
-
-Let's see if we get anywhere with this:
-
-```{r}
-lm_y = lm(price ~ ., diamonds)
-lm_ln_y = lm(log(price) ~ ., diamonds)
-summary(lm_y)$r.squared
-summary(lm_ln_y)$r.squared
-summary(lm_y)$sigma
-summary(lm_ln_y)$sigma
-``` 
-
-Did we find a real use-case of $R^2$ finally?? Yes... it is a good arbiter of comparisons as it is scale invariant unlike RMSE.
-
-Be careful when you use $g$ after logging, you will have to exponentiate the result. This is known to create bias because $E[Y]$ is different from $exp(E[ln(y)])$, but don't worry too much about this "bias" as it hardly matters practically speaking since it is only "biased" if the linear model is correct in an absolute sense. And when on Earth is any model absolutely correct?
-
-```{r}
-predict(lm_y, diamonds[12345, ])
-predict(lm_ln_y, diamonds[12345, ])
-exp(predict(lm_ln_y, diamonds[12345, ]))
-```
-
-
-If you like this stuff, there are a whole bunch of transformations out there that are even cooler than the natural log. Some of this may be covered in 369 / 633. Let us use the log going forward:
-
-```{r}
-diamonds %<>%
-  mutate(price = log(price))
-```
-
-Let's look at price by length of diamond.
-
-```{r}
-ggplot(diamonds, aes(x = x, y = price)) + 
-  geom_point()
-```
-
-Besides the non-linear relationship, what else do you see? Mistakes in the dataset! Can a real diamond have zero length?? Yes. This is the real world. There are mistakes all the time.
-
-Let's kill it! How many are we dealing with here?
-
-```{r}
-diamonds %>% 
-  filter(x == 0) %>% 
-  nrow
-```
-
-
-```{r}
-diamonds %<>% 
-  filter(x > 0)
-```
-
-What's the deal with the x variable now?
-
-```{r}
-diamonds$x %>% summary
-```
-
-How good does a best guess linear relationship do?
-
-```{r}
-mod = lm(price ~ x, diamonds)
-b = coef(mod)
-b
-summary(mod)$r.squared
-summary(mod)$sigma
-```
-
-Again we got some bad extrapolation going on. Let's see the best fit line $g(x)$ visually:
-
-```{r}
-ggplot(diamonds, aes(x = x, y = price)) + geom_point() + 
-  geom_abline(intercept = b[1], slope = b[2], col = "green")
-```
-
-Let's log-linearize it and see how we do.
-
-```{r}
-log_linear_mod = lm(log(price) ~ x, diamonds)
-b = coef(log_linear_mod)
-b
-ggplot(diamonds, aes(x = x, y = log(price))) + 
-  geom_point() + 
-  geom_abline(intercept = b[1], slope = b[2], col = "green")
-```
-
-How did we do? Ensure it's apples-apples.
-
-```{r}
-log_y_hat = log_linear_mod$fitted.values
-y_hat = exp(log_y_hat)
-e = diamonds$price - y_hat
-SSE = sum(e^2)
-SST = sum((diamonds$price - mean(diamonds$price))^2)
-Rsq = 1 - sum(e^2) / SST
-Rsq
-RMSE = sqrt(SSE / (nrow(diamonds) - 2))
-RMSE
-```
-
-Still not better. Log-log?
-
-```{r}
-log_log_linear_mod = lm(log(price) ~ log(x), diamonds)
-b = coef(log_log_linear_mod)
-b
-ggplot(diamonds, aes(x = log(x), y = log(price))) + 
-  geom_point() + 
-  geom_abline(intercept = b[1], slope = b[2], col = "green")
-```
-
-Let's see.
-
-```{r}
-log_y_hat = log_log_linear_mod$fitted.values
-y_hat = exp(log_y_hat)
-e = diamonds$price - y_hat
-SSE = sum(e^2)
-SST = sum((diamonds$price - mean(diamonds$price))^2)
-Rsq = 1 - sum(e^2) / SST
-Rsq
-RMSE = sqrt(SSE / (nrow(diamonds) - 2))
-RMSE
-```
-
-We did it.
-
-But we brought up a whole bunch of issues which we shall explore next class.
-
-
-
-
-# Model Selection
+## Selecting one of M Models
 
 We have now covered non-linearities (e.g. polynomial terms) and interactions. A new complication now clearly emerges. If I have $p$ predictors, there are many linear least squares models I can build (considering non-linear least squares models makes the space of models even larger!!)
 
@@ -855,9 +706,9 @@ Two improvements using CV to the above:
 * To reduce variance in the selection process, you make a CV of the selection set. 
 * To reduce variance in the testing process, you make an outer CV of the test set. This is a lot more coding!
 
-# MLR for Linear Model Selection
+Can we use MLR for Linear Model Selection?
 
-Not as nice as I would've liked. But I've figured it out by creating my own custom code. Still better then doing two loops of CV yourself! 
+Yes, but it is not as nice as I would've liked but it sure beats doing it yourself. I've figured it out by creating my own custom code.
 
 First, we create the task:
 
@@ -941,7 +792,7 @@ r$extract #"winning" model for each outer iteration
 
 See https://mlr.mlr-org.com/articles/tutorial/nested_resampling.html? for info on inner and outer loop CV.
 
-# MLR for Hyperparameter Selection
+## (2) Hyperparameter Selection
 
 We load the breast cancer dataset from earlier in the class.
 
@@ -993,17 +844,16 @@ print(getNestedTuneResultsOptPathDf(r)) #results of each inner validation over a
 r$extract #"winning" model for each outer iteration
 ```
 
+# (3) Stepwise Model Construction
 
-# Forward Stepwise Linear Model Construction
+There are many types of such stepwise models. Here we will look at Forward Stepwise Linear models. "Forward" meaning we start with a low complexity model and end with a high complexity model, "Stepwise" meaning we do so iteratively which each step consisting of one additional degree of freedom i.e. one incremental increase in complexity and "Linear" meaning that the model is linear. By default we use OLS.
 
-Let's look at the diamonds data
+We will be using the diamonds data again as an example. Let's make sure we have unordered factors to avoid issues later:
 
 ```{r}
 pacman::p_load(ggplot2)
-data(diamonds)
-diamonds$cut = factor(as.character(diamonds$cut))
-diamonds$color = factor(as.character(diamonds$color))
-diamonds$clarity = factor(as.character(diamonds$clarity))
+diamonds %<>%
+  mutate(cut = factor(as.character(cut)), color = factor(as.character(color)), clarity = factor(as.character(clarity)))
 ```
 
 What we're doing will be highly computational, so let's take a random sample of the dimaonds in $\mathbb{D}$:
