@@ -12,7 +12,7 @@
 \author{Professor Adam Kapelner} %STUDENTS: write your name here
 
 \iftoggle{professormode}{
-\date{Due ......., 2020 under the door of KY604\\ \vspace{0.5cm} \small (this document last updated \currenttime~on \today)}
+\date{Due Sunday, April 20, 2020 11:59PM by email\\ \vspace{0.5cm} \small (this document last updated \currenttime~on \today)}
 }
 
 \renewcommand{\abstractname}{Instructions and Philosophy}
@@ -24,7 +24,7 @@
 \begin{abstract}
 The path to success in this class is to do many problems. Unlike other courses, exclusively doing reading(s) will not help. Coming to lecture is akin to watching workout videos; thinking about and solving problems on your own is the actual ``working out.''  Feel free to \qu{work out} with others; \textbf{I want you to work on this in groups.}
 
-Reading is still \textit{required}. For this homework set, read Chapters 7-9 of Silver's book. You should be googling and reading about all the concepts introduced in class online. This is your responsibility to supplement in-class with \textit{your own} readings.
+Reading is still \textit{required}. For this homework set, read Chapters 7-11 of Silver's book. You should be googling and reading about all the concepts introduced in class online. This is your responsibility to supplement in-class with \textit{your own} readings.
 
 The problems below are color coded: \ingreen{green} problems are considered \textit{easy} and marked \qu{[easy]}; \inorange{yellow} problems are considered \textit{intermediate} and marked \qu{[harder]}, \inred{red} problems are considered \textit{difficult} and marked \qu{[difficult]} and \inpurple{purple} problems are extra credit. The \textit{easy} problems are intended to be ``giveaways'' if you went to class. Do as much as you can of the others; I expect you to at least attempt the \textit{difficult} problems. 
 
@@ -44,13 +44,17 @@ NAME: \line(1,0){380}
 
 
 
-\problem{These are questions about Silver's book, chapters 7-9.  For all parts in this question, answer using notation from class (i.e. $t ,f, g, h^*, \delta, \epsilon, e, t, z_1, \ldots, z_t, \mathbb{D}, \mathcal{H}, \mathcal{A}, \mathcal{X}, \mathcal{Y}, X, y, n, p, x_{\cdot 1}, \ldots, x_{\cdot p}$, $x_{1 \cdot}, \ldots, x_{n \cdot}$, etc.) as well as in-class concepts (e.g. simulation, validation, overfitting, etc.)} % and also we now have $f_{pr}, h^*_{pr}, g_{pr}, p_{th}$, etc from probabilistic classification as well as different types of validation schemes)
+\problem{These are questions about the rest of Silver's book, chapters 7--11. You can skim chapter 10 as it is not so relevant for the class. For all parts in this question, answer using notation from class (i.e. $t ,f, g, h^*, \delta, \epsilon, e, t, z_1, \ldots, z_t, \mathbb{D}, \mathcal{H}, \mathcal{A}, \mathcal{X}, \mathcal{Y}, X, y, n, p, x_{\cdot 1}, \ldots, x_{\cdot p}$, $x_{1 \cdot}, \ldots, x_{n \cdot}$, etc.) as well as in-class concepts (e.g. simulation, validation, overfitting, etc.)
+
+Note: I will not ask questions in this assignment about Bayesian calculations and modeling (a large chunk of Chapters 8 and 10) as this is the subject of Math 341. It is obviously important in Data Science (that's why Math 341 is a required course in the data science and statistics major).} % and also we now have $f_{pr}, h^*_{pr}, g_{pr}, p_{th}$, etc from probabilistic classification as well as different types of validation schemes)
 
 \begin{enumerate}
 
 \easysubproblem{Why are flu fatalities hard to predict? Which type of error is most dominant in the models?}\spc{1}
 
-\easysubproblem{In what context does Silver define extrapolation? Give a couple examples of extraordinary prediction failures (by vey famous people who were considered heavy-hitting experts of their time) that were due to reckless extrapolations.}\spc{1}
+\easysubproblem{In what context does Silver define extrapolation and what term did he use? Why does his terminology conflict with our terminology?}\spc{1}
+
+\easysubproblem{Give a couple examples of extraordinary prediction failures (by vey famous people who were considered heavy-hitting experts of their time) that were due to reckless extrapolations.}\spc{1}
 
 
 \easysubproblem{Using the notation from class, define \qu{self-fulfilling prophecy} and \qu{self-canceling prediction}.}\spc{1}
@@ -71,7 +75,7 @@ What do we mean by \qu{feedback mechanisms} in the context of this class?}\spc{2
 
 \easysubproblem{I'm not going to both asking about the bet that gave Bob Voulgaris his start. But what gives Voulgaris an edge (p239)? Frame it in terms of the concepts in this class.}\spc{1}
 
-Note: I will not ask questions in this assignment about Bayesian calculations and modeling (a large chunk of Chapter 8) as this is the subject of Math 341. It is obviously important in Data Science (that's why Math 341 is a required course in the new major).
+
 
 \easysubproblem{Why do you think a lot of science is not reproducible?}\spc{1}
 
@@ -87,141 +91,83 @@ Note: I will not ask questions in this assignment about Bayesian calculations an
 
 \easysubproblem{What do we call Google's \qu{theories} in this class? And what do we call \qu{testing} of those theories?}\spc{1}
 
+\easysubproblem{p315 give some very practical advice for an aspiring data scientist. There are a lot of push-button tools that exist that automatically fit models. What is your edge from taking this class that you have over people who are well-versed in those tools?}\spc{1}
+
+\easysubproblem{Create your own 2$\times$2 luck-skill matrix (Fig. 10-10) with your own examples (not the ones used in the book).}\spc{2}
+
+\easysubproblem{[EC] Why do you think Billing's algorithms (and other algorithms like his) are not very good at no-limit hold em? I can think of a couple reasons why this would be.}\spc{2}
+
+\easysubproblem{Do you agree with Silver's description of what makes people successful (pp326-327)? Explain.}\spc{2}
+
+\easysubproblem{Silver brings up an interesting idea on p328. Should we remove humans from the predictive enterprise completely after a good model has been built? Explain}\spc{2}
+
+\easysubproblem{According to Fama, using the notation from this class, how would explain a mutual fund that performs spectacularly in a single year but fails to perform that well in subsequent years?}\spc{1}
+
+\easysubproblem{Did the Manic Momentum model validate? Explain.}\spc{1}
+
+\easysubproblem{Are stock market bubbles noticable while we're in them? Explain.}\spc{1}
+
+\easysubproblem{What is the implication of Shiller's model for a long-term investor in stocks?}\spc{1}
+
+\easysubproblem{In lecture one, we spoke about \qu{heuristics} which are simple models with high error but extremely easy to learn and live by. What is the heuristic Silver quotes on p358 and why does it work so well?}\spc{1}
+
+\easysubproblem{Even if your model at predicting bubbles turned out to be good, what would prevent you from executing on it?}\spc{1}
+
+\easysubproblem{How can heuristics get us into trouble?}\spc{5}
+
 \end{enumerate}
 
-\problem{These are questions...}
+\problem{These are some questions related to validation.}
 
 \begin{enumerate}
 
-\easysubproblem{How did we define \qu{extrapolation} in class?}\spc{1}
+\easysubproblem{Assume you are doing one train-test split where you build the model on the training set and validate on the test set. What does the constant $K$ control? And what is its tradeoff?}\spc{3}
 
+\intermediatesubproblem{Assume you are doing one train-test split where you build the model on the training set and validate on the test set. If $n$ was very large so that there would be trivial misspecification error even when using $K=2$, would there be any benefit at all to increasing $K$ if your objective was to estimate generalization error? Explain.}\spc{3}
+
+\easysubproblem{What problem does $K$-fold CV try to solve?}\spc{3}
+
+\extracreditsubproblem{Theoretically, how does $K$-fold CV solve it?}\spc{5}
+
+
+\end{enumerate}
+
+\problem{These are some questions related to polynomial-derived features and logarithm-derived features in use in OLS regression.}
+
+\begin{enumerate}
+
+\intermediatesubproblem{What was the overarching problem we were trying to solve when we started to introduce polynomial terms into $\mathcal{H}$? What was the mathematical theory that justified this solution? Did this turn out to be a good solution? Why / why not?}\spc{3}
+
+\intermediatesubproblem{We fit the following model: $\yhat = b_0 + b_1 x + b_2 x^2$. What is the interpretation of $b_1$? What is the interpretation of $b_2$? Although we didn't yet discuss the \qu{true} interpretation of OLS coefficients, do your best with this.}\spc{4}
+
+\hardsubproblem{Assuming the model from the previous question, if $x \in \mathcal{X} = \bracks{10.0, 10.1}$, do you expect to \qu{trust} the estimates $b_1$ and $b_2$? Why or why not?}\spc{7}
+
+\hardsubproblem{We fit the following model: $\yhat = b_0 + b_1 x_1 + b_2 \natlog{x_2}$. We spoke about in class that $b_1$ represents loosely the predicted change in response for a proportional movement in $x_2$. So e.g. if $x_2$ increases by 10\%, the response is predicted to increase by $0.1 b_2$. Prove this approximation from first principles.}\spc{7}
+
+\easysubproblem{When does the approximation from the previous question work? When do you expect the approximation from the previous question not to work?}\spc{2}
+
+\intermediatesubproblem{We fit the following model: $\natlog{\yhat} = b_0 + b_1 x_1 + b_2 \natlog{x_1}$. What is the interpretation of $b_1$? What is the interpretation of $b_2$? Although we didn't yet discuss the \qu{true} interpretation of OLS coefficients, do your best with this.}\spc{3}
+
+\easysubproblem{Show that the model from the previous question is equal to $\yhat = m_0 m_1^{x_1} x_2^{b_2}$ and interpret $m_1$.}\spc{2}
+
+\end{enumerate}
+
+\problem{These are some questions related to the model selection procedure discussed in lecture.}
+
+\begin{enumerate}
+
+\easysubproblem{Define the fundamental problem of \qu{model selection}.}\spc{1}
+
+\easysubproblem{Describe the first procedure we introduced to solve it.}\spc{7}
+
+\easysubproblem{Discuss possible problems with this procedure.}\spc{2}
+
+\easysubproblem{Describe how you would use this model selection procedure to find hyperparameter values in algorithms that require hyperparameters.}\spc{2}
+
+\easysubproblem{Does using both inner and outer folds in a double cross-validation procedure solve some of these problems?}\spc{2}
 \end{enumerate}
 
 \end{document}
 
 
-\problem{These are questions about multivariate linear model fitting using the least squares algorithm.}
 
-\begin{enumerate}
-
-\hardsubproblem{Derive $\partialop{\c}{\c^\top A \c}$ where $\c \in \reals^n$ and $A \in \reals^{n \times n}$ but \textit{not} symmetric. Get as far as you can.}\spc{8}
-
-\easysubproblem{Given matrix $X \in \reals^{n \times (p+1)}$, full rank and first column consisting of the $\onevec_n$ vector, rederive the least squares solution $\b$ (the vector of coefficients in the linear model shipped in the prediction function $g$). No need to rederive the facts about vector derivatives.}\spc{10}
-
-\intermediatesubproblem{Consider the case where $p = 1$. Show that the solution for $\b$ you just derived is the same solution that we proved for simple regression in Lecture 8. That is, the first element of $\b$ is the same as $b_0 = \ybar - r \frac{s_y}{s_x}\xbar$ and the second element of $\b$ is $b_1 = r \frac{s_y}{s_x}$.} \spc{10}
-
-\easysubproblem{If $X$ is rank deficient, how can you solve for $\b$? Explain in English.} \spc{2}
-
-\hardsubproblem{Prove $\rank{X} =\rank{X^\top X}$.}\spc{6}
-
-\hardsubproblem{Given matrix $X \in \reals^{n \times (p+1)}$, full rank and first column consisting of the $\onevec_n$ vector, now consider cost multiples (\qu{weights}) $c_1, c_2, \ldots, c_n$ for each mistake $e_i$. As an example, previously the mistake for the 17th observation was $e_{17} := y_{17} - \hat{y}_{17}$ but now it would be $e_{17} := c_{17} (y_{17} - \hat{y}_{17})$.  Derive the weighted least squares solution $\b$. No need to rederive the facts about vector derivatives. Hints: (1) show that SSE is a quadratic form with the matrix $C$ in the middle (2) Split this matrix up into two pieces i.e. $C = C^{\half} C^{\half}$, distribute and then foil (3) note that a scalar value equals its own transpose and (4) use the vector derivative formulas.}\spc{10}
-
-
-\hardsubproblem{If $p=1$, prove $r^2 = R^2$ i.e. the linear correlation is the same as proportion of sample variance explained in a least squares linear model.}\spc{8}
-
-\intermediatesubproblem{Prove that $g(\bracks{1 ~\xbar_1~ \xbar_2~ \ldots~ \xbar_p}) =\bar{y}$ in OLS.}\spc{10}
-
-\intermediatesubproblem{Prove that $\bar{e} = 0$ in OLS.}\spc{10}
-
-\hardsubproblem{If you model $\y$ with one categorical nominal variable that has levels $A, B, C$, prove that the OLS estimates look like $\ybar_A$ if $x = A$, $\ybar_B$ if $x = B$ and $\ybar_C$ if $x = C$. You can choose to use an intercept or not. Likely without is easier.}\spc{10}
-
-
-\end{enumerate}
-
-\problem{These are questions related to the concept of orthogonal projection, QR decomposition and its relationship with least squares linear modeling.}
-
-\begin{enumerate}
-
-\hardsubproblem{[MA] Prove that if a square matrix is both symmetric and idempotent then it must be an orthogonal projection matrix.}\spc{10}
-
-\easysubproblem{Prove that $I_n$ is an orthogonal projection matrix $\forall n$.}\spc{3}
-
-
-\easysubproblem{What subspace does $I_n$ project onto?}\spc{3}
-
-\easysubproblem{Consider least squares linear regression using a design matrix $X$ with rank $p + 1$. What are the degrees of freedom in the resulting model? What does this mean?}\spc{6}
-
-
-\intermediatesubproblem{If you are orthogonally projecting the vector $\y$ onto the column space of $X$ which is of rank $p + 1$, derive the formula for $\proj{\colsp{X}}{\y}$. Is this the same as in OLS?}\spc{6}
-
-\hardsubproblem{We saw that the perceptron is an \textit{iterative algorithm}. This means that it goes through multiple iterations in order to converge to a closer and closer $\w$. Why not do the same with linear least squares regression? Consider the following. Regress $\y$ using $\X$ to get $\yhat$. This generates residuals $\e$ (the leftover piece of $\y$ that wasn't explained by the regression's fit, $\yhat$). Now try again! Regress $\e$ using $\X$ and then get new residuals $\e_{new}$. Would $\e_{new}$ be closer to $\zerovec_n$ than the first $\e$? That is, wouldn't this yield a better model on iteration \#2? Yes/no and explain.}\spc{5}
-
-
-\intermediatesubproblem{Prove that $\Q^\top = \Q^{-1}$ where $\Q$ is an orthonormal matrix such that $\colsp{\Q} = \colsp{\X}$ and $\Q$ and $\X$ are both matrices $\in \reals^{n \times (p+1)}$. Hint: this is purely a linear algebra exercise.}\spc{6}
-
-
-\intermediatesubproblem{Prove that the least squares projection $\H = \XXtXinvXt = \Q\Q^\top$.}\spc{10}
-
-\intermediatesubproblem{Prove that an orthogonal projection onto the $\colsp{\Q}$ is the same as the sum of the projections onto each column of $\Q$.}\spc{8}
-
-\easysubproblem{Prove that adding a new column to $\X$ results in SST remaining the same.}\spc{1}
-
-
-
-
-
-\hardsubproblem{[MA] Prove that $\rank{\H} =\tr{\H}$. Hint: you will need to use facts about eigenvalues and the eigendecomposition of projection matrices that we learned in class.}\spc{10}
-
-
-\end{enumerate}
-
-\problem{All of these are extra credit. This is for students who want to get a taste of a first year linear model theory class at the graduate level. The prereq to do these problems is Math 368/621. Only attempt these if you have time!
-
-In linear modeling, $\mathcal{H} = \braces{\x \w~:~\w \in \reals^{p+1}}$ where $\x = \bracks{1~x_1~\ldots~x_p}$, a row vector. Thus, there is a best function $h^*(\x) = \x\bbeta$ where $\bbeta = \bracks{\beta_0~\beta_1~\ldots~\beta_p}^\top$, a column vector and $y = h^*(\x) = \x\bbeta + \mathcal{E}$. Imagine that for all $n$ observations in $\mathbb{D}$, the $\Y = X\bbeta + \bv{\mathcal{E}}$ where $\bv{\mathcal{E}} \sim \multnormnot{n}{\zerovec_n}{\sigsq\I_n}$ and $\Y$ is a random vector with dimension $n$ modeling the responses of which $\y$ is a random realization. Assume $\sigsq$ is known. 
-}
-
-\begin{enumerate}
-
-\extracreditsubproblem{Show that $\Y\sim \multnormnot{n}{X\bbeta}{\sigsq\I_n}$.}\spc{3}
-
-\extracreditsubproblem{Let $\B = \XtXinv\Xt\Y$, i.e. the r.v. that represents the OLS estimator of which $\b$ is one realization which changes based on the realizations of the error-vector r.v. $\bv{\mathcal{E}}$. Find the distribution of $\B$ and once this is done, its expectation and variance-covariance matrix. Do the entries in $\B$ have dependence?}\spc{3}
-
-\extracreditsubproblem{Find the distribution of $\hat{\Y}$, the vector r.v. of predictions.}\spc{3}
-
-\extracreditsubproblem{Find the distribution of $\bv{E}$, the vector r.v. of residuals.}\spc{3}
-
-\extracreditsubproblem{Find the distribution of $SST$.}\spc{3}
-
-\extracreditsubproblem{Find the distribution of $SSE$.}\spc{3}
-
-\extracreditsubproblem{Find the distribution of $SSR$.}\spc{3}
-
-
-\extracreditsubproblem{Find the distribution of $R^2$.}\spc{3}
-
-\extracreditsubproblem{Now let $\sigsq$ be unknown. Use the MSE as its estimate. What is the distribution of $\B$ now?}\spc{3}
-
-\extracreditsubproblem{What is the distribution of MSE?}\spc{3}
-
-\extracreditsubproblem{What is the distribution of $R^2$?}\spc{3}
-
-\extracreditsubproblem{Let $\U \sim \multnormnot{n}{\zerovec_n}{\I_n}$ independent of $\V \sim \multnormnot{n}{\zerovec_n}{\I_n}$. Let $\theta$ be the r.v. model of the angle between $\U$ and $\V$. How is $\theta$ distributed?}\spc{3}
-
-\end{enumerate}
-
-
-\end{document}
-
-%%%%%%%%%%%%%%%%%%FOR HW4
-
-
-%\hardsubproblem{Trouble in paradise. Prove that the SSE of a multivariate linear least squares model always decreases (equivalently, $R^2$ always increases) upon the addition of a new independent predictor. Keep in mind this holds true even if this new predictor has no information about the true causal inputs to the phenomenon $y$.}\spc{9}
-
-%\intermediatesubproblem{Why is this a bad thing? Explain in English.}\spc{3}
-
-\problem{These are questions related to the concept of validation.}
-
-\begin{enumerate}
-
-\easysubproblem{What is \textit{model validation} and why is it important?}\spc{3}
-
-\easysubproblem{If you are giving a dataset $\mathbb{D}$, what is the problem with truly validating models?}\spc{3}
-
-\easysubproblem{To get around this fundamental problem, we assumed stationarity. Define this term.}\spc{3}
-
-\easysubproblem{Assuming stationarity, how can we do model validation?}\spc{3}
-
-\easysubproblem{What is the cost of this procedure?}\spc{3}
-
-\hardsubproblem{What are some limits of this procedure?}\spc{5}
-\end{enumerate}

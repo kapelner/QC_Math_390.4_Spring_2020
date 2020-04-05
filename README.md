@@ -29,9 +29,10 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec10.Rmd) 
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec19kap.pdf)
 * Lecture 18 video on slack
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec18kap.pdf)
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec18kap.pdf)-->
 * Lecture 17 video on slack
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec17kap.pdf)-->
+  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec11.Rmd) 
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec17kap.pdf)
 * Lecture 16 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec10.Rmd) 
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec16kap.pdf)
