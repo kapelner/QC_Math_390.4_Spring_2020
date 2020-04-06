@@ -2,222 +2,235 @@
 title: "Lab 8"
 author: "Your Name Here"
 output: pdf_document
-date: "11:59PM April 7, 2019"
+date: "11:59PM April 22, 2020"
 ---
 
-Load the `ggplot2` library and its dataset called `mpg`. Print out a summary of the dataset using `summary` and `str`. 
+# Data Wrangling / Munging / Carpentry
+
+Throughout this assignment you can use either `dplyr` or `data.table` to answer but not base R.
+
+Load the `storms` dataset from the `dplyr` package and investigate it using `str` and `summary` and `head`. Which two columns should be converted to type factor? Do so below.
 
 ```{r}
-pacman::p_load(ggplot2)
-data(mpg)
-mpg$drv = factor(mpg$drv)
-mpg$manufacturer = factor(mpg$manufacturer)
-mpg$model = factor(mpg$model)
-mpg$fl = factor(mpg$fl)
-mpg$class = factor(mpg$class)
-mpg$cyl = factor(mpg$cyl)
-summary(mpg)
-?mpg
-str(mpg)
-```
-
-Visualize a histogram then a density estimate of the `displ` variable, the engine displacement. Use `labs` to create a `title`, `subtitle`, `caption` and x-label via `x` and y-label via `y`. Do this for every single illustration in this lab. 
-
-```{r}
-ggplot(mpg) + 
-  aes(displ) +
-  geom_histogram() +
-  labs(title = "Engine Displacement Histogram" , subtitle = "", x = "Displacement (L)", caption = "Source: EPA 2008 Fuel Economy Dataset")
-
-
-ggplot(mpg) + 
-  aes(displ) +
-  geom_density(fill = "blue", alpha = 0.2, col = "white") +
-  labs(title = "Engine Displacement Density" , subtitle = "", x = "Displacement (L)", caption = "Source: EPA 2008 Fuel Economy Dataset")
-
-```
-
-
-Visualize a histogram the `displ` variable, but then fill the color of the bar by the `class` of the car. You will have to pass `class` in as the `fill` in the aesthetic of the histogram. 
-
-```{r}
-ggplot(mpg) + 
-  aes(displ) +
-  geom_histogram(aes(fill = class)) +
-  labs(title = "Engine Displacement Histogram" , subtitle = "Colored by Vehicle Type", x = "Displacement (L)", caption = "Source: EPA 2008 Fuel Economy Dataset")
-
-
-```
-
-Visualize overlapping densities of `cty` (city miles per gallon) and `hwy` (highway miles per gallon) using two colors with an alpha blend.  
-
-```{r}
-ggplot(mpg) +
-  geom_density(aes(cty), fill = "red", col = "white", alpha = 0.2) +
-  geom_density(aes(hwy), fill = "blue", col = "white", alpha = 0.2) +
-  xlim(5, 50) +
-  labs(title = "Fuel Efficiency Density" , subtitle = "City in Red and Highway in Blue", x = "miles per gallon", caption = "Source: EPA 2008 Fuel Economy Dataset")
-```
-
-Plot `cty` (city miles per gallon) vs `hwy` (highway miles per gallon) and draw a best fit line with a confidence region of that line.
-
-```{r}
-ggplot(mpg, aes(x = cty, y = hwy)) +
-  geom_point() +
-  geom_smooth(method = "lm") + 
-  labs(title = "City vs Highway Fuel Efficiency", subtitle = "With best fit line and confidence interval", x = "City (mpg)", y = "Highway (mpg)", caption = "Source: EPA 2008 Fuel Economy Dataset")
-```
-
-Plot `cty` (city miles per gallon) vs `hwy` (highway miles per gallon) and draw a best fit non-parametric functional relationship with a confidence region of that relationship.
-
-```{r}
-ggplot(mpg, aes(x = cty, y = hwy)) +
-  geom_point() +
-  geom_smooth() + 
-  labs(title = "City vs Highway Fuel Efficiency", subtitle = "With best fit line and confidence interval", x = "City (mpg)", y = "Highway (mpg)", caption = "Source: EPA 2008 Fuel Economy Dataset")
-```
-
-
-Plot `cty` (city miles per gallon) vs `hwy` (highway miles per gallon) and then try to visualize *as many other variables* as you can visualize effectively on the same plot. Try text, color, size, shape, etc.
-
-```{r}
-ggplot(mpg, aes(x = cty, y = hwy)) +
-  geom_point(aes(col = drv, shape = cyl, size = displ)) +
-  geom_text(aes(label = fl)) +
-  labs(title = "City vs Highway Fuel Efficiency", x = "City (mpg)", y = "Highway (mpg)", caption = "Source: EPA 2008 Fuel Economy Dataset")
-```
-
-
-Convert `cyl` to an ordinal factor. Then use the package `dplyr` to retain only cars with 4, 6, 8 cylinders in the dataset. Then make a canonical illustration of `cty` by `cyl`.
-
-```{r}
-mpg$cyl = factor(mpg$cyl, ordered = TRUE)
-#mpg$cyl
-pacman::p_load(dplyr)
-mpg = mpg %>%
-  filter(cyl %in% c(4, 6, 8))
-ggplot(mpg, aes(x = cyl, y = cty)) +
-  geom_boxplot() +
-  labs(title = "City Fuel Efficiency by Number of Cylnders", x = "Number of Cylnders", y = "City (mpg)", caption = "Source: EPA 2008 Fuel Economy Dataset")
-```
-
-
-Load the `stringr` library. Use the `str_detect` function in this libary to rewrite the `trans` variable in the data frame to be just "manual" or "automatic".
-
-```{r}
+storms
 #TO-DO
 ```
 
-Now visualize `cty` by `trans` via two overlapping alpha-blended densities. 
-
-```{r}
-#TO-DO
-```
-
-Now visualize `cty` by `trans` via a box and whisker plot.
+Reorder the columns so name is first, status is second, category is third and the rest are the same.
 
 ```{r}
 #TO-DO
 ```
 
 
-Now visualize `cty` by `drv` by `trans` via two box and whisker plots horizontally laid out.
+Create a new feature `wind_speed_per_unit_pressure`.
 
 ```{r}
 #TO-DO
 ```
 
-Now visualize `cty` by `class` via a violin plot. Look at the ggplot cheatsheet!
-
-```{r}
-ggplot(mpg, aes(x = class, y = cty)) +
-  geom_violin(fill = "brown", alpha = 0.4) +
-  labs(title = "City Fuel Efficiency by Vehicle Type", x = "Class", y = "City (mpg)", caption = "Source: EPA 2008 Fuel Economy Dataset")
-```
-
-Make a pie chart of `class`.
-
-Visualize `trans` vs `class`. Look at the ggplot cheatsheet!
+Create a new feature: `average_diameter` which averages the two diameter metrics. If one is missing, then use the value of the one that is present. If both are missing, leave missing.
 
 ```{r}
 #TO-DO
 ```
 
-Using the package `ggExtra`'s `ggMarginal` function, look at the `hwy` by `year` and plot the marginal density on both the x and y axes.
+
+For each storm, summarize the maximum wind speed. "Summarize" means create a new dataframe with only the summary metrics you care about.
 
 ```{r}
 #TO-DO
 ```
 
-Using the package `ggcorrplot`'s `ggcorrplot` function, look at the correlations for all variables in this dataset that are legal in a corrrelogram. Use dplyr to `select_if` the variable is appropriate.
+Order your dataset by maximum wind speed storm but within the rows of storm show the observations in time order from early to late.
 
 ```{r}
 #TO-DO
 ```
 
-Use the `stat_ecdf` function to plot the estimated cumulative distribution of `cty'.
+Find the strongest storm by wind speed per year.
 
 ```{r}
 #TO-DO
 ```
 
-Create a data generating process where $x$ is uniform between 0 and 10 and $y$ is $x^2$ plus $N(0,1)$ noise. Plot $n = 200$ points and then plot the quadratic relationship $y = x^2$ using the function `stat_function`.
+For each named storm, find its maximum category, wind speed, pressure and diameters (do not allow the max to be NA).
 
 ```{r}
 #TO-DO
 ```
 
-We now move to Rcpp. Load the library.
+
+For each year in the dataset, tally the number of storms. "Tally" is a fancy word for "count the number of". Plot the number of storms by year. Any pattern?
 
 ```{r}
 #TO-DO
 ```
 
-Write an R function `is_odd` and a C++ function `is_odd_cpp` that evaluates if a number is odd and returns true if so.
-
-
-```{r}
-#TO-DO
-```
-
-Using `system.time', run both functions 1,000,000 times on the numbers 1, 2, ..., 1000000. Who is faster and by how much?
+For each year in the dataset, tally the storms by category.
 
 ```{r}
 #TO-DO
 ```
 
-Write an R function `fun` and a C++ function `fun_cpp` that takes a natural number returns $n$ if $n$ is 0 or 1 otherwise the result of the function on $n - 1$ and $n - 2$. This is the function that returns the $n$th Fibonacci number.
+For each year in the dataset, find the maximum wind speed per status level.
 
 ```{r}
 #TO-DO
 ```
 
-Using `system.time', run both functions on the numbers 1, 2, ..., 100. Who is faster and by how much?
+For each storm, summarize its average location in latitude / longitude coordinates.
 
 ```{r}
 #TO-DO
 ```
 
-Write an R function `logs` and a C++ function `logs_cpp` that takes a natural number $n$ and returns an array of $ln(1), ln(2), ..., ln(n)$. 
+For each storm, summarize its duration in number of hours (to the nearest 6hr increment).
 
 ```{r}
 #TO-DO
 ```
 
-Using `system.time', run both functions on the numbers 1, 2, ..., 1000000. Who is faster and by how much?
+Convert year, month, day, hour into the variable `timestamp` using the `lubridate` package.
 
 ```{r}
 #TO-DO
 ```
 
-Write an R function `max_distances` and a C++ function `max_distances_cpp` that takes an $n \times p$ matrix $X$ and returns an $n \times n$ matrix called $D$ of NA's where the upper triangular portion above the diagonal is the max distances between the elements of the $i, j$th rows of $X$.
-
+Using the `lubridate` package, create new variables `day_of_week` which is a factor with levels "Sunday", "Monday", ... "Saturday" and `week_of_year` which is integer 1, 2, ..., 52.
 
 ```{r}
 #TO-DO
 ```
 
-Create a matrix $X$ of $n = 1000$ and $p = 20$ filled with iid $N(0, 1)$ realizations. Using `system.time', calculate $D$ using both functions. Who is faster and by how much?
+For each storm, summarize the day in which is started in the following format "Friday, June 27, 1975".
+
+```{r}
+#TO-DO
+```
+
+Create a new factor variable `decile_windspeed` by binning wind speed into 10 bins and drop `wind`.
+
+```{r}
+#TO-DO
+```
+
+Create a new data frame `serious_storms` which are category 3 and above hurricanes.
+
+```{r}
+#TO-DO
+```
+
+In `serious_storms`, merge the variables lat and long together into `lat_long` with values `lat / long` as a string.
+
+```{r}
+#TO-DO
+```
+
+For each category, find the average wind speed, pressure and diameters (do not count the NA's in your averaging).
+
+```{r}
+#TO-DO
+```
+
+For each named storm, find its maximum category, wind speed, pressure and diameters (do not allow the max to be NA) and the number of readings (i.e. observations).
+
+```{r}
+#TO-DO
+```
+
+Calculate the distance from each storm observation to Miami in a new variable `distance_to_miami`. This is very challenging. You will need a function that computes distances from two sets of latitude / longitude coordinates. 
+
+```{r}
+MIAMI_COORDS = c(25.7617, -80.1918)
+#TO-DO
+```
+
+For each storm observation, use the function from the previous question to calculate the distance it moved since the previous observation.
+
+```{r}
+#TO-DO
+```
+
+For each storm, find the total distance it moved over its observations and its total displacement. "Distance" is a scalar quantity that refers to "how much ground an object has covered" during its motion. "Displacement" is a vector quantity that refers to "how far out of place an object is"; it is the object's overall change in position.
+
+```{r}
+#TO-DO
+```
+
+For each storm observation, calculate the average speed the storm moved in location.
+
+```{r}
+#TO-DO
+```
+
+For each storm, calculate its average ground speed (how fast its eye is moving which is different from windspeed around the eye).
+
+```{r}
+#TO-DO
+```
+
+Is there a relationship between average ground speed and maximum category attained? Use a dataframe summary (not a regression).
+
+```{r}
+#TO-DO
+```
+
+Now we want to transition to building real design matrices for prediction. This is more in tune with what happens in the real world. Large data dump and you convert it into $X$ and $y$ how you see fit.
+
+Suppose we wish to predict the following: given the first three readings of a storm, can you predict its maximum wind speed? Identify the `y` and identify which features you need $x_1, ... x_p$ and build that matrix with `dplyr` functions. This is not easy, but it is what it's all about. Feel free to "featurize" as creatively as you would like. You aren't going to overfit if you only build a few features relative to the total 198 storms.
+
+```{r}
+#TO-DO
+```
+
+Fit your model. Validate it. Assess your level of success at this endeavor.
+ 
+```{r}
+
+```
+
+
+# Interactions in linear models
+
+Load the Boston Housing Data from package `MASS` and use `str` and `summary` to remind yourself of the features and their types and then use `?MASS::Boston` to read an English description of the features.
+
+```{r}
+data(Boston, package = "MASS")
+str(Boston)
+summary(Boston)
+?MASS::Boston
+```
+
+#TO-DO
+
+Using what you learned about the Boston Housing Data in the previous question, try to guess which features are interacting. Confirm using plots in `ggplot` that illustrate three (or more) features.
+
+```{r}
+#TO-DO
+```
+
+Once an interaction has been located, confirm the "non-linear linear" model with the interaction term does better than just the vanilla linear model by demonstrating a lower RMSE. In Econ 382 you would test this explicitly using a hypothesis test. We know in this class than increasing $p$ yields alower RMSE. But the exercise is still a good one.
+
+```{r}
+#TO-DO
+```
+
+Repeat this procedure for another interaction with two different features (not used in the previous interaction you found) and verify.
+
+```{r}
+#TO-DO
+```
+
+Fit a model using all possible first-order interactions. Verify it is "better" than the linear model. Do you think you overfit? Why or why not?
+
+```{r}
+#TO-DO
+```
+
+# CV
+
+Use 5-fold CV to estimate the generalization error of the model with all interactions.
 
 ```{r}
 #TO-DO
