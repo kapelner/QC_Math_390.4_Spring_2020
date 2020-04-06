@@ -12,7 +12,6 @@ Throughout this assignment you can use either `dplyr` or `data.table` to answer 
 Load the `storms` dataset from the `dplyr` package and investigate it using `str` and `summary` and `head`. Which two columns should be converted to type factor? Do so below.
 
 ```{r}
-storms
 #TO-DO
 ```
 
@@ -22,6 +21,17 @@ Reorder the columns so name is first, status is second, category is third and th
 #TO-DO
 ```
 
+Find a subset of the data of storms only in the 1970's.
+
+```{r}
+#TO-DO
+```
+
+Find a subset of the data of storm observations only with category 4 and above and wind speed 100MPH and above.
+
+```{r}
+#TO-DO
+```
 
 Create a new feature `wind_speed_per_unit_pressure`.
 
