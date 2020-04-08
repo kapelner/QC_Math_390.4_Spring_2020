@@ -80,7 +80,7 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 <!--
 * [(Lab 10, due 5/12)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab09.Rmd)
 * [(Lab 9, due 4/14)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab09.Rmd)-->
-* [(Lab 8, due 4/22)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab08.Rmd)
+* [(Lab 8, due 4/25)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab08.Rmd)
 * [(Lab 7, due 4/8)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab07.Rmd)
 * [(Lab 6, due 3/21)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab06.Rmd)
 * [(Lab 5, due 3/7)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab05.Rmd)
