@@ -516,6 +516,7 @@ download.file("http://simonsoftware.se/other/xkcd.ttf", dest = "xkcd.ttf", mode 
 font_import(path = ".", pattern = "xkcd", prompt = FALSE)
 fonts()
 fonttable()
+
 loadfonts(device="win")
 
 graphics_obj + theme_xkcd()

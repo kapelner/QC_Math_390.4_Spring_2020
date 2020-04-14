@@ -6,10 +6,10 @@ date: "April 3, 2020"
 
 # MLR library for CV
 
-"Machine Learning in R" (the `mlr` package) is a very popular R library that makes it very simple to build models, do validation, etc. The full rewrite (package `mlr3`) just came out last September now so expect the new version to be even better. Next year I will switch over to the new package. Feel free to do so on your own.
+"Machine Learning in R" (the `mlr3` package) is a very popular R library that makes it very simple to build models, do validation, etc. This package was recently rewritten (September, 2019).
 
 ```{r}
-pacman::p_load(ggplot2, mlr)
+pacman::p_load(ggplot2, mlr3)
 ```
 
 It splits the modeling task into conceptual pieces. The most basic pieces are:

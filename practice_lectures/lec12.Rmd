@@ -1,7 +1,7 @@
 ---
 title: "Practice Lecture 12 MATH 390.4 Queens College"
 author: "Professor Adam Kapelner"
-date: "April 14, 2019"
+date: "April 14, 2020"
 ---
 
 # (3) Stepwise Model Construction
@@ -11,7 +11,7 @@ There are many types of such stepwise models. Here we will look at Forward Stepw
 We will be using the diamonds data again as an example. Let's make sure we have unordered factors to avoid issues later:
 
 ```{r}
-pacman::p_load(ggplot2)
+pacman::p_load(tidyverse, magrittr)
 diamonds %<>%
   mutate(cut = factor(as.character(cut)), color = factor(as.character(color)), clarity = factor(as.character(clarity)))
 ```
@@ -24,7 +24,7 @@ train_indices = sample(1 : nrow(diamonds), Nsamp)
 diamonds_train = diamonds[train_indices, ]
 ```
 
-Let's built a model with all second-order interactions
+Let's built a model with all second-order interactions e.g. all things that look like depth x table x clarity or depth^2 x color or depth^3.
 
 ```{r}
 mod = lm(price ~ . * . * ., diamonds_train)
@@ -37,7 +37,9 @@ length(coef(mod))
 coef(mod)[1000 : 1100]
 ```
 
-Remember we overfit just using first order interactions? We'll certainly overfit using first-order interactions AND second order interactions
+For features that are non-binary, it's p_non_binary^3 features. Binary features are more complicated because its each level in feature A times each level in feature B. There are no squared or cube terms for binary features (since they're all the same i.e. ${0,1}^d = {0,1}$).
+
+Remember we lkely overfit just using first order interactions? We'll certainly overfit using first-order interactions AND second order interactions
 
 ```{r}
 summary(mod)$r.squared
@@ -65,12 +67,13 @@ sd(e_test) / sd(y_test)
 
 This is not only "overfitting"; it is an absolute trainwreck! This means you can do better using the null model (average of y) instead of this model.
 
-So let us employ stepwise to get a good model. We need predictors to start with. How about `. * . * .` --- there's nothing intrinsically wrong with this. Let's create the model matrix:
+So let us employ stepwise to get a "good" model. We need our basis predictors to start with. How about the linear components of `. * . * .` --- there's nothing intrinsically wrong with that - it's probably a good basis for $f(x)$. Let's create the model matrix for both train and test:
 
 ```{r}
 Xmm_train = model.matrix(price ~ . * . * ., diamonds_train)
 y_train = diamonds_train$price
 p_plus_one = ncol(Xmm_train)
+p_plus_one
 
 Xmm_test = model.matrix(price ~ . * . * ., diamonds_test)
 ```
@@ -83,7 +86,7 @@ in_sample_ses_by_iteration = c() #keep a growing list of se's by iteration
 oos_ses_by_iteration = c() #keep a growing list of se's by iteration
 i = 1
 
-while (TRUE){
+repeat {
 
   #get all predictors left to try
   all_ses = array(NA, p_plus_one) #record all possibilities
@@ -116,7 +119,7 @@ while (TRUE){
 }
 ```
 
-Now let's look at the patterns
+Now let's look at our complexity curve:
 
 ```{r}
 simulation_results = data.frame(
@@ -133,13 +136,13 @@ ggplot(simulation_results) +
 ```
 
 
-We can kind of see what the optimal model is above. If we want an exact procedure, we'd probably fit a separate smoothing regression to the oos results and analytically find the arg-minimum, $j^*$. That number will then be fed into the model matrix to create the right feature set and the final model will be produced with all the data.
+We can kind of see what the optimal model is above. If we want an exact procedure, we'd probably fit a separate smoothing regression to the oos results and analytically find the arg-minimum, $j^*$. That number will then be fed into the model matrix to create the right feature set and the final model will be produced with all the data. Or we can just stop as soon as oos error goes up. You can also obviously do CV within each iterations to stabilize this further (lab exercise).
 
-Can we honestly assess future performance now? No... we needed to keep a third set hanging around. This you will do for a lab exercise.
+Can we honestly assess future performance now? No... why? Our test set was really our select set and we don't have a third test set (lab exercise). Inner and outer folding can be done too as we discussed.
 
 # Regression Trees
 
-Let's take a look at the simulated sine curve data (i.e. the illustration I drew on the board last class)
+Let's take a look at the simulated sine curve data.
 
 ```{r}
 pacman::p_load(tidyverse, magrittr)
@@ -151,13 +154,46 @@ ggplot(data.frame(x = x, y = y), aes(x, y)) + geom_point(lwd=0.6)
 ```
 
 
-Let's fit a regression tree. First load the package:
+Let's fit a regression tree. We will use the development package "YARF" which I've been hacking on now for a few years. The package internals are written in Java. So we first need to ensure that Java and R speak to each other through proper configuration of the `rJava` package. You need to have a full JDK of Java installed on your computer and have its binary executables in the proper path. This demo will be in Java JDK 8 since I haven't tested `YARF` in the more modern Java JDK's yet.
 
 ```{r}
 options(java.parameters = "-Xmx4000m")
-# pacman::p_install_gh("kapelner/YARF", subdir = "YARF", ref = "dev")
+pacman::p_load(rJava)
+#if that doesn't work, use:
+# install.packages("rJava", type = "source")
+# library(rJava)
+.jinit() #this initializes the JVM in the background and if this runs with no issues nor output, you probably have rJava installed and connected to the JDK properly.
+```
+
+Just like the whole `Rcpp` demo, we can do a whole demo with `rJava`, but we won't. Here's just an example of creating a Java object and running a method on it:
+
+```{r}
+java_double = .jnew("java/lang/Double", 3.1415)
+java_double
+class(java_double)
+.jclass(java_double)
+#call an instance method 
+.jcall(java_double, "I", "intValue")
+#call a static method
+J("java/lang/String", "valueOf", java_double)
+J("java/lang/String", "valueOf", x) #some sort of alphanumeric code for the pointer address
+```
+
+A note on rJava vs Rcpp. 
+
+* If you're doing quick and dirty fast functions for loops and recursion, do it in Rcpp since there is lower overhead of programming. 
+* If you are programming more full-featured software, go with rJava. 
+* Also, if you need full-featured parallelized execution and threading control e.g. thread pooling and the ease of debugging, my personal opinion is that rJava is easier to get working with less dependencies. My experience is that the Rcpp threading libraries just aren't there yet and neither is openMP directives within Rcpp. 
+* Further, the JVM is fully asynchronous which means it runs completely independently of R. What this means is that you can execute something in Java, Java can "thread it off" and return you to the R prompt with a pointer to the object that houses its execution. You can then query the object. We will see dems of this.
+
+Now we install the package from github including its dependency and load it:
+
+```{r}
+# pacman::p_install_gh("kapelner/YARF/YARFJARs", ref = "dev")
+# pacman::p_install_gh("kapelner/YARF/YARF", ref = "dev")
 pacman::p_load(YARF)
 ```
+
 
 Then run the fit:
 
@@ -198,7 +234,7 @@ ggplot(data.frame(x = x, y = y), aes(x, y)) +
   geom_point(aes(x, y), data.frame(x = x_predict, y = g), col = "blue")
 ```
 
-Less overfitting now. Can we try to underfit? That's easy...
+Less overfitting now but now it's clearly underfit!
 
 Now let's look at some real data. We load the Boston Housing data:
 
@@ -281,11 +317,9 @@ sd(e)
 1 - sd(e) / sd(y_test)
 ```
 
-Let's do that over and over to get a sense of the variability. Do you see why people do cross validation / bootstrap validation? To reduce the error of the estimate. 
+The take-home message here is that the tree beats the linear model in future predictive performance but the only way to be truly convinced of this is to do the split over and over to get a sense of the average over the massive variability (like the previous demo) or to do CV to reduce the error of the estimate. 
 
-The take-home message here is that the tree beats the linear model in future predictive performance. Why is this?
-
-Let's see what's going on in the tree.
+Why does the regression tree beat the linear model? Let's see what's going on in the tree.
 
 ```{r}
 get_tree_num_nodes_leaves_max_depths(tree_mod)
@@ -307,7 +341,9 @@ get_tree_num_nodes_leaves_max_depths(tree_mod)
 nrow(Boston_train) / get_tree_num_nodes_leaves_max_depths(tree_mod)$num_leaves
 ```
 
-This is essentially giving each obsevation it's own guess. Just like linear modeling when $n = p + 1$ and nearest neighbors when $K = 1$. Let's see how bad the overfitting is:
+Why is it not exactly 1 on average? I think it's because...
+
+Regardless of this point, this model is essentially giving each obsevation it's own y-hat, it's own personal guess which will be its own personal y. Just like linear modeling when $n = p + 1$ and nearest neighbors when $K = 1$. Let's see how bad the overfitting is:
 
 ```{r}
 y_hat_train = predict(tree_mod, Boston_train)
