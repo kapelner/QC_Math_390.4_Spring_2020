@@ -1,0 +1,1681 @@
+---
+title: "lec15.Rmd"
+author: "Adam Kapelner"
+date: "April 23, 2020"
+output: html_document
+---
+
+# Using Probability Estimation to do Classification
+
+First repeat quickly (a) load the adult data (b) do a training / test split and (c) build the logisitc model.
+
+```{r}
+pacman::p_load_gh("coatless/ucidata")
+data(adult)
+adult = na.omit(adult) #kill any observations with missingness
+
+set.seed(1)
+train_size = 5000
+train_indices = sample(1 : nrow(adult), train_size)
+adult_train = adult[train_indices, ]
+y_train = adult_train$income
+X_train = adult_train
+X_train$income = NULL
+
+test_size = 5000
+test_indices = sample(setdiff(1 : nrow(adult), train_indices), test_size)
+adult_test = adult[test_indices, ]
+y_test = adult_test$income
+X_test = adult_test
+X_test$income = NULL
+
+logistic_mod = glm(income ~ ., adult_train, family = "binomial")
+p_hats_train = predict(logistic_mod, adult_train, type = "response")
+p_hats_test = predict(logistic_mod, adult_test, type = "response")
+```
+
+Let's establish a rule: if the probability estimate is greater than or equal to 50%, let's classify the observation as positive, otherwise 0.
+
+```{r}
+y_hats_train = factor(ifelse(p_hats_train >= 0.5, ">50K", "<=50K"))
+```
+
+How did this "classifier" do in-sample?
+
+```{r}
+mean(y_hats_train != y_train)
+table(y_train, y_hats_train)
+```
+
+Let's see the same thing oos:
+
+```{r}
+y_hats_test = factor(ifelse(p_hats_test >= 0.5, ">50K", "<=50K"))
+mean(y_hats_test != y_test)
+oos_conf_table = table(y_test, y_hats_test)
+oos_conf_table
+```
+
+A tad bit worse. Here are estimates of the future performance for each class:
+
+```{r}
+n = sum(oos_conf_table)
+fp = oos_conf_table[1, 2]
+fn = oos_conf_table[2, 1]
+tp = oos_conf_table[2, 2]
+tn = oos_conf_table[1, 1]
+num_pred_pos = sum(oos_conf_table[, 2])
+num_pred_neg = sum(oos_conf_table[, 1])
+num_pos = sum(oos_conf_table[2, ])
+num_neg = sum(oos_conf_table[1, ])
+precision = tp / num_pred_pos
+cat("precision", round(precision * 100, 2), "%\n")
+recall = tp / num_pos
+cat("recall", round(recall * 100, 2), "%\n")
+false_discovery_rate = 1 - precision
+cat("false_discovery_rate", round(false_discovery_rate * 100, 2), "%\n")
+false_omission_rate = fn / num_pred_neg
+cat("false_omission_rate", round(false_omission_rate * 100, 2), "%\n")
+```
+
+This whole classifier hinged on the decision of 50%! What if we change it??
+
+# Asymmetric Cost Classifiers
+
+Let's establish a *new* rule: if the probability estimate is greater than or equal to 90%, let's classify the observation as positive, otherwise 0.
+
+```{r}
+y_hats_train = factor(ifelse(p_hats_train >= 0.9, ">50K", "<=50K"))
+mean(y_hats_train != y_train)
+oos_conf_table = table(y_train, y_hats_train)
+oos_conf_table
+```
+
+Of course the misclassification error went up! But now look at the confusion table! The second column represents all $\hat{y} = 1$ and there's not too many of them! Why? You've made it *much* harder to classify something as positive. Here's the new additional performance metrics now:
+
+```{r}
+n = sum(oos_conf_table)
+fp = oos_conf_table[1, 2]
+fn = oos_conf_table[2, 1]
+tp = oos_conf_table[2, 2]
+tn = oos_conf_table[1, 1]
+num_pred_pos = sum(oos_conf_table[, 2])
+num_pred_neg = sum(oos_conf_table[, 1])
+num_pos = sum(oos_conf_table[2, ])
+num_neg = sum(oos_conf_table[1, ])
+precision = tp / num_pred_pos
+cat("precision", round(precision * 100, 2), "%\n")
+recall = tp / num_pos
+cat("recall", round(recall * 100, 2), "%\n")
+false_discovery_rate = 1 - precision
+cat("false_discovery_rate", round(false_discovery_rate * 100, 2), "%\n")
+false_omission_rate = fn / num_pred_neg
+cat("false_omission_rate", round(false_omission_rate * 100, 2), "%\n")
+```
+
+We don't make many false discoveries but we make a lot of false omissions! It's a tradeoff...
+
+# Receiver-Operator Curve Plot
+
+The entire classifier is indexed by that indicator function probability threshold which creates the classification decision. Why not see look at the entire range of possible classification models. We do this with a function. We will go through it slowly and explain each piece:
+
+```{r}
+#' Computes performance metrics for a binary probabilistic classifer
+#'
+#' Each row of the result will represent one of the many models and its elements record the performance of that model so we can (1) pick a "best" model at the end and (2) overall understand the performance of the probability estimates a la the Brier scores, etc.
+#'
+#' @param p_hats  The probability estimates for n predictions
+#' @param y_true  The true observed responses
+#' @param res     The resolution to use for the grid of threshold values (defaults to 1e-3)
+#'
+#' @return        The matrix of all performance results
+compute_metrics_prob_classifier = function(p_hats, y_true, res = 0.001){
+  #we first make the grid of all prob thresholds
+  p_thresholds = seq(0 + res, 1 - res, by = res) #values of 0 or 1 are trivial
+  
+  #now we create a matrix which will house all of our results
+  performance_metrics = matrix(NA, nrow = length(p_thresholds), ncol = 12)
+  colnames(performance_metrics) = c(
+    "p_th",
+    "TN",
+    "FP",
+    "FN",
+    "TP",
+    "miscl_err",
+    "precision",
+    "recall",
+    "FDR",
+    "FPR",
+    "FOR",
+    "miss_rate"
+  )
+  
+  #now we iterate through each p_th and calculate all metrics about the classifier and save
+  n = length(y_true)
+  for (i in 1 : length(p_thresholds)){
+    p_th = p_thresholds[i]
+    y_hats = factor(ifelse(p_hats >= p_th, ">50K", "<=50K"))
+    confusion_table = table(
+      factor(y_true, levels = c("<=50K", ">50K")),
+      factor(y_hats, levels = c("<=50K", ">50K"))
+    )
+      
+    fp = confusion_table[1, 2]
+    fn = confusion_table[2, 1]
+    tp = confusion_table[2, 2]
+    tn = confusion_table[1, 1]
+    npp = sum(confusion_table[, 2])
+    npn = sum(confusion_table[, 1])
+    np = sum(confusion_table[2, ])
+    nn = sum(confusion_table[1, ])
+  
+    performance_metrics[i, ] = c(
+      p_th,
+      tn,
+      fp,
+      fn,
+      tp,
+      (fp + fn) / n,
+      tp / npp, #precision
+      tp / np,  #recall
+      fp / npp, #false discovery rate (FDR)
+      fp / nn,  #false positive rate (FPR)
+      fn / npn, #false omission rate (FOR)
+      fn / np   #miss rate
+    )
+  }
+  
+  #finally return the matrix
+  performance_metrics
+}
+```
+
+Now let's generate performance results for the in-sample data:
+
+```{r}
+pacman::p_load(data.table, magrittr)
+performance_metrics_in_sample = compute_metrics_prob_classifier(p_hats_train, y_train) %>% data.table
+performance_metrics_in_sample
+```
+
+Now let's plot the ROC curve
+
+```{r}
+pacman::p_load(ggplot2)
+ggplot(performance_metrics_in_sample) +
+  geom_line(aes(x = FPR, y = recall)) +
+  geom_abline(intercept = 0, slope = 1, col = "orange") + 
+  coord_fixed() + xlim(0, 1) + ylim(0, 1)
+```
+
+Now calculate the area under the curve (AUC) which is used to evaluate the probabilistic classifier (just like the Brier score) using a trapezoid area function. 
+
+```{r}
+pacman::p_load(pracma)
+-trapz(performance_metrics_in_sample$FPR, performance_metrics_in_sample$recall)
+```
+
+This is not bad at all!
+
+Note that I should add $<0, 0>$ and $<1, 1>$ as points before this is done but I didn't...
+
+How do we do out of sample?
+
+
+```{r}
+performance_metrics_oos = compute_metrics_prob_classifier(p_hats_test, y_test) %>% data.table
+performance_metrics_oos
+```
+
+And graph the ROC:
+
+
+```{r}
+#first we do our own melting of two data frames together to make it long format
+performance_metrics_in_and_oos = rbind(
+    cbind(performance_metrics_in_sample, data.table(sample = "in")),
+    cbind(performance_metrics_oos, data.table(sample = "out"))
+)
+ggplot(performance_metrics_in_and_oos) +
+  geom_line(aes(x = FPR, y = recall, col = sample)) +
+  geom_abline(intercept = 0, slope = 1, col = "orange") + 
+  coord_fixed() + xlim(0, 1) + ylim(0, 1)
+```
+
+
+```{r}
+-trapz(performance_metrics_oos$FPR, performance_metrics_oos$recall)
+```
+
+
+Not bad at all - only a tad worse! In the real world it's usually a lot worse. We are lucky we have n = 5,000 in both a train and test set.
+
+# Detection Error Tradeoff curve
+
+```{r}
+ggplot(performance_metrics_in_and_oos) +
+  geom_line(aes(x = FDR, y = miss_rate, col = sample)) +
+  coord_fixed() + xlim(0, 1) + ylim(0, 1)
+```
+
+
+#Using AUC to Compare Probabilistic Classification Models
+
+What would the effect be of less information on the same traing set size? Imagine we didn't know the features: occupation, education, education_num, relationship, marital_status. How would we do relative to the above? Worse!
+
+```{r}
+logistic_mod_less_data = glm(income ~ . - occupation - education - education_num - relationship - marital_status, adult_train, family = "binomial")
+p_hats_test = predict(logistic_mod_less_data, adult_test, type = "response")
+performance_metrics_oos_mod_2 = compute_metrics_prob_classifier(p_hats_test, y_test) %>% data.table
+ggplot(performance_metrics_oos) +
+  geom_line(aes(x = FPR, y = recall), col = "blue") +
+  geom_abline(intercept = 0, slope = 1, col = "red") + 
+  coord_fixed() + xlim(0, 1) + ylim(0, 1) +
+  geom_line(data = performance_metrics_oos_mod_2, aes(x = FPR, y = recall), col = "green")
+```
+
+and we can see clearly that the AUC is worse:
+
+```{r}
+-trapz(performance_metrics_oos_mod_2$FPR, performance_metrics_oos_mod_2$recall)
+```
+
+As we lose information that is related to the true causal inputs, we lose predictive ability. Same story for this entire data science class since error due to ignorance increases! And certainly no different in probabilistic classifiers.
+
+# Choosing a Decision Threshold Based on Asymmetric Costs and Rewards
+
+The ROC and DET curves gave you a glimpse into all the possibilities. Each point on that curve is a separate $g(x)$ with its own performance metrics. How do you pick one?
+
+Let's create rewards and costs. Imagine we are trying to predict income because we want to sell people an expensive item e.g. a car. We want to advertise our cars via a nice packet in the mail. The packet costs \$5. If we send a packet to someone who really does make $>50K$/yr then we are expected to make \$1000. So we have rewards and costs below:
+
+```{r}
+r_tp = 0
+c_fp = -5
+c_fn = -1000
+r_tn = 0
+```
+
+Let's return to the linear logistic model with all features. Let's calculate the overall oos average reward per observation (per person) for each possible $p_{th}$:
+
+```{r}
+n = nrow(adult_test)
+performance_metrics_oos$avg_reward = 
+  (r_tp * performance_metrics_oos$TP +
+  c_fp * performance_metrics_oos$FP +
+  c_fn * performance_metrics_oos$FN +
+  r_tn * performance_metrics_oos$TN) / n
+```
+
+Let's plot average reward (reward per person) by threshold:
+
+```{r}
+ggplot(performance_metrics_oos) +
+  geom_line(aes(x = p_th, y = avg_reward))
+```
+
+Obviously, the best decision is $p_{th} \approx 0$ which means you classifiy almost everything as a positive. This makes sense because the mailing is so cheap. What are the performance characteristics of the optimal model?
+
+```{r}
+i_star = which.max(performance_metrics_oos$avg_reward)
+round(as.matrix(performance_metrics_oos[i_star, ]), 2)
+```
+
+The more interesting problem is where the cost of advertising is higher:
+
+```{r}
+r_tp = 0
+c_fp = -200
+c_fn = -1000
+r_tn = 0
+performance_metrics_oos$avg_reward = 
+  (r_tp * performance_metrics_oos$TP +
+  c_fp * performance_metrics_oos$FP +
+  c_fn * performance_metrics_oos$FN +
+  r_tn * performance_metrics_oos$TN) / n
+ggplot(performance_metrics_oos) +
+  geom_point(aes(x = p_th, y = avg_reward), lwd = 0.01)
+```
+
+What are the performance characteristics of the optimal model?
+
+```{r}
+i_star = which.max(performance_metrics_oos$avg_reward)
+round(as.matrix(performance_metrics_oos[i_star, ]), 2)
+```
+
+If $g_{pr}$ is closer to $f_{pr}$, what happens? All the threshold-derived classification models get better and you are guaranteed to make more money since you have a better discriminating eye.
+
+
+# Bias-Variance Decomposition of Generalization Error
+
+
+Let's try to fit a quadratic $f$ with a linear model and examine bias-variance tradeoff.
+
+```{r}
+rm(list = ls())
+xmin = 0
+xmax = 5
+n_train = 20
+n_test = 1000
+sigsq = 1
+resolution = 10000
+
+Nsim = 1000
+
+training_gs = matrix(NA, nrow = Nsim, ncol = 2)
+all_residuals = matrix(NA, nrow = Nsim, ncol = n_test)
+x_trains = matrix(NA, nrow = Nsim, ncol = n_train)
+y_trains = matrix(NA, nrow = Nsim, ncol = n_train)
+for (nsim in 1 : Nsim){
+  #simulate dataset $\mathbb{D}$
+  x_train = runif(n_train, xmin, xmax)
+  delta_train = rnorm(n_train, 0, sqrt(sigsq)) #mean zero, variance sigsq always (not dependent on value of x)
+  y_train = x_train^2 + delta_train
+  x_trains[nsim, ] = x_train
+  y_trains[nsim, ] = y_train
+  
+  
+  #fit a model g | x's, delta's and save it
+  g_model = lm(y_train ~ ., data.frame(x = x_train))
+  training_gs[nsim, ] = coef(g_model)
+  
+  #generate oos dataset and save residuals on oos data
+  x_test = runif(n_test, xmin, xmax)
+  delta_test = rnorm(n_test, 0, sigsq) #mean zero, variance sigsq always (not dependent on value of x)
+  y_test = x_test^2 + delta_test
+  y_hat_test = predict(g_model, data.frame(x = x_test))
+  all_residuals[nsim, ] = y_test - y_hat_test
+}
+```
+
+Graph a few:
+
+```{r}
+pacman::p_load(ggplot2)
+ggplot() + 
+  geom_point(aes(x, y), data = data.frame(x = x_trains[1, ], y = y_trains[1, ]), col = "blue") +
+  geom_point(aes(x, y), data = data.frame(x = x_trains[2, ], y = y_trains[2, ]), col = "darkgreen") +
+  geom_point(aes(x, y), data = data.frame(x = x_trains[3, ], y = y_trains[3, ]), col = "red")
+```
+
+The blue dataset is one possible $\mathbb{D}$, the green dataset is another possible $\mathbb{D}$ and the red dataset is another possible $\mathbb{D}$. This illustrated "dataset-dataset variability".
+
+Take a look at the mse:
+
+```{r}
+mse = mean(c(all_residuals)^2)
+mse
+```
+
+This should be irreducible error plus bias-squared plus variance.
+
+Let's visualize the bias
+
+```{r}
+g_average = colMeans(training_gs)
+f = function(x){x^2}
+x = seq(xmin, xmax, length.out = resolution)
+ggplot(data.frame(x = x, f = f(x)), aes(x, f)) + 
+  geom_line(col = "darkgreen") + 
+  geom_abline(intercept = g_average[1], slope = g_average[2], col = "red")
+```
+
+What is the average bias of $g$?
+
+```{r}
+x = seq(xmin, xmax, length.out = resolution)
+g_avg_x = g_average[1] + g_average[2] * x
+f_x = x^2
+biases = f_x - g_avg_x
+expe_bias_g_sq = mean(biases^2)
+expe_bias_g_sq
+```
+
+What is the variance? Let's look at all lines:
+
+```{r}
+plot_obj = ggplot() + 
+  xlim(xmin, xmax) + ylim(xmin^2, xmax^2)
+
+for (nsim in 1 : min(Nsim, 100)){ #otherwise takes too long
+  plot_obj = plot_obj + geom_abline(intercept = training_gs[nsim, 1], slope = training_gs[nsim, 2], col = "blue")
+}
+
+plot_obj +
+  geom_abline(intercept = g_average[1], slope = g_average[2], col = "red", lwd = 2)
+```
+
+Now calculate this average variance:
+
+```{r}
+x = seq(xmin, xmax, length.out = resolution)
+
+expe_g_x = g_average[1] + g_average[2] * x
+
+var_x_s = array(NA, Nsim)
+for (nsim in 1 : Nsim){
+  g_x = training_gs[nsim, 1] + training_gs[nsim, 2] * x
+  var_x_s[nsim] = mean((g_x - expe_g_x)^2)
+}
+
+expe_var_g = mean(var_x_s)
+expe_var_g
+```
+
+Now check the equivalence
+
+```{r}
+mse
+sigsq
+expe_bias_g_sq
+expe_var_g
+sigsq + expe_bias_g_sq + expe_var_g
+```
+
+This is not exactly equal due to numerical error.
+
+Let's try the whole thing again using a quadratic regression!
+
+```{r}
+training_gs = matrix(NA, nrow = Nsim, ncol = 3)
+all_residuals = matrix(NA, nrow = Nsim, ncol = n_test)
+
+for (nsim in 1 : Nsim){
+  #simulate dataset $\mathbb{D}$
+  x_train = runif(n_train, xmin, xmax)
+  delta_train = rnorm(n_train, 0, sqrt(sigsq)) #mean zero, variance sigsq always (not dependent on value of x)
+  y_train = x_train^2 + delta_train
+  
+  #fit a model g | x's, delta's and save it
+  g_model = lm(y_train ~ poly(x, 2, raw = TRUE), data.frame(x = x_train))
+  training_gs[nsim, ] = coef(g_model)
+  
+  #generate oos dataset and save residuals on oos data
+  x_test = runif(n_test, xmin, xmax)
+  delta_test = rnorm(n_test, 0, sigsq) #mean zero, variance sigsq always (not dependent on value of x)
+  y_test = x_test^2 + delta_test
+  y_hat_test = predict(g_model, data.frame(x = x_test))
+  all_residuals[nsim, ] = y_test - y_hat_test
+}
+```
+
+Take a look at the mse:
+
+```{r}
+mse = mean(c(all_residuals)^2)
+mse
+```
+
+Much lower! Why? Bias went down. 
+
+Let's visualize the bias
+
+```{r}
+g_average = colMeans(training_gs)
+f = function(x){x^2}
+x = seq(xmin, xmax, length.out = resolution)
+ggplot(data.frame(x = x, f = f(x)), aes(x, f)) + 
+  geom_line(col = "darkgreen") + 
+  stat_function(fun = function(x){g_average[1] + g_average[2] * x + g_average[3] * x^2}, col = "red")
+```
+
+Not much! What is the average bias of $g$?
+
+```{r}
+x = seq(xmin, xmax, length.out = resolution)
+g_avg_x = g_average[1] + g_average[2] * x + g_average[3] * x^2
+f_x = x^2
+biases = f_x - g_avg_x
+expe_bias_g_sq = mean(biases^2)
+expe_bias_g_sq
+```
+
+What is the variance? Let's look at all lines:
+
+```{r}
+plot_obj = ggplot(data.frame(x = x)) + 
+  xlim(xmin, xmax) + ylim(xmin^2, xmax^2)
+
+for (nsim in 1 : min(Nsim, 50)){ #otherwise takes too long
+  plot_obj = plot_obj + geom_line(data = data.frame(x = x, y = training_gs[nsim, 1] + training_gs[nsim, 2] * x + training_gs[nsim, 3] * x^2), mapping = aes(x, y), col = "blue")
+}
+
+plot_obj +
+  stat_function(fun = function(x){g_average[1] + g_average[2] * x + g_average[3] * x^2}, col = "red", lwd = 2)
+```
+
+Now calculate this average variance:
+
+```{r}
+x = seq(xmin, xmax, length.out = resolution)
+
+expe_g_x = g_average[1] + g_average[2] * x + g_average[3] * x^2
+
+var_x_s = array(NA, Nsim)
+for (nsim in 1 : Nsim){
+  g_x = training_gs[nsim, 1] + training_gs[nsim, 2] * x + training_gs[nsim, 3] * x^2
+  var_x_s[nsim] = mean((g_x - expe_g_x)^2)
+}
+
+expe_var_g = mean(var_x_s)
+expe_var_g
+```
+
+Now check the equivalence
+
+```{r}
+mse
+sigsq
+expe_bias_g_sq
+expe_var_g
+sigsq + expe_bias_g_sq + expe_var_g
+```
+
+
+Try it again with quintic polynomials!
+
+```{r}
+training_gs = matrix(NA, nrow = Nsim, ncol = 6)
+all_residuals = matrix(NA, nrow = Nsim, ncol = n_test)
+
+for (nsim in 1 : Nsim){
+  #simulate dataset $\mathbb{D}$
+  x_train = runif(n_train, xmin, xmax)
+  delta_train = rnorm(n_train, 0, sqrt(sigsq)) #mean zero, variance sigsq always (not dependent on value of x)
+  y_train = x_train^2 + delta_train
+  
+  #fit a model g | x's, delta's and save it
+  g_model = lm(y_train ~ poly(x, 5, raw = TRUE), data.frame(x = x_train))
+  training_gs[nsim, ] = coef(g_model)
+  
+  #generate oos dataset and save residuals on oos data
+  x_test = runif(n_test, xmin, xmax)
+  delta_test = rnorm(n_test, 0, sigsq) #mean zero, variance sigsq always (not dependent on value of x)
+  y_test = x_test^2 + delta_test
+  y_hat_test = predict(g_model, data.frame(x = x_test))
+  all_residuals[nsim, ] = y_test - y_hat_test
+}
+```
+
+Take a look at the mse:
+
+```{r}
+mse = mean(c(all_residuals)^2)
+mse
+```
+
+Much higher! Why? Variance went up!
+
+Let's visualize the bias
+
+```{r}
+g_average = colMeans(training_gs)
+f = function(x){x^2}
+x = seq(xmin, xmax, length.out = resolution)
+ggplot(data.frame(x = x, f = f(x)), aes(x, f)) + 
+  geom_line(col = "darkgreen") + 
+  stat_function(fun = function(x){g_average[1] + g_average[2] * x + g_average[3] * x^2 + g_average[4] * x^3 + g_average[5] * x^4 + g_average[6] * x^5}, col = "red")
+```
+
+Not much! Now acutllay compute the average bias squared of $g$:
+
+```{r}
+x = seq(xmin, xmax, length.out = resolution)
+g_avg_x = g_average[1] + g_average[2] * x + g_average[3] * x^2 + g_average[4] * x^3 + g_average[5] * x^4 + g_average[6] * x^5
+f_x = x^2
+biases = f_x - g_avg_x
+expe_bias_g_sq = mean(biases^2)
+expe_bias_g_sq
+```
+
+This appears to have increased over last time ... but it's only because we're not running the regression infinite times. Remember this "expectation" is only an average.
+
+What is the variance? Let's look at all lines:
+
+```{r}
+plot_obj = ggplot(data.frame(x = x)) + 
+  xlim(xmin, xmax) + ylim(xmin^2, xmax^2)
+
+for (nsim in 1 : min(Nsim, 50)){ #otherwise takes too long
+  plot_obj = plot_obj + geom_line(data = data.frame(x = x, y = training_gs[nsim, 1] + training_gs[nsim, 2] * x + training_gs[nsim, 3] * x^2 + training_gs[nsim, 4] * x^3 + training_gs[nsim, 5] * x^4 + training_gs[nsim, 6] * x^5), mapping = aes(x, y), col = "blue")
+}
+
+plot_obj +
+  stat_function(fun = function(x){g_average[1] + g_average[2] * x + g_average[3] * x^2 + g_average[4] * x^3 + g_average[5] * x^4 + g_average[6] * x^5}, col = "red", lwd = 2)
+```
+
+It looks awful!!!
+
+Now actually compute the average variance numerically:
+
+```{r}
+x = seq(xmin, xmax, length.out = resolution)
+
+expe_g_x = g_average[1] + g_average[2] * x + g_average[3] * x^2 + g_average[4] * x^3 + g_average[5] * x^4 + g_average[6] * x^5
+
+var_x_s = array(NA, Nsim)
+for (nsim in 1 : Nsim){
+  g_x = training_gs[nsim, 1] + training_gs[nsim, 2] * x + training_gs[nsim, 3] * x^2 + training_gs[nsim, 4] * x^3 + training_gs[nsim, 5] * x^4 + training_gs[nsim, 6] * x^5
+  var_x_s[nsim] = mean((g_x - expe_g_x)^2)
+}
+
+expe_var_g = mean(var_x_s)
+expe_var_g
+```
+
+Any more complexity than you need allows for overfitting!
+
+Now check the equivalence
+
+```{r}
+mse
+sigsq
+expe_bias_g_sq
+expe_var_g
+sigsq + expe_bias_g_sq + expe_var_g
+```
+
+# Bias - Variance Decomposition of MSE in Regression Trees
+
+Let's return to the simulated sine curve data which we used to introduce regression trees.
+
+```{r}
+rm(list = ls())
+n_train = 100
+n_test = 500
+xmin = 0
+xmax = 10
+sigsq = 0.09
+Nsim = 250
+resolution = 1000
+```
+
+And load the tree package:
+
+```{r}
+options(java.parameters = "-Xmx4000m")
+# pacman::p_install_gh("kapelner/YARF", subdir = "YARF", ref = "dev")
+pacman::p_load(YARF, tidyverse)
+```
+
+Now let's generate lots of different datasets and fit many tree models. Note there's a new argument `calculate_oob_error = FALSE`. This is here for speed only. Ignore this for now as we will go over what this means later in detail.
+
+```{r}
+training_gs = list() #storing entire objects - need a hash
+all_residuals = matrix(NA, nrow = Nsim, ncol = n_test)
+
+for (nsim in 1 : Nsim){
+  #simulate dataset $\mathbb{D}$
+  x_train = runif(n_train, xmin, xmax)
+  delta_train = rnorm(n_train, 0, sqrt(sigsq))
+  y_train = sin(x_train) + delta_train
+  # ggplot(data.frame(x = x, y = y), aes(x, y)) + geom_point(lwd=0.6) 
+  
+  #fit a model g | x's, delta's and save it
+  g_model = YARFCART(data.frame(x = x_train), y_train, calculate_oob_error = FALSE)
+  training_gs[[nsim]] = g_model
+  
+  #generate oos dataset and save residuals on oos data
+  x_test = runif(n_test, xmin, xmax)
+  delta_test = rnorm(n_test, 0, sqrt(sigsq)) #mean zero, variance sigsq always (not dependent on value of x)
+  y_test = sin(x_test) + delta_test
+  y_hat_test = predict(g_model, data.frame(x = x_test))
+  all_residuals[nsim, ] = y_test - y_hat_test
+}
+```
+
+Let's look at the last data set to remind ourselves of the problem setting:
+
+```{r}
+ggplot(data.frame(x = x_train, y = y_train)) + geom_point(aes(x, y))
+```
+
+
+What does the storage of all the models look like?
+
+```{r}
+head(training_gs)
+```
+
+Take a look at the mse:
+
+```{r}
+mse = mean(c(all_residuals)^2)
+mse
+```
+
+Let's visualize the bias
+
+```{r}
+#generate x and the truth
+x = seq(xmin, xmax, length.out = resolution)
+f_x = sin(x)
+
+#now estimate the expectation of g by averaging all the different models
+g_avg_x = array(0, resolution)
+for (nsim in 1 : Nsim){
+  g_nsim = training_gs[[nsim]]
+  g_avg_x = g_avg_x + predict(g_nsim, data.frame(x = x))
+}
+g_avg_x = g_avg_x / Nsim #average of all models
+
+#now plot
+ggplot(data.frame(x = x, f = f_x, expe_g = g_avg_x)) + 
+  geom_line(aes(x, f), col = "darkgreen") + 
+  geom_line(aes(x, expe_g), col = "red")
+```
+
+Not much! Now actually compute the average bias squared of $g$:
+
+```{r}
+biases = f_x - g_avg_x
+expe_bias_g_sq = mean(biases^2)
+expe_bias_g_sq
+```
+
+This is small - why??
+
+It's because trees are so expressive and have such model complexity that they can nail almost any true $f$ function!
+
+That means the MSE save the irreducible noise is coming from the variance. Let's look at one of the lines:
+
+```{r}
+plot_obj = ggplot(data.frame(x = x)) + 
+  xlim(xmin, xmax) #+ ylim(xmin^2, xmax^2)
+
+for (nsim in 1 : min(Nsim, 1)){ #otherwise takes too long
+  g_nsim = training_gs[[nsim]]
+  g_x = predict(g_nsim, data.frame(x = x))
+  plot_obj = plot_obj + geom_line(data = data.frame(x = x, y = g_x), aes(x = x, y = y), col = "blue")
+}
+
+plot_obj +
+  geom_line(data = data.frame(x = x, expe_g = g_avg_x), mapping = aes(x, expe_g), col = "red", lwd = 1.5)
+```
+
+It looks awful!!!
+
+Now actually compute the average variance numerically:
+
+```{r}
+x = seq(xmin, xmax, length.out = resolution)
+
+var_x_s = array(NA, min(Nsim, 50))
+for (nsim in 1 : min(Nsim, 50)){ #otherwise takes too long
+  g_nsim = training_gs[[nsim]]
+  g_x = predict(g_nsim, data.frame(x = x))
+  var_x_s[nsim] = mean((g_x - g_avg_x)^2)
+}
+
+expe_var_g = mean(var_x_s)
+expe_var_g
+```
+
+Any more complexity than you need allows for overfitting!
+
+Now check the equivalence
+
+```{r}
+mse
+sigsq
+expe_bias_g_sq
+expe_var_g
+sigsq + expe_bias_g_sq + expe_var_g
+```
+
+# Model Averaging via Bootstrap Aggregation ("Bagging")
+
+```{r}
+rm(list = ls())
+n_train = 100
+n_test = 500
+xmin = 0
+xmax = 10
+sigsq = 0.09
+num_trees = 250
+resolution = 1000
+```
+
+And load the tree package:
+
+```{r}
+options(java.parameters = "-Xmx4000m")
+# pacman::p_install_gh("kapelner/YARF", subdir = "YARF", ref = "dev")
+pacman::p_load(YARF)
+```
+
+Now let's generate one dataset (only ONE) 
+
+```{r}
+x_train = runif(n_train, xmin, xmax)
+delta_train = rnorm(n_train, 0, sqrt(sigsq))
+y_train = sin(x_train) + delta_train
+ggplot(data.frame(x = x_train, y = y_train)) + geom_point(aes(x, y))
+```
+
+Spend a moment to appreciate that this is all we're going to have. There is a lot of irreducible noise that is going to prevent us from finding the sine curve.
+
+Now we create many bootstrap samples to create similiar but different datasets and fit many tree models:
+
+```{r}
+bootstrapped_gs = list() #storing entire objects - need a hash
+
+for (t in 1 : num_trees){
+  #fit a model g | x's, delta's and save it
+  bootstrap_indices_t = sample(1 : n_train, replace = TRUE)
+  g_model = YARFCART(data.frame(x = x_train[bootstrap_indices_t]), y_train[bootstrap_indices_t], calculate_oob_error = FALSE)
+  bootstrapped_gs[[t]] = g_model
+}
+```
+
+Now let's aggregate all models constructed with bootstrap samples together by averaging and see what it looks like relative to real $f$:
+
+```{r}
+#generate x and the truth
+x = seq(xmin, xmax, length.out = resolution)
+f_x = sin(x)
+
+#create the bagged model predictions
+g_bagged = array(0, resolution)
+for (t in 1 : num_trees){
+  g_t = bootstrapped_gs[[t]]
+  g_bagged = g_bagged + predict(g_t, data.frame(x = x))
+}
+g_bagged = g_bagged / num_trees #average of all models
+
+#now plot
+ggplot(data.frame(x = x, f = f_x, g_bagged = g_bagged)) + 
+  geom_line(aes(x, f), col = "darkgreen") + 
+  geom_line(aes(x, g_bagged), col = "blue")
+```
+  
+That's pretty good considering the plot of the raw data from above.
+
+Now let's see if this is truly better than one tree. The way to do this is generate lots of datasets and try to estimate mse (with bias and variance).
+
+To do this, we employ a convenience method called `YARFBAG`. We first define a number of trees in the "bag":
+
+```{r}
+num_trees = 250 #called "M" in class
+```
+
+And then we run the same simulation as we did above with one tree.
+
+```{r}
+Nsim = 250
+training_gs = list() #storing entire objects - need a hash
+all_residuals = matrix(NA, nrow = Nsim, ncol = n_test)
+
+for (nsim in 1 : Nsim){
+  #simulate dataset $\mathbb{D}$
+  x_train = runif(n_train, xmin, xmax)
+  delta_train = rnorm(n_train, 0, sqrt(sigsq))
+  y_train = sin(x_train) + delta_train
+  # ggplot(data.frame(x = x, y = y), aes(x, y)) + geom_point(lwd=0.6) 
+  
+  #fit a model g | x's, delta's and save it
+  g_model = YARFBAG(data.frame(x = x_train), y_train, num_trees = num_trees, calculate_oob_error = FALSE)
+  training_gs[[nsim]] = g_model
+  
+  #generate oos dataset and save residuals on oos data
+  x_test = runif(n_test, xmin, xmax)
+  delta_test = rnorm(n_test, 0, sqrt(sigsq)) #mean zero, variance sigsq always (not dependent on value of x)
+  y_test = sin(x_test) + delta_test
+  y_hat_test = predict(g_model, data.frame(x = x_test))
+  all_residuals[nsim, ] = y_test - y_hat_test
+}
+```
+
+Let's look at the last data set to remind ourselves of the problem setting:
+
+```{r}
+ggplot(data.frame(x = x_train, y = y_train)) + geom_point(aes(x, y))
+```
+
+
+What does the storage of all the models look like?
+
+```{r}
+head(training_gs)
+```
+
+Take a look at the mse:
+
+```{r}
+mse = mean(c(all_residuals)^2)
+mse
+```
+
+Let's visualize the bias
+
+```{r}
+#generate x and the truth
+x = seq(xmin, xmax, length.out = resolution)
+f_x = sin(x)
+
+#now estimate the expectation of g by averaging all the different models
+g_avg_x = array(0, resolution)
+for (nsim in 1 : Nsim){
+  g_nsim = training_gs[[nsim]]
+  g_avg_x = g_avg_x + predict(g_nsim, data.frame(x = x))
+}
+g_avg_x = g_avg_x / Nsim #average of all models
+
+#now plot
+ggplot(data.frame(x = x, f = f_x, expe_g = g_avg_x)) + 
+  geom_line(aes(x, f), col = "darkgreen") + 
+  geom_line(aes(x, expe_g), col = "red")
+```
+
+Not much! If anything it should be *better* than the bias of a single tree!
+
+Now actually compute the average bias squared of $g$:
+
+```{r}
+biases = f_x - g_avg_x
+expe_bias_g_sq = mean(biases^2)
+expe_bias_g_sq
+```
+
+Almost zilch.
+
+Now... variance?
+
+```{r}
+plot_obj = ggplot(data.frame(x = x)) + 
+  xlim(xmin, xmax) #+ ylim(xmin^2, xmax^2)
+
+for (nsim in 1 : min(Nsim, 50)){ #otherwise takes too long
+  g_nsim = training_gs[[nsim]]
+  g_x = predict(g_nsim, data.frame(x = x))
+  plot_obj = plot_obj + geom_line(data = data.frame(x = x, y = g_x), aes(x = x, y = y), col = "blue")
+}
+
+plot_obj +
+  geom_line(data = data.frame(x = x, expe_g = g_avg_x), mapping = aes(x, expe_g), col = "red", lwd = 1.5)
+```
+
+There is variance, but less than previously when only one tree was used.
+
+Now actually compute the average variance numerically:
+
+```{r}
+x = seq(xmin, xmax, length.out = resolution)
+
+var_x_s = array(NA, min(Nsim, 50))
+for (nsim in 1 : min(Nsim, 50)){ #otherwise takes too long
+  g_nsim = training_gs[[nsim]]
+  g_x = predict(g_nsim, data.frame(x = x))
+  var_x_s[nsim] = mean((g_x - g_avg_x)^2)
+}
+
+expe_var_g = mean(var_x_s)
+expe_var_g
+```
+
+Any more complexity than you need allows for overfitting!
+
+Now check the equivalence
+
+```{r}
+mse
+sigsq
+expe_bias_g_sq
+expe_var_g
+sigsq + expe_bias_g_sq + expe_var_g
+```
+
+We have a better algorithm!
+
+# Bagged Trees vs. a Linear Model
+
+First we'll load the packages and data:
+
+```{r}
+rm(list = ls())
+options(java.parameters = "-Xmx8000m")
+# pacman::p_install_gh("kapelner/YARF", subdir = "YARF", ref = "dev")
+# pacman::p_load(YARF, ggplot2)
+library(YARF)
+diamonds_sample = diamonds[sample(1 : nrow(diamonds), 2000), ]
+boston = MASS::Boston
+cancer = MASS::biopsy
+cancer$ID = NULL
+cancer = na.omit(cancer)
+pacman::p_load_gh("coatless/ucidata")
+data(adult)
+adult = na.omit(adult) #kill any observations with missingness
+adult_sample = adult[sample(1 : nrow(adult), 2000), ]
+```
+
+Let's look at the boston housing data first
+
+```{r}
+prop_test = 0.1
+test_indices = sample(1 : nrow(boston), round(prop_test * nrow(boston)))
+boston_test = boston[test_indices, ]
+y_test = boston_test$medv
+X_test = boston_test
+X_test$medv = NULL
+train_indices = setdiff(1 : nrow(boston), test_indices)
+boston_train = boston[train_indices, ]
+y_train = boston_train$medv
+X_train = boston_train
+X_train$medv = NULL
+
+mod_lin = lm(y_train ~ ., X_train)
+y_hat_test_lin = predict(mod_lin, X_test)
+s_e_lin = sd(y_test - y_hat_test_lin)
+s_e_lin
+
+num_trees = 500
+mod_bag = YARFBAG(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE)
+y_hat_test_bag = predict(mod_bag, X_test)
+s_e_bag = sd(y_test - y_hat_test_bag)
+s_e_bag
+
+cat("oos standard error reduction:", (1 - s_e_bag / s_e_lin) * 100, "%\n")
+```
+
+How much room was there to improve?
+
+```{r}
+summary(mod_lin)$r.squared
+```
+
+Whole lot of room to improve! That extra 26% or so of unexplained variance is split between bias and irreducible error due to unknown information. The bagged trees can get rid of the bias and minimize variance while doing so. And it did a great job!
+
+Now the diamonds data:
+
+```{r}
+n_train = 500
+
+training_indices = sample(1 : nrow(diamonds), n_train)
+diamonds_train = diamonds[training_indices, ]
+y_train = diamonds_train$price
+X_train = diamonds_train
+X_train$price = NULL
+
+
+test_indices = setdiff(1 : nrow(diamonds), training_indices)
+diamonds_test = diamonds[test_indices, ]
+y_test = diamonds_test$price
+X_test = diamonds_test
+X_test$price = NULL
+
+
+mod_lin = lm(y_train ~ ., X_train)
+y_hat_test_lin = predict(mod_lin, X_test)
+s_e_lin = sd(y_test - y_hat_test_lin)
+s_e_lin
+
+mod_bag = YARFBAG(X_train, y_train, calculate_oob_error = FALSE)
+y_hat_test_bag = predict(mod_bag, X_test)
+s_e_bag = sd(y_test - y_hat_test_bag)
+s_e_bag
+
+cat("oos standard error reduction:", (1 - s_e_bag / s_e_lin) * 100, "%\n")
+```
+
+```{r}
+summary(mod_lin)$r.squared
+```
+
+Not a whole lot of room to improve! That extra 8% of unexplained variance is split between bias and irreducible error due to unknown information. But it did the best it can. It is likely what's remaining is due to information we are not privy to.
+
+
+# Validation in Bagging?
+
+We are using the "bootstrap" to get the trees. Can we do model validation in the same step? 
+
+The answer is yes. For every tree, there was a bootstrap sample of the training set used to build the tree. But there are observations in $\mathbb{D}$ that are not in the bootstrap sample! About 1/3 on average are left out i.e. "out of bag (oob)". Over many trees, there are different oob subsets than become the full data set. So you actually have validation in a way on the whole dataset kind of like K-fold cross validation. Supposedly this validation is similar to K=2 in terms of performance. It is what everyone seems to use. 
+
+Let's load the data and packages from last class and plot the data:
+
+```{r}
+rm(list = ls())
+n_train = 100
+n_test = 500
+xmin = 0
+xmax = 10
+sigsq = 0.09
+num_trees = 500
+x_train = runif(n_train, xmin, xmax)
+delta_train = rnorm(n_train, 0, sqrt(sigsq))
+y_train = sin(x_train) + delta_train
+ggplot(data.frame(x = x_train, y = y_train)) + geom_point(aes(x, y))
+```
+
+Let's look at one bagged tree model and compute OOB errors after construction:
+
+```{r}
+bagged_tree_mod = YARFBAG(data.frame(x = x_train), y_train, num_trees = num_trees) #TRUE is the default! Why? It's something you want to know!
+bagged_tree_mod
+```
+
+How did this work? Let's look at the oob sets:
+
+```{r}
+cat("bootstrap indices:")
+sort(bagged_tree_mod$bootstrap_indices[[1]])
+cat("oob:")
+sort(setdiff(1 : n_train, bagged_tree_mod$bootstrap_indices[[1]]))
+cat("bootstrap indices:")
+bagged_tree_mod$bootstrap_indices[[2]]
+cat("oob:")
+setdiff(1 : n_train, bagged_tree_mod$bootstrap_indices[[2]])
+```
+
+It took predictions on each tree on the oob set, averaged by observation across trees and then averaged across observation averages.
+
+
+# Random Forests
+
+
+What do we have now? We have model selection is done within training. And training and validation are done in a single step! No more costly K-fold CV with 3 splits!
+
+But can it get any better? YES. As you saw, the variance terms can be shrunk further the more decorrelated the trees become. We do this now by introducing randomness into the splits by choosing only a subset of the features to split on randomly. The trees are then grown as normal. Then the we model average many trees via bagging. And that's random forests!
+
+Quick demo with the boston housing data and oob validation:
+
+```{r}
+rm(list = ls())
+boston = MASS::Boston
+y = boston$medv
+X = boston
+X$medv = NULL
+
+mod_bag = YARFBAG(X, y, num_trees = 500)
+mod_bag
+mod_rf = YARF(X, y, num_trees = 500)
+mod_rf
+```
+
+Gain in decorrelation?
+
+```{r}
+cat("gain: ", (mod_rf$pseudo_rsq_oob - mod_bag$pseudo_rsq_oob) / mod_bag$pseudo_rsq_oob * 100, "%\n")
+```
+
+For this example, not much. How about on the diamonds dataset?
+
+```{r}
+diamonds = ggplot2::diamonds
+
+rm(list = ls())
+num_trees = 500
+n_train = 500
+
+training_indices = sample(1 : nrow(diamonds), n_train)
+diamonds_train = diamonds[training_indices, ]
+y_train = diamonds_train$price
+X_train = diamonds_train
+X_train$price = NULL
+
+mod_bag = YARFBAG(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE)
+mod_rf = YARF(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE)
+
+test_indices = setdiff(1 : nrow(diamonds), training_indices)
+diamonds_test = diamonds[test_indices, ]
+y_test = diamonds_test$price
+X_test = diamonds_test
+X_test$price = NULL
+
+mse_bag = sum((y_test = predict(mod_bag, X_test))^2) / nrow(X_test)
+mse_rf = sum((y_test = predict(mod_rf, X_test))^2) / nrow(X_test)
+cat("gain: ", (mse_bag - mse_rf) / mse_bag * 100, "%\n")
+```
+
+Also, not much, but real.
+
+
+# Correlation does not Imply Causation
+
+Take a look at the following real data:
+
+```{r}
+spurious = data.frame(
+  yearly_divorce_rate_maine_per_1000 = c(5,4.7,4.6,4.4,4.3,4.1,4.2,4.2,4.2,4.1),
+  yearly_US_consumption_margarine_per_capita = c(8.2,7,6.5,5.3,5.2,4,4.6,4.5,4.2,3.7)
+)
+
+ggplot(spurious, aes(x = yearly_divorce_rate_maine_per_1000, y = yearly_US_consumption_margarine_per_capita)) +
+  geom_point() + geom_smooth()
+```
+
+How did this happen? 
+
+Well, we can imagine doing the same thing.
+
+
+```{r}
+y = spurious$yearly_US_consumption_margarine_per_capita
+n = length(y)
+
+r = 100000
+best_abs_corr = 0
+best_random_xs = NULL
+for (i in 1 : r){
+  x = rnorm(n)
+  
+  random_abs_corr = abs(cor(x, y))
+  if (random_abs_corr > best_abs_corr){
+    best_abs_corr = random_abs_corr
+    best_random_xs = x
+  }
+}
+spurious$best_random_xs = best_random_xs
+ggplot(spurious, aes(x = best_random_xs, y = yearly_US_consumption_margarine_per_capita)) +
+  geom_point() + geom_smooth() + ggtitle(paste("Spurious Correlation has |r| = ", round(best_abs_corr, 3)))
+```
+
+So what's the narrative here? If you look through a gajillion random features that have no causal connection with the phenomenon $y$, you will eventually find something that "clicks". However, this will be vanish if you keep collecting data. Anything that is built upon falsehood will crumble!
+
+#An Example of Correlation without Causation
+
+When does correlation really not imply causation? From class, we spoke about the phenomenon $y$ = "num car accidents" with observed feature "x" = "num umbrellas sold" but common cause $z$ = "rain amount". It is clear the umbrella sales has *no causal* relationship with car accidents. But they *are correlated* because they are linked by a common cause. Here's the data example that makes this clear.
+
+The data generating process as specified by the causal diagram looks as follows:
+
+```{r}
+rm(list = ls())
+set.seed(1)
+n = 300
+sigma = 0.3
+
+umbrella_example_data = data.frame(
+  z_rainfall = runif(n, 0, 6) #here's the common cause - rainfall
+)
+umbrella_example_data$x_umbrella_sales = umbrella_example_data$z_rainfall^2 + rnorm(n, sigma) #x is a variable that is driven by z with noise
+umbrella_example_data$y_car_accidents = umbrella_example_data$z_rainfall + rnorm(n, sigma) #y is a variable driven by z with noise
+```
+
+So we only see $x$ and $y$. Here's what it appears as:
+
+```{r}
+pacman::p_load(ggplot2)
+ggplot(umbrella_example_data) +
+  aes(x = x_umbrella_sales, y = y_car_accidents) +
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+and the model looks like:
+
+```{r}
+mod = lm(y_car_accidents ~ x_umbrella_sales, umbrella_example_data)
+round(coef(mod), 3)
+```
+
+So what's the interpretation of the coefficient for $x$? ...
+
+What you can't say is that $x$ is a causal contributor to $y$! You may want to say it, but you can't!
+
+Now let's build a model of $y$ linear in both $x$ and $z$. What happens?
+
+```{r}
+mod = lm(y_car_accidents ~ x_umbrella_sales + z_rainfall, umbrella_example_data)
+round(coef(mod), 3)
+```
+
+The effect of $x$ is gone!! Why? If you keep $z$ constant, the sole true causal factor in $y$, manipulating $x$ won't matter anymore!
+
+Why is this? Well, you can look at how x affects y in local areas of z for instance.
+
+```{r}
+b = 0.8; a = 0.7
+z_small_indices = umbrella_example_data$z_rainfall < 
+  quantile(umbrella_example_data$z_rainfall, b) &
+  umbrella_example_data$z_rainfall >
+  quantile(umbrella_example_data$z_rainfall, a)
+
+ggplot(umbrella_example_data[z_small_indices, ]) +
+  aes(x = x_umbrella_sales, y = y_car_accidents) +
+  geom_point()
+```
+
+If you force the common cause (lurking variable) to be an approximate constant, then you won't see any affect of x on y.
+
+
+#Classification Trees and Confusion Tables
+
+Let's load up the adult dataset where the response is 1 if the person makes more than $50K per year and 0 if they make less than $50K per year.
+
+```{r}
+pacman::p_load_gh("coatless/ucidata")
+data(adult)
+adult %<>% 
+  na.omit #kill any observations with missingness
+str(adult)
+?adult
+```
+
+Let's use samples of 2,000 to run experiments:
+
+```{r}
+test_size = 2000
+train_indices = sample(1 : nrow(adult), test_size)
+adult_train = adult[train_indices, ]
+y_train = adult_train$income
+X_train = adult_train
+X_train$income = NULL
+test_indices = sample(setdiff(1 : nrow(adult), train_indices), test_size)
+adult_test = adult[test_indices, ]
+y_test = adult_test$income
+X_test = adult_test
+X_test$income = NULL
+```
+
+Load the tree package:
+
+```{r}
+options(java.parameters = "-Xmx4000m")
+# pacman::p_install_gh("kapelner/YARF", subdir = "YARF", ref = "dev")
+pacman::p_load(YARF)
+```
+
+Make a tree:
+
+```{r}
+tree_mod = YARFCART(X_train, y_train)
+```
+
+How "big" is this tree model?
+
+```{r}
+get_tree_num_nodes_leaves_max_depths(tree_mod)
+```
+
+What are the "main" splits?
+
+```{r}
+illustrate_trees(tree_mod, max_depth = 4, open_file = TRUE)
+```
+
+Compute in-sample and out of sample fits:
+
+```{r}
+y_hat_train = predict(tree_mod, X_train)
+y_hat_test = predict(tree_mod, X_test)
+```
+
+Let's look at the confusion table in-sample:
+
+```{r}
+table(y_train, y_hat_train)
+```
+
+There are no errors here! Thus, precision and recall are both 100%. This makes sense because classification trees overfit.
+
+Let's do the same oos:
+
+```{r}
+oos_conf_table = table(y_test, y_hat_test)
+oos_conf_table
+```
+
+We didn't do as well (of course). Let's calculate some performance metrics. We assume ">50k" is the "positive" category and "<=50k" is the "negative" category. Note that this choice is arbitrary and everything would just be switched if we did it the other way.
+
+```{r}
+n = sum(oos_conf_table)
+n
+fp = oos_conf_table[1, 2]
+fn = oos_conf_table[2, 1]
+tp = oos_conf_table[2, 2]
+tn = oos_conf_table[1, 1]
+num_pred_pos = sum(oos_conf_table[, 2])
+num_pred_neg = sum(oos_conf_table[, 1])
+num_pos = sum(oos_conf_table[2, ])
+num_neg = sum(oos_conf_table[1, ])
+acc = (tp + tn) / n
+acc
+misclassifcation_error = 1 - acc
+misclassifcation_error
+precision = tp / num_pred_pos
+precision
+recall = tp / num_pos
+recall
+false_discovery_rate = 1 - precision
+false_discovery_rate
+false_omission_rate = fn / num_pred_neg
+false_omission_rate
+```
+
+Let's see how this works on a dataset whose goal is classification for more than 2 levels. Note: this is only possible now with trees!
+
+```{r}
+rm(list = ls())
+pacman::p_load(mlbench)
+data(LetterRecognition)
+LetterRecognition = na.omit(LetterRecognition) #kill any observations with missingness
+str(LetterRecognition)
+?LetterRecognition
+```
+
+Now we split the data:
+
+```{r}
+test_samp = 2000
+train_indices = sample(1 : nrow(LetterRecognition), test_samp)
+ltr_train = LetterRecognition[train_indices, ]
+y_train = ltr_train$lettr
+X_train = ltr_train
+X_train$lettr = NULL
+test_indices = sample(setdiff(1 : nrow(LetterRecognition), train_indices), test_samp)
+ltr_test = LetterRecognition[test_indices, ]
+y_test = ltr_test$lettr
+X_test = ltr_test
+X_test$lettr = NULL
+```
+
+And fit a tree model and its in-sample and oos fits:
+
+```{r}
+tree_mod = YARFCART(X_train, y_train)
+y_hat_train = predict(tree_mod, X_train)
+y_hat_test = predict(tree_mod, X_test)
+```
+
+Take a look at the in-sample confusion matrix:
+
+```{r}
+table(y_train, y_hat_train)
+```
+
+Perfecto... as expected... 
+
+Now the oos confusion matrix:
+
+```{r}
+oos_confusion_table = table(y_test, y_hat_test)
+oos_confusion_table
+```
+
+Hard to read. Let's make it easier to read by blanking out the diagonal and looking at entried only >= 5:
+
+```{r}
+oos_confusion_table[oos_confusion_table < 5] = ""
+diag(oos_confusion_table) = "."
+oos_confusion_table
+```
+
+What's it using to determine letter?
+
+```{r}
+illustrate_trees(tree_mod, max_depth = 3, open_file = TRUE)
+```
+
+Where did these features comes from?? Deep learning helps to create the features from the raw pixel data. Wish I had a whole next semester to discuss this...
+
+Random Forests:
+
+```{r}
+num_trees = 500
+n_train = 500
+
+training_indices = sample(1 : nrow(adult), n_train)
+adult_train = adult[training_indices, ]
+y_train = adult_train$income
+X_train = adult_train
+X_train$income = NULL
+
+mod_bag = YARFBAG(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE)
+mod_rf = YARF(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE)
+```
+
+And test:
+
+```{r}
+test_indices = sample(setdiff(1 : nrow(adult), training_indices), 25000)
+adult_test = adult[test_indices, ]
+y_test = adult_test$income
+X_test = adult_test
+X_test$income = NULL
+
+y_hat_test_bag = predict(mod_bag, X_test)
+y_hat_test_rf = predict(mod_rf, X_test)
+
+oos_conf_table_bag = table(y_test, y_hat_test_bag)
+oos_conf_table_rf = table(y_test, y_hat_test_rf)
+oos_conf_table_bag
+oos_conf_table_rf
+miscl_err_bag = mean(y_test != y_hat_test_bag)
+miscl_err_rf = mean(y_test != y_hat_test_rf)
+miscl_err_bag
+miscl_err_rf
+
+cat("gain: ", (miscl_err_bag - miscl_err_rf) / miscl_err_bag * 100, "%\n")
+```
+
+And on letters:
+
+```{r}
+test_samp = 2000
+train_indices = sample(1 : nrow(LetterRecognition), test_samp)
+ltr_train = LetterRecognition[train_indices, ]
+y_train = ltr_train$lettr
+X_train = ltr_train
+X_train$lettr = NULL
+test_indices = sample(setdiff(1 : nrow(LetterRecognition), train_indices), test_samp)
+ltr_test = LetterRecognition[test_indices, ]
+y_test = ltr_test$lettr
+X_test = ltr_test
+X_test$lettr = NULL
+```
+
+And fit a tree model and its in-sample and oos fits:
+
+```{r}
+mod_bag = YARFBAG(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE)
+mod_rf = YARF(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE)
+mod_bag
+mod_rf
+
+oos_conf_table_bag = table(y_test, y_hat_test_bag)
+oos_conf_table_rf = table(y_test, y_hat_test_rf)
+oos_conf_table_bag
+oos_conf_table_rf
+miscl_err_bag = mean(y_test != y_hat_test_bag)
+miscl_err_rf = mean(y_test != y_hat_test_rf)
+miscl_err_bag
+miscl_err_rf
+
+cat("gain: ", (miscl_err_bag - miscl_err_rf) / miscl_err_bag * 100, "%\n")
+```
+
+
+# Missingness
+
+Take a look at the weather dataset again:
+
+```{r}
+pacman::p_load(nycflights13, tidyverse, magrittr)
+data(weather)
+str(weather)
+summary(weather)
+```
+
+Note how `time_hour` is perfectly collinear with the year, month, day and hour columns. So let's drop `time_hour`:
+
+```{r}
+weather %<>%
+  select(-c(time_hour))
+```
+
+We also cannot have character variables:
+
+```{r}
+weather %<>%
+  mutate(origin = as.factor(origin))
+```
+
+
+Imagine we were trying to predict `precip`. So let's section our dataset:
+
+```{r}
+y = weather$precip
+X = weather
+X$precip = NULL
+rm(weather)
+```
+
+Let's first create a matrix with $p$ columns that represents missingness
+
+```{r}
+M = tbl_df(apply(is.na(X), 2, as.numeric))
+colnames(M) = paste("is_missing_", colnames(X), sep = "")
+head(M)
+summary(M)
+```
+
+Some of these missing indicators are collinear because they share all the rows they are missing on. Let's filter those out:
+
+```{r}
+M = tbl_df(t(unique(t(M))))
+```
+
+
+Many featuers did not have missingness so let's remove them:
+
+```{r}
+M %<>% select_if(function(x){sum(x) > 0})
+head(M)
+dim(M)
+colSums(M)
+```
+
+Now let's work on imputation. The missingness is not extreme except in the `wind_gust` variable. Let's drop that variable:
+
+```{r}
+X %<>% select(-wind_gust)
+```
+
+Without imputing and without using missingness as a predictor in its own right, let's see what we get with a basic linear model now:
+
+```{r}
+lin_mod_listwise_deletion = lm(y ~ ., X)
+summary(lin_mod_listwise_deletion)
+```
+
+A measly 13.2%. Also note: year is collinear.
+
+Now let's impute using the package. we cannot fit RF models to the entire dataset (it's 26,000! observations) so we will sample 2,000 for each of the trees and then average. That will be good enough.
+
+```{r}
+pacman::p_load(missForest)
+Ximp = missForest(data.frame(X), sampsize = rep(2000, ncol(X)))$ximp
+```
+
+Now we take our imputed dataset, combine it with our missingness indicators for a new design matrix.
+
+```{r}
+Xnew = data.frame(cbind(Ximp, M))
+linear_mod_impute_and_missing_dummies = lm(y ~ ., Xnew)
+summary(linear_mod_impute_and_missing_dummies)
+```
+
+Is this a better model?? Are they even comparable? How to compare them? I'm not sure... certainly an R^2 comparison is the wrong way to compare.
+
+Note: this is just an illustration of best practice. It didn't necessarily have to "work".
+
+It is hard to compare the two models since the first model was built with 23,000 observations and this was built with the full 26,000 observations. Those extra 3,000 are the most difficult to predict on. This is complicated...

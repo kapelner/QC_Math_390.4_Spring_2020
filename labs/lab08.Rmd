@@ -64,7 +64,7 @@ Find the strongest storm by wind speed per year.
 #TO-DO
 ```
 
-For each named storm, find its maximum category, wind speed, pressure and diameters (do not allow the max to be NA).
+For each named storm, find its maximum category, wind speed, pressure and diameters. Do not allow the max to be NA (unless all the measurements for that storm were NA).
 
 ```{r}
 #TO-DO
