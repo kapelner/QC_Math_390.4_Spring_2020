@@ -5,12 +5,14 @@ output: pdf_document
 date: "11:59PM May 2, 2020"
 ---
 
-Load the `adult` dataset and remove missingness.
+Set a seed and load the `adult` dataset and remove missingness. We also drop the education variable as it's linearly dependent with the education_num variable and will complicate the interactions further on.
 
 ```{r}
+set.seed(1)
 pacman::p_load_gh("coatless/ucidata")
 data(adult)
 adult = na.omit(adult)
+adult$education = NULL
 ```
 
 We had problems with the features "occupation" and "native_country". Go through these two features and and identify levels with too few examples and wrap them into a level called "other". This is standard practice.
@@ -21,6 +23,7 @@ adult$occupation = as.character(adult$occupation)
 adult$other = adult$occupation %in% c("Armed-Forces", "Priv-house-serv", "Protective-serv")
 table(adult$other)
 adult$occupation[adult$other] = "other"
+adult$other = NULL
 adult$occupation = as.factor(adult$occupation)
 sort(table(adult$occupation))
 
@@ -30,21 +33,28 @@ table(adult$domestic)
 adult$native_country = NULL
 ```
 
-We will be doing model selection. Split the dataset into 3 distinct subsets of 5000 observations. You will need the following variables: `Xtrain`, `ytrain`, `Xselect`, `yselect`, `Xtest`, `ytest`.
+
+We will be doing model selection. We will split the dataset into 3 distinct subsets. Set the size of our splits here. For simplicitiy, all three splits will be identically sized. We are making it small so the stepwise algorithm can compute quickly. If you have a faster machine, feel free to increase this.
 
 ```{r}
-set.seed(1)
+Nsplitsize = 1000
+```
+
+
+Now create the following variables: `Xtrain`, `ytrain`, `Xselect`, `yselect`, `Xtest`, `ytest` with `Nsplitsize` observations:
+
+```{r}
 adult = adult[sample(1 : nrow(adult)), ]
-Xtrain = adult[1 : 5000, ]
+
+Xtrain = adult[1 : Nsplitsize, ]
 Xtrain$income = NULL
-ytrain = ifelse(adult[1 : 5000, "income"] == ">50K", 1,0)
-Xselect = adult[5001 : 10000, ]
+ytrain = ifelse(adult[1 : Nsplitsize, "income"] == ">50K", 1, 0)
+Xselect = adult[(Nsplitsize + 1) : (2 * Nsplitsize), ]
 Xselect$income = NULL
-yselect = ifelse(adult[5001 : 10000, "income"] ==">50K", 1,0)
-Xtest = adult[10001 : 15000, ]
+yselect = ifelse(adult[(Nsplitsize + 1) : (2 * Nsplitsize), "income"] ==">50K", 1, 0)
+Xtest = adult[(2 * Nsplitsize + 1) : (3 * Nsplitsize), ]
 Xtest$income = NULL
-ytest = ifelse(adult[10001 : 15000, "income"] == ">50K",1,0)
- 
+ytest = ifelse(adult[(2 * Nsplitsize + 1) : (3 * Nsplitsize), "income"] == ">50K", 1, 0)
 ```
 
 Fit a vanilla logistic regression on the training set.
@@ -56,35 +66,40 @@ logistic_mod = glm(ytrain ~ ., Xtrain, family = "binomial")
 and report the log scoring rule, the Brier scoring rule.
 
 ```{r}
-phatTrain = predict(logistic_mod, Xtrain, type = 'response')
-logScoringRule = ytrain * log(phatTrain)+(1-ytrain)*log(1-phatTrain)
-head(logScoringRule)
-mean(logScoringRule)
-mean(-(ytrain - phatTrain)^2)
+phat_train = predict(logistic_mod, Xtrain, type = 'response')
+mean(ytrain * log(phat_train) + (1 - ytrain) * log(1 - phat_train)) #log score computation
+mean(-(ytrain - phat_train)^2) #brier score computations
 ```
+
 
 Then use this probability estimation model to do classification by thresholding at 0.5. Tabulate a confusion matrix and compute the misclassification error.
 
 ```{r}
-y_hat_train = ifelse(phatTrain >= 0.5, 1, 0)
+y_hat_train = ifelse(phat_train >= 0.5, 1, 0)
 table(ytrain, y_hat_train)
-
-mean(ytrain!=y_hat_train)
-
+mean(ytrain != y_hat_train)
 ```
 
-We will be doing model selection using a basis of linear features consisting of all interactions of the 14 raw features. Create a model matrix from the training data containing all these features. Make sure it has an intercept column too (the one vector is usually an important feature).
+We will be doing model selection using a basis of linear features consisting of all interactions of the 14 raw features. Create a model matrix from the training data containing all these features. Make sure it has an intercept column too (the one vector is usually an important feature). Cast it as a data frame so we can use it more easily for modeling later on.
 
 ```{r}
-Xmm_train = model.matrix(~.*. , Xtrain)
-Xmm_select = model.matrix(~.*. , Xselect)
+Xmm_train = data.frame(model.matrix(~ . * ., Xtrain))
 dim(Xmm_train)
-dim(Xmm_select)
 ```
 
-Write code that will fit a model stepwise. You can refer to the chunk of line 83 in practice lecture 12. Use the Brier score to do the selection. Run the code and hit "stop" when you begin to the see the Brier score degrade appreciably.
+We're going to need those model matrices (as data frames) for both the select and test sets. So make them here:
 
 ```{r}
+Xmm_select = data.frame(model.matrix(~ . * . , Xselect))
+dim(Xmm_select)
+Xmm_test = data.frame(model.matrix(~ . * . , Xtest))
+dim(Xmm_test)
+```
+
+Write code that will fit a model stepwise. You can refer to the chunk of line 83 in practice lecture 12. Use the Brier score to do the selection. Run the code and hit "stop" when you begin to the see the Brier score degrade appreciably oos. Be patient as it will wobble.
+
+```{r}
+pacman::p_load(Matrix)
 p_plus_one = ncol(Xmm_train)
 predictor_by_iteration = c() #keep a growing list of predictors by iteration
 in_sample_brier_by_iteration = c() #keep a growing list of se's by iteration
@@ -98,28 +113,32 @@ repeat {
   for (j_try in 1 : p_plus_one){
     if (!(j_try %in% predictor_by_iteration)){
       Xmm_sub = Xmm_train[, c(predictor_by_iteration, j_try), drop = FALSE]
-      logistic_mod = glm(ytrain ~ ., data.frame(Xmm_sub), family = "binomial")
-      phatTrain = predict(logistic_mod, data.frame(Xmm_sub), type = 'response')
+      #we need a check here to ensure the matrix is full rank
+      if (ncol(Xmm_sub) > rankMatrix(Xmm_sub)){
+        next
+      }
+      #use suppressWarnings to get this to run without blasting the console
+      logistic_mod = suppressWarnings(glm(ytrain ~ ., Xmm_sub, family = "binomial"))
+      phatTrain = suppressWarnings(predict(logistic_mod, Xmm_sub, type = 'response'))
       all_brier[j_try] = mean(-(ytrain - phatTrain)^2) 
     }
   }
-  j_star = which.min(all_brier)
+  j_star = which.max(all_brier) #We didn't catch this in lab... it has to be max Brier.
   predictor_by_iteration = c(predictor_by_iteration, j_star)
   in_sample_brier_by_iteration = c(in_sample_brier_by_iteration, all_brier[j_star])
   
   #now let's look at oos
   Xmm_sub = Xmm_train[, predictor_by_iteration, drop = FALSE]
-  logistic_mod = glm(ytrain ~ ., data.frame(Xmm_sub), family = "binomial")
-  phatTrain = predict(logistic_mod, data.frame(Xmm_sub), type = 'response')
+  logistic_mod = suppressWarnings(glm(ytrain ~ ., Xmm_sub, family = "binomial"))
+  phatTrain = suppressWarnings(predict(logistic_mod, Xmm_sub, type = 'response'))
   all_brier[j_try] = mean(-(ytrain - phatTrain)^2)
   
-  phat_select = predict(logistic_mod, Xmm_select[, predictor_by_iteration, drop = FALSE], type = 'response')
-  
-  
+  phat_select = suppressWarnings(predict(logistic_mod, Xmm_select[, predictor_by_iteration, drop = FALSE], type = 'response'))
+
   oos_brier = mean(-(yselect - phat_select)^2) 
   oos_brier_by_iteration = c(oos_brier_by_iteration, oos_brier)
   
-  cat("i = ", i, "in sample: brier = ", all_brier[j_star], "oos_brier", oos_brier, "\n   predictor added:", colnames(Xmm_train)[j_star], "\n")
+  cat("i =", i, "in sample brier = ", all_brier[j_star], "oos brier =", oos_brier, "\n   predictor added:", colnames(Xmm_train)[j_star], "\n")
   
   i = i + 1
   
