@@ -2,8 +2,65 @@
 title: "Lab 10"
 author: "Your Name Here"
 output: pdf_document
-date: "11:59PM May 12, 2019"
+date: "11:59PM May 9, 2020"
 ---
+
+Before you do this lab, ensure you have the Java JDK installed. The JDK is NOT the JRE. The former allows you to compile Java programs and the latter allows you only to run Java programs. Then insure that `rJava` is installed and working. In other words, the following should work and give the same output from practice lecture 12. If it doesn't, try the code that is commented out to reinstall. Google errors. Frustration in libraries and platforms not working on your computer is unfortunately part of computer science and thus part of data science.
+
+```{r}
+options(java.parameters = "-Xmx4000m")
+pacman::p_load(rJava)
+#if that doesn't work, use:
+# install.packages("rJava", type = "source")
+# library(rJava)
+.jinit() #this initializes the JVM in the background and if this runs with no issues nor output, you probably have rJava installed and connected to the JDK properly.
+java_double = .jnew("java/lang/Double", 3.1415)
+java_double
+class(java_double)
+.jclass(java_double)
+#call an instance method 
+.jcall(java_double, "I", "intValue") #java_double.intValue();
+#call a static method
+J("java/lang/String", "valueOf", java_double) #String.valueOf(java_double);
+J("java/lang/String", "valueOf", x) #some sort of alphanumeric code for the pointer address
+```
+
+It is important to have rJava working on your computer as a fair number of R packages really do make use of it. It's a good thing to have in your toolbox in general.
+
+Now ensure that YARF is installed properly:
+
+
+```{r}
+# pacman::p_install_gh("kapelner/YARF/YARFJARs", ref = "dev")
+# pacman::p_install_gh("kapelner/YARF/YARF", ref = "dev")
+pacman::p_load(YARF)
+```
+
+If that printed out "YARF can now make use of [n] cores", you are in business.
+
+Let's take a look at the simulated sine curve data from practice lecture 12:
+
+```{r}
+rm(list = ls())
+pacman::p_load(tidyverse, magrittr)
+n = 500
+x_max = 10
+x = runif(n, 0, x_max)
+y = sin(x) + rnorm(n, 0, 0.3)
+ggplot(data.frame(x = x, y = y), aes(x, y)) + geom_point(lwd = 0.6) 
+```
+
+Use `mlr` and `YARF` to locate the optimal node size hyperparameter for the regression tree model.
+
+```{r}
+#TO-DO
+```
+
+Plot the regression tree model with the optimal node size.
+
+```{r}
+#TO-DO
+```
 
 First load the tree-building package:
 
