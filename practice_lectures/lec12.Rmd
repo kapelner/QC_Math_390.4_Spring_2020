@@ -110,12 +110,10 @@ repeat {
   cat("i = ", i, "in sample: se = ", all_ses[j_star], "oos_se", oos_se, "\n   predictor added:", colnames(Xmm_train)[j_star], "\n")
   
   i = i + 1
-  predictor_by_iteration
   
   if (i > Nsamp || i > p_plus_one){
     break #why??
   }
-  
 }
 ```
 

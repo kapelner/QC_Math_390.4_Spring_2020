@@ -7,7 +7,11 @@ date: "2AM April 26, 2020"
 
 # Data Wrangling / Munging / Carpentry
 
-Throughout this assignment you can use either `dplyr` or `data.table` to answer but not base R.
+Throughout this assignment you can use either the `tidyverse` package suite or `data.table` to answer but not base R. You can mix `data.table` with `magrittr` piping if you wish but don't go back and forth between `tbl_df`'s and `data.table` objects.
+
+```{r}
+pacman::p_load(tidyverse, magrittr, data.table)
+```
 
 Load the `storms` dataset from the `dplyr` package and investigate it using `str` and `summary` and `head`. Which two columns should be converted to type factor? Do so below.
 
@@ -119,7 +123,7 @@ For each storm, summarize the day in which is started in the following format "F
 #TO-DO
 ```
 
-Create a new factor variable `decile_windspeed` by binning wind speed into 10 bins and drop `wind`.
+Create a new factor variable `decile_windspeed` by binning wind speed into 10 bins.
 
 ```{r}
 #TO-DO
@@ -137,7 +141,7 @@ In `serious_storms`, merge the variables lat and long together into `lat_long` w
 #TO-DO
 ```
 
-For each category, find the average wind speed, pressure and diameters (do not count the NA's in your averaging).
+Let's return now to the original storms data frame. For each category, find the average wind speed, pressure and diameters (do not count the NA's in your averaging).
 
 ```{r}
 #TO-DO

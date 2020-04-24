@@ -19,10 +19,11 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec23kap.pdf)
 * Lecture 22 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec12.Rmd)
-  - Theory Notes [(Jan Bazant)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec22bazant.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec22kap.pdf)
+  - Theory Notes [(Jan Bazant)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec22bazant.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec22kap.pdf)-->
 * Lecture 21 video on slack
-  - Theory Notes [(Jan Bazant)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec21bazant.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec21kap.pdf)-->
-* Lecture 20
+  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec15.Rmd)
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec21kap.pdf)
+* Lecture 20 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec14.Rmd)
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec20kap.pdf)
 * Lecture 19 video on slack

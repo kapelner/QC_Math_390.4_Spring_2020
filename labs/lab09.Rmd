@@ -2,7 +2,197 @@
 title: "Lab 9"
 author: "Your Name Here"
 output: pdf_document
-date: "11:59PM April 14, 2019"
+date: "11:59PM May 2, 2020"
 ---
 
+Load the `adult` dataset and remove missingness.
+
+```{r}
+pacman::p_load_gh("coatless/ucidata")
+data(adult)
+adult = na.omit(adult)
+```
+
+We had problems with the features "occupation" and "native_country". Go through these two features and and identify levels with too few examples and wrap them into a level called "other". This is standard practice.
+
+```{r}
+#TO-DO
+```
+
+We will be doing model selection. Split the dataset into 3 distinct subsets of 7500 observations. You will need the following variables: `Xtrain`, `ytrain`, `Xselect`, `yselect`, `Xtest`, `ytest`.
+
+```{r}
+#TO-DO
+```
+
+Fit a vanilla logistic regression on the training set and report the log scoring rule, the Brier scoring rule and then use this probability estimation model to do classification by thresholding at 0.5. Tabulate a confusion matrix and compute the misclassification error.
+
+```{r}
+#TO-DO
+```
+
+We will be doing model selection using a basis of linear features consisting of all interactions of the 14 raw features. Create a model matrix from the training data containing all these features. Make sure it has an intercept column too (the one vector is usually an important feature).
+
+```{r}
+#TO-DO
+```
+
+Write code that will fit a model stepwise. You can refer to the chunk of line 83 in practice lecture 12. Use the Brier score to do the selection. Run the code and hit "stop" when you see begin to the see the Brier score degrade appreciably.
+
+```{r}
+#TO-DO
+```
+
+Plot the in-sample and oos (select set) Brier score by $p$. Does this look like what's expected?
+
+```{r}
+#TO-DO
+```
+
+Print out the coefficients of the model selection procedure's guess as to the locally optimal probability estimation model and interpret the five largest (in abolute value) coefficients. Do the signs make sense on these coefficients?
+
+```{r}
+#TO-DO
+```
+
+Use this locally optimal probability estimation model to make predictions in all three data sets: train, select test. Compare to the Brier scores across all three sets. Is this expected?
+
+```{r}
+#TO-DO
+```
+
+Plot the probability predictions in the test set by `y`. Does this plot look good?
+
+```{r}
+#TO-DO
+```
+
+Calculate misclassification error, sensitivity (recall), specificity (true negative rate, TN / N), FDR, FOR for this model if you threshold at phat = 0.5. Interpret these metrics.
+
+```{r}
+#TO-DO
+```
+
+Now, consider an asymmetric costs scenario. Let's say you're trying to sell people luxury products and want to advertise with only high-salaried individuals. Since your advertising is expensive, you want to not waste money on people who do not make a high salary. Thus your cost of predicting >50K when it truly is <=50K, i.e. a false positive (FP), is higher than predicting <=50K when the person truly makes >50K, i.e. a false negative (FN). Set the cost of FP to 3x more than the cost of FN. Use a grid of 0.001 to step through thresholds for the locally optimal probability estimation model (source the function from practice lecture 15). Do this in the selection dataset.
+
+```{r}
+#TO-DO
+```
+
+Plot an ROC curve for the selection dataset.
+
+```{r}
+#TO-DO
+```
+
+Calculate AUC and interpret.
+
+```{r}
+#TO-DO
+```
+
+Plot a DET curve for the selection dataset.
+
+```{r}
+#TO-DO
+```
+
+Calculate total cost for each classification model defined by each threshold.
+
+```{r}
+#TO-DO
+```
+
+Find the probability estimate threshold for the locally optimal asymmetric cost model for your FP and FN costs. Use this optimal probability estimate threshold and classify the test set. Print out its confusion matrix in the test set and calculate average cost per future observation, future FDR and future FOR and interpret these metrics in the context of this scenario. Is this model successful in internalizing your asymmetric costs?
+
+```{r}
+#TO-DO
+```
+
+Throughout the next part of this assignment you can use either the `tidyverse` package suite or `data.table` to answer but not base R. You can mix `data.table` with `magrittr` piping if you wish but don't go back and forth between `tbl_df`'s and `data.table` objects.
+
+```{r}
+pacman::p_load(tidyverse, magrittr, data.table)
+```
+
+We will be using the `storms` dataset from the `dplyr` package. Filter this dataset on all storms that have no missing measurements for the two diameter variables, "ts_diameter" and "hu_diameter".
+
+```{r}
+#TO-DO
+```
+
+From this subset, create a data frame that only has storm, observation period number (i.e., 1, 2, ..., T) and the "ts_diameter" and "hu_diameter" metrics.
+
+```{r}
+#TO-DO
+```
+
+Create a data frame in long format with columns "diameter" for the measurement and "diameter_type" which will be categorical taking on the values "hu" or "ts".
+
+```{r}
+#TO-DO
+```
+
+Using this long-formatted data frame, use a line plot to illustrate both "ts_diameter" and "hu_diameter" metrics by observation period for four random storms using a 2x2 faceting. The two diameters should appear in two different colors and there should be an appropriate legend.
+
+```{r}
+#TO-DO
+```
+
+Before you do the rest of this lab, ensure you have the Java JDK installed. The JDK is NOT the JRE. The former allows you to compile Java programs and the latter allows you only to run Java programs. Then insure that `rJava` is installed and working. In other words, the following should work and give the same output from practice lecture 12. If it doesn't, try the code that is commented out to reinstall. Google errors. Frustration in libraries and platforms not working on your computer is unfortunately part of computer science and thus part of data science.
+
+```{r}
+options(java.parameters = "-Xmx4000m")
+pacman::p_load(rJava)
+#if that doesn't work, use:
+# install.packages("rJava", type = "source")
+# library(rJava)
+.jinit() #this initializes the JVM in the background and if this runs with no issues nor output, you probably have rJava installed and connected to the JDK properly.
+java_double = .jnew("java/lang/Double", 3.1415)
+java_double
+class(java_double)
+.jclass(java_double)
+#call an instance method 
+.jcall(java_double, "I", "intValue") #java_double.intValue();
+#call a static method
+J("java/lang/String", "valueOf", java_double) #String.valueOf(java_double);
+J("java/lang/String", "valueOf", x) #some sort of alphanumeric code for the pointer address
+```
+
+It is important to have rJava working on your computer as a fair number of R packages really do make use of it. It's a good thing to have in your toolbox in general.
+
+Now ensure that YARF is installed properly:
+
+
+```{r}
+# pacman::p_install_gh("kapelner/YARF/YARFJARs", ref = "dev")
+# pacman::p_install_gh("kapelner/YARF/YARF", ref = "dev")
+pacman::p_load(YARF)
+```
+
+If that printed out "YARF can now make use of [n] cores", you are in business.
+
+Let's take a look at the simulated sine curve data from practice lecture 12:
+
+```{r}
+rm(list = ls())
+pacman::p_load(tidyverse, magrittr)
+n = 500
+x_max = 10
+x = runif(n, 0, x_max)
+y = sin(x) + rnorm(n, 0, 0.3)
+ggplot(data.frame(x = x, y = y), aes(x, y)) + geom_point(lwd = 0.6) 
+```
+
+Use `mlr` and `YARF` to locate the optimal node size hyperparameter for the regression tree model.
+
+```{r}
+#TO-DO
+```
+
+Plot the regression tree model with the optimal node size.
+
+```{r}
+#TO-DO
+```
 
