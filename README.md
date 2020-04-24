@@ -80,8 +80,8 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 ## Labs
 
 <!--
-* [(Lab 10, due 5/12)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab09.Rmd)
-* [(Lab 9, due 4/14)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab09.Rmd)-->
+* [(Lab 10, due 5/12)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab09.Rmd)-->
+* [(Lab 9, due 5/2)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab09.Rmd)
 * [(Lab 8, due 4/25)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab08.Rmd)
 * [(Lab 7, due 4/8)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab07.Rmd)
 * [(Lab 6, due 3/21)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab06.Rmd)
@@ -103,8 +103,8 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 * Homework 0 [(syllabus, page 7)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/syllabus/syllabus.pdf?raw=true) (due 1/31)
 
 ## Writing Assignments
-<!--
-* Final Project [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/final_project.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/final_project.pdf) (due 5/23 by email)-->
+<!---->
+* Final Project [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/final_project.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/final_project.pdf) (due 5/24 by email)
 * Modeling Essay [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/modeling_essay.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/modeling_essay.pdf) (due 4/6) [(example essay)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/writing_assignments/modeling_essay_example.pdf)
 
 
