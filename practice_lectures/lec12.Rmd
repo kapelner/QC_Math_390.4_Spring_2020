@@ -147,27 +147,25 @@ What is the "optimal model"?
 
 Can we honestly assess future performance now? No... why? Our test set was really our select set and we don't have a third test set (lab exercise). Inner and outer folding can be done too as we discussed.
 
-# Regression Trees
+# R with Java
 
-Let's take a look at the simulated sine curve data.
+Java and R can speak to each other through proper configuration of the `rJava` package. You need to have a full JDK of Java installed on your computer and have its binary executables in the proper path. This demo will be in Java JDK 8 (released in 2014 and not officially supported after 2020) since I haven't tested on the more modern Java JDK's yet. We first install `rJava` if necessary:
 
 ```{r}
-pacman::p_load(tidyverse, magrittr)
-n = 500
-x_max = 10
-x = runif(n, 0, x_max)
-y = sin(x) + rnorm(n, 0, 0.3)
-ggplot(data.frame(x = x, y = y), aes(x, y)) + geom_point(lwd = 0.6) 
+if (!pacman::p_isinstalled(rJava)){
+  pacman::p_load(pkgbuild)
+  if (pkgbuild::check_build_tools()){
+    install.packages("rJava", type = "source")
+  }
+  install.packages("rJava")
+}
 ```
 
-Let's fit a regression tree. We will use the development package "YARF" which I've been hacking on now for a few years. The package internals are written in Java. So we first need to ensure that Java and R speak to each other through proper configuration of the `rJava` package. You need to have a full JDK of Java installed on your computer and have its binary executables in the proper path. This demo will be in Java JDK 8 since I haven't tested `YARF` in the more modern Java JDK's yet.
+Now we load the package. Before we do, we set the JVM to have 4G of RAM. After we load it, we initialize te JVM. This should print out nothing or "0" to indicate success.
 
 ```{r}
 options(java.parameters = "-Xmx4000m")
 pacman::p_load(rJava)
-#if that doesn't work, use:
-# install.packages("rJava", type = "source")
-# library(rJava)
 .jinit() #this initializes the JVM in the background and if this runs with no issues nor output, you probably have rJava installed and connected to the JDK properly.
 ```
 
@@ -192,16 +190,31 @@ A note on rJava vs Rcpp.
 * Also, if you need full-featured parallelized execution and threading control e.g. thread pooling and the ease of debugging, my personal opinion is that rJava is easier to get working with less dependencies. My experience is that the Rcpp threading libraries just aren't there yet and neither is openMP directives within Rcpp. 
 * Further, the JVM is fully asynchronous which means it runs completely independently of R. What this means is that you can execute something in Java, Java can "thread it off" and return you to the R prompt with a pointer to the object that houses its execution. You can then query the object. We will see dems of this.
 
-Now we install the package from github including its dependency and load it:
+
+# Regression Trees
+
+Let's fit a regression tree. We will use the development package `YARF` which I've been hacking on now for a few years. The package internals are written in Java which we just installed above. Since `YARF` is not on CRAN, we install the package from my github including its dependency (if necessary) and then load it 
 
 ```{r}
-# pacman::p_install_gh("kapelner/YARF/YARFJARs", ref = "dev")
-# pacman::p_install_gh("kapelner/YARF/YARF", ref = "dev")
+if (!pacman::p_isinstalled(YARF)){
+  pacman::p_install_gh("kapelner/YARF/YARFJARs", ref = "dev")
+  pacman::p_install_gh("kapelner/YARF/YARF", ref = "dev")
+}
 pacman::p_load(YARF)
 ```
 
+The data will be fitting with the regression tree is a sine curve plus noise:
 
-Then run the fit:
+```{r}
+pacman::p_load(tidyverse, magrittr)
+n = 500
+x_max = 10
+x = runif(n, 0, x_max)
+y = sin(x) + rnorm(n, 0, 0.3)
+ggplot(data.frame(x = x, y = y), aes(x, y)) + geom_point(lwd = 0.6) 
+```
+
+Now we fit a regression tree to this model. Nevermind the `bootstrap_indices` and `calculate_oob_error` arguments. This will be clear why they are not defaults later in the semester.
 
 ```{r}
 tree_mod = YARFCART(data.frame(x = x), y, 

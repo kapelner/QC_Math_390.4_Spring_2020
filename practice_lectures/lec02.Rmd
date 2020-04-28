@@ -370,6 +370,7 @@ my_function(3)
 my_function("asd")
 my_function(x = 3) #you can specify that 3 is the value for argument "x"
 my_function(y = 3) #illegal argument
+(function(x){x + 1})(3) #anonymous function
 ```
 
 R is somewhat user friendly as it allows for default argument values, making those arguments optional to specify when calling the function:
@@ -389,6 +390,23 @@ my_function() #no dice
 my_function(1, 0) #required argument specified
 my_function(0, q = 7) #required argument specified and one optional argument
 rm(my_function) #can be deleted since it's an object
+```
+
+There are also common functional programming functions. 
+
+* Reduce uses a binary function to successively combine the elements of a given vector and a possibly given initial value. 
+* Filter extracts the elements of a vector for which a predicate (logical) function gives true. 
+* Find and Position give the first or last such element and its position in the vector, respectively. 
+* Map applies a function to the corresponding elements of given vectors. 
+
+If you like this, there are many packages that extend this and organize it nicely e.g. `purrr` (we will get to packages next class).
+
+```{r}
+x = c(1, 2, 3, 4, 5)
+Reduce(sum, x)
+Filter(function(x){x <= 3}, x)
+Find(function(x){x <= 3}, x)
+Map(function(x){x + 100}, x) #what happened here?? Map will return a list (for flexibility)
 ```
 
 ## First modeling exercise
