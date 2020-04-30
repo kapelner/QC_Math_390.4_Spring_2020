@@ -8,18 +8,19 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 
 <!-- 
 * Lecture 26 video on slack
-  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec14.Rmd)
+  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec19.Rmd)
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec26kap.pdf)
 * Lecture 25 video on slack
+  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec18.Rmd) 
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec25kap.pdf)
 * Lecture 24 video on slack
-  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec13.Rmd) 
+  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec17.Rmd) 
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec24kap.pdf) 
 * Lecture 23 video on slack
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec23kap.pdf)
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec23kap.pdf)-->
 * Lecture 22 video on slack
-  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec12.Rmd)
-  - Theory Notes [(Jan Bazant)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec22bazant.pdf) [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec22kap.pdf)-->
+  - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec16.Rmd)
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec22kap.pdf)
 * Lecture 21 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec15.Rmd)
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec21kap.pdf)
@@ -80,7 +81,8 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 ## Labs
 
 <!--
-* [(Lab 10, due 5/12)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab09.Rmd)-->
+* [(Lab 11, due 5/12)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab11.Rmd)
+* [(Lab 10, due 5/12)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab10.Rmd)-->
 * [(Lab 9, due 5/2)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab09.Rmd)
 * [(Lab 8, due 4/25)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab08.Rmd)
 * [(Lab 7, due 4/8)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab07.Rmd)
@@ -94,7 +96,6 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 ## Theory Homeworks
 
 <!--
-* Homework 6 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf) (due 5/18)
 * Homework 5 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf) (due 4/18)-->
 * Homework 4 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw04/hw04t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw04/hw04t.pdf) (due 4/20)
 * Homework 3 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf) (due 3/18)
