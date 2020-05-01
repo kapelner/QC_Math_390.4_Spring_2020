@@ -5,7 +5,39 @@ output: pdf_document
 date: "11:59PM May 9, 2020"
 ---
 
-Before you do this lab, ensure you have the Java JDK installed. The JDK is NOT the JRE. The former allows you to compile Java programs and the latter allows you only to run Java programs. Then insure that `rJava` is installed and working. In other words, the following should work and give the same output from practice lecture 12. If it doesn't, try the code that is commented out to reinstall. Google errors. Frustration in libraries and platforms not working on your computer is unfortunately part of computer science and thus part of data science.
+
+In the first part of this lab, we will be joining three datasets in an effort to make a design matrix that predicts if a bill will be paid on time. Load up the three files:
+
+```{r}
+pacman::p_load(tidyverse, magrittr, data.table, R.utils)
+bills = fread()
+payments = fread()
+discounts = fread()
+```
+
+The unit we care about is the bill. The metric we care about is "paid on time" and it's binary. We would like to build the best design matrix we can and of course generate the y. Warning: this data is highly anonymized and there is likely zero signal! So don't expect to get predictive accuracy. The value of the exercise is in the practice. I think this may be one of the most useful exercises in the entire semester.
+
+I will create the basic steps for you guys. First, join the three datasets in an intelligent way. You will need to examine the datasets beforehand.
+
+```{r}
+#TO-DO
+```
+
+Now create the response metric "paid_on_time".
+
+```{r}
+#TO-DO
+```
+
+Now create the design matrix by ensuring the unit is bill. How should you featurize? Should you create some features? What type(s) should they be? 
+
+```{r}
+#TO-DO
+```
+
+Fit a tree to this data. Try to use `YARF` if you have it. If not, use the package `rpart`. Below is a guide to installing `YARF` and ensuring it works.
+
+First, ensure you have the Java JDK installed. The JDK is NOT the JRE. The former allows you to compile Java programs and the latter allows you only to run Java programs. Then insure that `rJava` is installed and working. In other words, the following should work and give the same output from practice lecture 12. If it doesn't, try the code that is commented out to reinstall. Google errors. Frustration in libraries and platforms not working on your computer is unfortunately part of computer science and thus part of data science.
 
 ```{r}
 options(java.parameters = "-Xmx4000m")
@@ -38,19 +70,35 @@ pacman::p_load(YARF)
 
 If that printed out "YARF can now make use of [n] cores", you are in business.
 
-Let's take a look at the simulated sine curve data from practice lecture 12:
+Now create a training-test split and make the tree model and provide oos performance metrics: create a confusion table and compute FDR and FOR.
+
+```{r}
+#TO-DO
+```
+
+
+We are done with this unit. 
+
+Let's take a look at the simulated sine curve data from practice lecture 12. Below is the code for the data generating process:
 
 ```{r}
 rm(list = ls())
-pacman::p_load(tidyverse, magrittr)
 n = 500
+sigma = 0.3
+x_min = 0
 x_max = 10
-x = runif(n, 0, x_max)
-y = sin(x) + rnorm(n, 0, 0.3)
-ggplot(data.frame(x = x, y = y), aes(x, y)) + geom_point(lwd = 0.6) 
+x = runif(n, x_min, x_max)
+f_x = function(x){sin(x)}
+y = f_x(x) + rnorm(n, 0, sigma)
 ```
 
-Use `mlr` and `YARF` to locate the optimal node size hyperparameter for the regression tree model.
+Plot an example dataset of size 500:
+
+```{r}
+#TO-DO
+```
+
+Locate the optimal node size hyperparameter for the regression tree model.
 
 ```{r}
 #TO-DO
@@ -62,175 +110,42 @@ Plot the regression tree model with the optimal node size.
 #TO-DO
 ```
 
-First load the tree-building package:
-
-```{r}
-options(java.parameters = "-Xmx4000m")
-# pacman::p_install_gh("kapelner/YARF", subdir = "YARF", ref = "dev")
-pacman::p_load(YARF)
-```
-
-Let's take a look at the simulated sine curve data (i.e. the illustration I drew on the board last class)
-
-```{r}
-pacman::p_load(tidyverse)
-n_train = 500
-x_max = 10
-x_train = runif(n_train, 0, x_max)
-y_train = sin(x_train) + rnorm(n_train, 0, 0.3)
-ggplot(data.frame(x = x_train, y = y_train), aes(x, y)) + geom_point(lwd=0.6) 
-```
-
-create a test set from the this data generating process with size 1000.
-
-```{r}
-n_test = 1000
-x_test = runif(n_test, 0, x_max)
-y_test = sin(x_test) + rnorm(n_test, 0, 0.3)
-ggplot(data.frame(x = x_test, y = y_test), aes(x, y)) + geom_point(lwd=0.6) 
-```
-
-
-Fit a linear model to this dataset and test out of sample to get an idea of the generalization error.
-
-```{r}
-linear_mod = lm(y_train ~ x_train)
-se_oos = sd(y_test - predict(linear_mod, data.frame(x_train = x_test)))
-se_oos
-```
-
-Fit a tree to this dataset where nodesize is 25.
-
-```{r}
-tree_mod = YARFCART(data.frame(x = x_train), y_train, nodesize = 25)
-```
-
-How many nodes and how deep is this tree?
-
-```{r}
-get_tree_num_nodes_leaves_max_depths(tree_mod)
-```
-
-Create an image of this tree's nodes and split rules.
-
-```{r}
-illustrate_trees(tree_mod, max_depth = 4)
-```
-
-Test this tree model's performance out of sample to get an idea of the generalization error.
-
-```{r}
-se_oos = sd(y_test - predict(tree_mod, data.frame(x = x_test)))
-se_oos
-```
-
-Fit a tree to this dataset where nodesize is 1 and test out of sample.
-
-```{r}
-tree_mod = YARFCART(data.frame(x = x_train), y_train, nodesize = 1)
-get_tree_num_nodes_leaves_max_depths(tree_mod)
-se_oos = sd(y_test - predict(tree_mod, data.frame(x = x_test)))
-se_oos
-```
-
-Create M = 200 bootstrap samples of the data and save in a list.
-
-```{r}
-M = 200
-bootstrap_x_train = list()
-bootstrap_y_train = list()
-
-for(i in 1:M){
-  bootstrap_indices = sample(1 : n_train, replace = TRUE, size = n_train)
-  bootstrap_x_train[[i]] = x_train[bootstrap_indices]
-  bootstrap_y_train[[i]] = y_train[bootstrap_indices]
-}
-```
-
-Create a bag of M trees model where nodesize = 5 (the regression default). Use the call of `YARFCART`.
-
-```{r}
-tree_mods = list()
-for (k in 1 : M){
-  tree_mods[[k]] = YARFCART(data.frame(x = bootstrap_x_train[[k]]), bootstrap_y_train[[k]], nodesize = 5, calculate_oob_error = FALSE)
-}
-```
-
-Test this bagged model out of sample.
-
-```{r}
-y_test_hats = matrix(NA, nrow = n_test, ncol = M)
-
-for(k in 1 : M){
-  y_test_hats[, k] = predict(tree_mods[[k]], data.frame(x = x_test))
-  
-}
-y_test_hats = rowMeans(y_test_hats)
-
-se_oos = sd(y_test - y_test_hats)
-se_oos
-```
-
-Using the bootstrapped samples, find the oob error. This is hard!
+Provide the bias-variance decomposition of this DGP fit with this model. It is a lot of code, but it is in the practice lectures.
 
 ```{r}
 #TO-DO
 ```
 
-Fit a random forest model (RF) to the data. Report oob error.
+Load the boston housing data. Leave 25% of the observations oos for honest validation. 
 
 ```{r}
 #TO-DO
 ```
 
-Test the RF model out of sample. Is this error lower than the bagged model? Is the error similar to its oob error?
+Fit a linear model with all first-order interactions and provide std err of residuals in the test set.
 
 ```{r}
 #TO-DO
 ```
 
-Load the `diamonds' dataset. Sample 1,000 rows for training and 1,000 rows for testing.
+Bag this algorithm with $M = 1000$ and provide std err of residuals in the test set. 
 
 ```{r}
 #TO-DO
 ```
 
-Build a linear model and test.
-
-```{r}
-#TO-DO
-```
-
-Build a bagged model and test. You can use `YARFBAG`.
-
-```{r}
-#TO-DO
-```
-
-Build a RF model and test. You can use `YARF`.
-
-
-```{r}
-#TO-DO
-```
-
-Explain why the gains are small from linear regression -> bagged trees -> random Forests
+What is your gain over the unbagged model? Why is there a gain?
 
 #TO-DO
 
-Use `mlr` to build a RF model that is optimally tuned for the hyperparameter `mtry` and test out of sample.
-
-```{r}
-#TO-DO
-```
-
-Load the `nycflights13` data and join the weather table to airport in the four ways we learned about. 
 
 
-```{r}
-#TO-DO
-```
 
-Explain in English what each of these joins is doing.
 
-#TO-DO
+
+
+
+
+
+
+
