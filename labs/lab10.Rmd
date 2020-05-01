@@ -10,9 +10,9 @@ In the first part of this lab, we will be joining three datasets in an effort to
 
 ```{r}
 pacman::p_load(tidyverse, magrittr, data.table, R.utils)
-bills = fread()
-payments = fread()
-discounts = fread()
+bills = fread("https://github.com/kapelner/QC_Math_390.4_Spring_2020/raw/master/labs/bills_dataset/bills.csv.bz2")
+payments = fread("https://github.com/kapelner/QC_Math_390.4_Spring_2020/raw/master/labs/bills_dataset/payments.csv.bz2")
+discounts = fread("https://github.com/kapelner/QC_Math_390.4_Spring_2020/raw/master/labs/bills_dataset/discounts.csv.bz2")
 ```
 
 The unit we care about is the bill. The metric we care about is "paid on time" and it's binary. We would like to build the best design matrix we can and of course generate the y. Warning: this data is highly anonymized and there is likely zero signal! So don't expect to get predictive accuracy. The value of the exercise is in the practice. I think this may be one of the most useful exercises in the entire semester.
