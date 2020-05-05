@@ -5,6 +5,13 @@ date: "May 5, 2020"
 output: html_document
 ---
 
+First load the tree package:
+
+```{r}
+options(java.parameters = "-Xmx4000m")
+pacman::p_load(YARF, tidyverse, magrittr, data.table)
+```
+
 # Validation in Bagging?
 
 We are using the "bootstrap" to get the trees. Can we do model validation in the same step? 
@@ -45,10 +52,47 @@ cat("bootstrap indices:")
 bagged_tree_mod$bootstrap_indices[[2]]
 cat("oob:")
 setdiff(1 : n_train, bagged_tree_mod$bootstrap_indices[[2]])
+bagged_tree_mod$y_oob
+
+n_oob = sapply(1 : n_train, function(i){sum(unlist(lapply(bagged_tree_mod$bootstrap_indices, function(set){!(i %in% set)})))})
+round(n_oob / num_trees, 2)
 ```
 
 It took predictions on each tree on the oob set, averaged by observation across trees and then averaged across observation averages.
 
+Let's compare this to training-test manual splits. Let's look at the boston housing data first.
+
+```{r}
+boston = MASS::Boston %>% data.table
+
+seed = 1
+set.seed(seed)
+prop_test = 0.2
+test_indices = sample(1 : nrow(boston), round(prop_test * nrow(boston)))
+boston_test = boston[test_indices, ]
+y_test = boston_test$medv
+X_test = boston_test
+X_test$medv = NULL
+train_indices = setdiff(1 : nrow(boston), test_indices)
+boston_train = boston[train_indices, ]
+y_train = boston_train$medv
+X_train = boston_train
+X_train$medv = NULL
+
+num_trees = 500
+
+#build on training and validate on test
+mod_bag_train = YARFBAG(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE, seed = seed)
+y_hat_test_bag = predict(mod_bag_train, X_test)
+s_e_bag = sd(y_test - y_hat_test_bag)
+s_e_bag
+
+#build and validate on all the data at once!
+mod_bag_all = YARFBAG(boston[, !"medv"], boston$medv, num_trees = num_trees, seed = seed)
+mod_bag_all$rmse_oob
+```
+
+There is a lot of variation, but theoretically, they should be about the same. 
 
 # Random Forests
 
@@ -66,25 +110,29 @@ y = boston$medv
 X = boston
 X$medv = NULL
 
-mod_bag = YARFBAG(X, y, num_trees = 500)
+seed = 1
+num_trees = 500
+mod_bag = YARFBAG(X, y, num_trees = num_trees, seed = seed)
 mod_bag
-mod_rf = YARF(X, y, num_trees = 500)
+mod_rf = YARF(X, y, num_trees = num_trees, seed = seed)
 mod_rf
 ```
 
 Gain in decorrelation?
 
 ```{r}
-cat("gain: ", (mod_rf$pseudo_rsq_oob - mod_bag$pseudo_rsq_oob) / mod_bag$pseudo_rsq_oob * 100, "%\n")
+cat("gain: ", (mod_bag$pseudo_rsq_oob - mod_rf$pseudo_rsq_oob) / mod_bag$pseudo_rsq_oob * 100, "%\n")
 ```
 
-For this example, not much. How about on the diamonds dataset?
+For this example, not much. How about on the diamonds dataset? Here the dataset is too big to fit a regression tree. So we'll subsample train and we can subsample test because it's free.
 
 ```{r}
 diamonds = ggplot2::diamonds
 
 rm(list = ls())
 num_trees = 500
+seed = 1
+
 n_train = 500
 
 training_indices = sample(1 : nrow(diamonds), n_train)
@@ -93,8 +141,8 @@ y_train = diamonds_train$price
 X_train = diamonds_train
 X_train$price = NULL
 
-mod_bag = YARFBAG(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE)
-mod_rf = YARF(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE)
+mod_bag = YARFBAG(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE, seed = seed)
+mod_rf = YARF(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE, seed = seed)
 
 test_indices = setdiff(1 : nrow(diamonds), training_indices)
 diamonds_test = diamonds[test_indices, ]
@@ -108,114 +156,6 @@ cat("gain: ", (mse_bag - mse_rf) / mse_bag * 100, "%\n")
 ```
 
 Also, not much, but real.
-
-
-# Correlation does not Imply Causation
-
-Take a look at the following real data:
-
-```{r}
-spurious = data.frame(
-  yearly_divorce_rate_maine_per_1000 = c(5,4.7,4.6,4.4,4.3,4.1,4.2,4.2,4.2,4.1),
-  yearly_US_consumption_margarine_per_capita = c(8.2,7,6.5,5.3,5.2,4,4.6,4.5,4.2,3.7)
-)
-
-ggplot(spurious, aes(x = yearly_divorce_rate_maine_per_1000, y = yearly_US_consumption_margarine_per_capita)) +
-  geom_point() + geom_smooth()
-```
-
-How did this happen? 
-
-Well, we can imagine doing the same thing.
-
-
-```{r}
-y = spurious$yearly_US_consumption_margarine_per_capita
-n = length(y)
-
-r = 100000
-best_abs_corr = 0
-best_random_xs = NULL
-for (i in 1 : r){
-  x = rnorm(n)
-  
-  random_abs_corr = abs(cor(x, y))
-  if (random_abs_corr > best_abs_corr){
-    best_abs_corr = random_abs_corr
-    best_random_xs = x
-  }
-}
-spurious$best_random_xs = best_random_xs
-ggplot(spurious, aes(x = best_random_xs, y = yearly_US_consumption_margarine_per_capita)) +
-  geom_point() + geom_smooth() + ggtitle(paste("Spurious Correlation has |r| = ", round(best_abs_corr, 3)))
-```
-
-So what's the narrative here? If you look through a gajillion random features that have no causal connection with the phenomenon $y$, you will eventually find something that "clicks". However, this will be vanish if you keep collecting data. Anything that is built upon falsehood will crumble!
-
-#An Example of Correlation without Causation
-
-When does correlation really not imply causation? From class, we spoke about the phenomenon $y$ = "num car accidents" with observed feature "x" = "num umbrellas sold" but common cause $z$ = "rain amount". It is clear the umbrella sales has *no causal* relationship with car accidents. But they *are correlated* because they are linked by a common cause. Here's the data example that makes this clear.
-
-The data generating process as specified by the causal diagram looks as follows:
-
-```{r}
-rm(list = ls())
-set.seed(1)
-n = 300
-sigma = 0.3
-
-umbrella_example_data = data.frame(
-  z_rainfall = runif(n, 0, 6) #here's the common cause - rainfall
-)
-umbrella_example_data$x_umbrella_sales = umbrella_example_data$z_rainfall^2 + rnorm(n, sigma) #x is a variable that is driven by z with noise
-umbrella_example_data$y_car_accidents = umbrella_example_data$z_rainfall + rnorm(n, sigma) #y is a variable driven by z with noise
-```
-
-So we only see $x$ and $y$. Here's what it appears as:
-
-```{r}
-pacman::p_load(ggplot2)
-ggplot(umbrella_example_data) +
-  aes(x = x_umbrella_sales, y = y_car_accidents) +
-  geom_point() + 
-  geom_smooth(method = "lm")
-```
-
-and the model looks like:
-
-```{r}
-mod = lm(y_car_accidents ~ x_umbrella_sales, umbrella_example_data)
-round(coef(mod), 3)
-```
-
-So what's the interpretation of the coefficient for $x$? ...
-
-What you can't say is that $x$ is a causal contributor to $y$! You may want to say it, but you can't!
-
-Now let's build a model of $y$ linear in both $x$ and $z$. What happens?
-
-```{r}
-mod = lm(y_car_accidents ~ x_umbrella_sales + z_rainfall, umbrella_example_data)
-round(coef(mod), 3)
-```
-
-The effect of $x$ is gone!! Why? If you keep $z$ constant, the sole true causal factor in $y$, manipulating $x$ won't matter anymore!
-
-Why is this? Well, you can look at how x affects y in local areas of z for instance.
-
-```{r}
-b = 0.8; a = 0.7
-z_small_indices = umbrella_example_data$z_rainfall < 
-  quantile(umbrella_example_data$z_rainfall, b) &
-  umbrella_example_data$z_rainfall >
-  quantile(umbrella_example_data$z_rainfall, a)
-
-ggplot(umbrella_example_data[z_small_indices, ]) +
-  aes(x = x_umbrella_sales, y = y_car_accidents) +
-  geom_point()
-```
-
-If you force the common cause (lurking variable) to be an approximate constant, then you won't see any affect of x on y.
 
 
 #Classification Trees and Confusion Tables
@@ -463,6 +403,117 @@ miscl_err_rf
 
 cat("gain: ", (miscl_err_bag - miscl_err_rf) / miscl_err_bag * 100, "%\n")
 ```
+
+Very real gains for classification.
+
+
+# Correlation does not Imply Causation
+
+Take a look at the following real data:
+
+```{r}
+spurious = data.frame(
+  yearly_divorce_rate_maine_per_1000 = c(5,4.7,4.6,4.4,4.3,4.1,4.2,4.2,4.2,4.1),
+  yearly_US_consumption_margarine_per_capita = c(8.2,7,6.5,5.3,5.2,4,4.6,4.5,4.2,3.7)
+)
+
+ggplot(spurious, aes(x = yearly_divorce_rate_maine_per_1000, y = yearly_US_consumption_margarine_per_capita)) +
+  geom_point() + geom_smooth()
+```
+
+How did this happen? 
+
+Well, we can imagine doing the same thing.
+
+
+```{r}
+y = spurious$yearly_US_consumption_margarine_per_capita
+n = length(y)
+
+r = 100000
+best_abs_corr = 0
+best_random_xs = NULL
+for (i in 1 : r){
+  x = rnorm(n)
+  
+  random_abs_corr = abs(cor(x, y))
+  if (random_abs_corr > best_abs_corr){
+    best_abs_corr = random_abs_corr
+    best_random_xs = x
+  }
+}
+spurious$best_random_xs = best_random_xs
+ggplot(spurious, aes(x = best_random_xs, y = yearly_US_consumption_margarine_per_capita)) +
+  geom_point() + geom_smooth() + ggtitle(paste("Spurious Correlation has |r| = ", round(best_abs_corr, 3)))
+```
+
+So what's the narrative here? If you look through a gajillion random features that have no causal connection with the phenomenon $y$, you will eventually find something that "clicks". However, this will be vanish if you keep collecting data. Anything that is built upon falsehood will crumble!
+
+#An Example of Correlation without Causation
+
+When does correlation really not imply causation? From class, we spoke about the phenomenon $y$ = "num car accidents" with observed feature "x" = "num umbrellas sold" but common cause $z$ = "rain amount". It is clear the umbrella sales has *no causal* relationship with car accidents. But they *are correlated* because they are linked by a common cause. Here's the data example that makes this clear.
+
+The data generating process as specified by the causal diagram looks as follows:
+
+```{r}
+rm(list = ls())
+set.seed(1)
+n = 300
+sigma = 0.3
+
+umbrella_example_data = data.frame(
+  z_rainfall = runif(n, 0, 6) #here's the common cause - rainfall
+)
+umbrella_example_data$x_umbrella_sales = umbrella_example_data$z_rainfall^2 + rnorm(n, sigma) #x is a variable that is driven by z with noise
+umbrella_example_data$y_car_accidents = umbrella_example_data$z_rainfall + rnorm(n, sigma) #y is a variable driven by z with noise
+```
+
+So we only see $x$ and $y$. Here's what it appears as:
+
+```{r}
+pacman::p_load(ggplot2)
+ggplot(umbrella_example_data) +
+  aes(x = x_umbrella_sales, y = y_car_accidents) +
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+and the model looks like:
+
+```{r}
+mod = lm(y_car_accidents ~ x_umbrella_sales, umbrella_example_data)
+round(coef(mod), 3)
+```
+
+So what's the interpretation of the coefficient for $x$? ...
+
+What you can't say is that $x$ is a causal contributor to $y$! You may want to say it, but you can't!
+
+Now let's build a model of $y$ linear in both $x$ and $z$. What happens?
+
+```{r}
+mod = lm(y_car_accidents ~ x_umbrella_sales + z_rainfall, umbrella_example_data)
+round(coef(mod), 3)
+```
+
+The effect of $x$ is gone!! Why? If you keep $z$ constant, the sole true causal factor in $y$, manipulating $x$ won't matter anymore!
+
+Why is this? Well, you can look at how x affects y in local areas of z for instance.
+
+```{r}
+b = 0.8; a = 0.7
+z_small_indices = umbrella_example_data$z_rainfall < 
+  quantile(umbrella_example_data$z_rainfall, b) &
+  umbrella_example_data$z_rainfall >
+  quantile(umbrella_example_data$z_rainfall, a)
+
+ggplot(umbrella_example_data[z_small_indices, ]) +
+  aes(x = x_umbrella_sales, y = y_car_accidents) +
+  geom_point()
+```
+
+If you force the common cause (lurking variable) to be an approximate constant, then you won't see any affect of x on y.
+
 
 
 # Missingness
