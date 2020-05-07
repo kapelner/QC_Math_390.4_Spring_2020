@@ -1,5 +1,5 @@
 ---
-title: "lec1.Rmd"
+title: "lec18.Rmd"
 author: "Adam Kapelner"
 date: "May 5, 2020"
 output: html_document
@@ -8,7 +8,7 @@ output: html_document
 First load the tree package:
 
 ```{r}
-options(java.parameters = "-Xmx4000m")
+options(java.parameters = "-Xmx4g")
 pacman::p_load(YARF, tidyverse, magrittr, data.table)
 ```
 
@@ -49,9 +49,9 @@ sort(bagged_tree_mod$bootstrap_indices[[1]])
 cat("oob:")
 sort(setdiff(1 : n_train, bagged_tree_mod$bootstrap_indices[[1]]))
 cat("bootstrap indices:")
-bagged_tree_mod$bootstrap_indices[[2]]
+sort(bagged_tree_mod$bootstrap_indices[[2]])
 cat("oob:")
-setdiff(1 : n_train, bagged_tree_mod$bootstrap_indices[[2]])
+sort(setdiff(1 : n_train, bagged_tree_mod$bootstrap_indices[[2]]))
 bagged_tree_mod$y_oob
 
 n_oob = sapply(1 : n_train, function(i){sum(unlist(lapply(bagged_tree_mod$bootstrap_indices, function(set){!(i %in% set)})))})
@@ -94,24 +94,25 @@ mod_bag_all$rmse_oob
 
 There is a lot of variation, but theoretically, they should be about the same. 
 
-# Random Forests
-
-
 What do we have now? We have model selection is done within training. And training and validation are done in a single step! No more costly K-fold CV with 3 splits!
+
+# Random Forests
 
 But can it get any better? YES. As you saw, the variance terms can be shrunk further the more decorrelated the trees become. We do this now by introducing randomness into the splits by choosing only a subset of the features to split on randomly. The trees are then grown as normal. Then the we model average many trees via bagging. And that's random forests!
 
-Quick demo with the boston housing data and oob validation:
+Quick demo with the diamonds and oob validation:
 
 ```{r}
 rm(list = ls())
-boston = MASS::Boston
-y = boston$medv
-X = boston
-X$medv = NULL
 
 seed = 1
-num_trees = 500
+set.seed(seed)
+n_samp = 2000
+diamonds_samp = diamonds %>% sample_n(n_samp)
+y = diamonds_samp$price
+X = diamonds_samp %>% select(-price)
+
+num_trees = 1000
 mod_bag = YARFBAG(X, y, num_trees = num_trees, seed = seed)
 mod_bag
 mod_rf = YARF(X, y, num_trees = num_trees, seed = seed)
@@ -121,41 +122,53 @@ mod_rf
 Gain in decorrelation?
 
 ```{r}
-cat("gain: ", (mod_bag$pseudo_rsq_oob - mod_rf$pseudo_rsq_oob) / mod_bag$pseudo_rsq_oob * 100, "%\n")
+cat("gain: ", (mod_bag$rmse_oob - mod_rf$rmse_oob) / mod_bag$rmse_oob * 100, "%\n")
 ```
 
 For this example, not much. How about on the diamonds dataset? Here the dataset is too big to fit a regression tree. So we'll subsample train and we can subsample test because it's free.
 
 ```{r}
-diamonds = ggplot2::diamonds
-
 rm(list = ls())
-num_trees = 500
 seed = 1
 
-n_train = 500
-
+n_train = 1000
 training_indices = sample(1 : nrow(diamonds), n_train)
 diamonds_train = diamonds[training_indices, ]
 y_train = diamonds_train$price
-X_train = diamonds_train
-X_train$price = NULL
+X_train = diamonds_train %>% select(-price)
 
-mod_bag = YARFBAG(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE, seed = seed)
-mod_rf = YARF(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE, seed = seed)
+num_trees = 500
+mod_bag = YARFBAG(X_train, y_train, num_trees = num_trees, seed = seed, calculate_oob_error = FALSE)
+mod_rf = YARF(X_train, y_train, num_trees = num_trees, seed = seed, calculate_oob_error = FALSE, mtry = 7)
+mod_bag
+mod_rf
 
-test_indices = setdiff(1 : nrow(diamonds), training_indices)
-diamonds_test = diamonds[test_indices, ]
+diamonds_test = diamonds[setdiff(1 : nrow(diamonds), training_indices), ]
 y_test = diamonds_test$price
-X_test = diamonds_test
-X_test$price = NULL
+X_test = diamonds_test %>% select(-price)
 
-mse_bag = sum((y_test = predict(mod_bag, X_test))^2) / nrow(X_test)
-mse_rf = sum((y_test = predict(mod_rf, X_test))^2) / nrow(X_test)
-cat("gain: ", (mse_bag - mse_rf) / mse_bag * 100, "%\n")
+rmse_bag = sd(y_test - predict(mod_bag, X_test))
+rmse_rf = sd(y_test - predict(mod_rf, X_test))
+cat("gain: ", (rmse_bag - rmse_rf) / rmse_bag * 100, "%\n")
 ```
 
-Also, not much, but real.
+Not much, but real. And I had to play with `mtry` because the default of $p/3$ doesn't work.
+
+If `mtry` it small, the gain may be so small in the rho-multiple on the variance term that it doesn't outweigh the increase in bias. Thus, we underfit a little bit. Thus it's better to stay with just bagging. Here it is on the boston housing data:
+
+```{r}
+rm(list = ls())
+y = MASS::Boston$medv
+X = MASS::Boston
+X$medv = NULL
+seed = 1
+num_trees = 500
+mod_bag = YARFBAG(X, y, num_trees = num_trees, seed = seed)
+mod_bag
+mod_rf = YARF(X, y, num_trees = num_trees, seed = seed)
+mod_rf
+cat("oob rmse loss:", round((mod_bag$rmse_oob - mod_rf$rmse_oob) / mod_bag$rmse_oob * 100, 3), "%\n")
+```
 
 
 #Classification Trees and Confusion Tables
@@ -167,38 +180,29 @@ pacman::p_load_gh("coatless/ucidata")
 data(adult)
 adult %<>% 
   na.omit #kill any observations with missingness
-str(adult)
-?adult
 ```
 
 Let's use samples of 2,000 to run experiments:
 
 ```{r}
-test_size = 2000
-train_indices = sample(1 : nrow(adult), test_size)
+train_size = 2000
+train_indices = sample(1 : nrow(adult), train_size)
 adult_train = adult[train_indices, ]
 y_train = adult_train$income
 X_train = adult_train
 X_train$income = NULL
-test_indices = sample(setdiff(1 : nrow(adult), train_indices), test_size)
+test_indices = sample(setdiff(1 : nrow(adult), train_indices), train_size)
 adult_test = adult[test_indices, ]
 y_test = adult_test$income
 X_test = adult_test
 X_test$income = NULL
 ```
 
-Load the tree package:
-
-```{r}
-options(java.parameters = "-Xmx4000m")
-# pacman::p_install_gh("kapelner/YARF", subdir = "YARF", ref = "dev")
-pacman::p_load(YARF)
-```
-
 Make a tree:
 
 ```{r}
 tree_mod = YARFCART(X_train, y_train)
+tree_mod
 ```
 
 How "big" is this tree model?
@@ -266,17 +270,17 @@ Let's see how this works on a dataset whose goal is classification for more than
 
 ```{r}
 rm(list = ls())
-pacman::p_load(mlbench)
+pacman::p_load(mlbench, skimr)
 data(LetterRecognition)
 LetterRecognition = na.omit(LetterRecognition) #kill any observations with missingness
-str(LetterRecognition)
+skim(LetterRecognition)
 ?LetterRecognition
 ```
 
 Now we split the data:
 
 ```{r}
-test_samp = 2000
+test_samp = 500
 train_indices = sample(1 : nrow(LetterRecognition), test_samp)
 ltr_train = LetterRecognition[train_indices, ]
 y_train = ltr_train$lettr
@@ -318,6 +322,7 @@ Hard to read. Let's make it easier to read by blanking out the diagonal and look
 oos_confusion_table[oos_confusion_table < 5] = ""
 diag(oos_confusion_table) = "."
 oos_confusion_table
+mean(y_test != y_hat_test)
 ```
 
 What's it using to determine letter?
@@ -332,9 +337,9 @@ Random Forests:
 
 ```{r}
 num_trees = 500
-n_train = 500
+train_size = 2000
 
-training_indices = sample(1 : nrow(adult), n_train)
+training_indices = sample(1 : nrow(adult), train_size)
 adult_train = adult[training_indices, ]
 y_train = adult_train$income
 X_train = adult_train
@@ -392,6 +397,9 @@ mod_rf = YARF(X_train, y_train, num_trees = num_trees, calculate_oob_error = FAL
 mod_bag
 mod_rf
 
+y_hat_test_bag = predict(mod_bag, X_test)
+y_hat_test_rf = predict(mod_rf, X_test)
+
 oos_conf_table_bag = table(y_test, y_hat_test_bag)
 oos_conf_table_rf = table(y_test, y_hat_test_rf)
 oos_conf_table_bag
@@ -406,209 +414,4 @@ cat("gain: ", (miscl_err_bag - miscl_err_rf) / miscl_err_bag * 100, "%\n")
 
 Very real gains for classification.
 
-
-# Correlation does not Imply Causation
-
-Take a look at the following real data:
-
-```{r}
-spurious = data.frame(
-  yearly_divorce_rate_maine_per_1000 = c(5,4.7,4.6,4.4,4.3,4.1,4.2,4.2,4.2,4.1),
-  yearly_US_consumption_margarine_per_capita = c(8.2,7,6.5,5.3,5.2,4,4.6,4.5,4.2,3.7)
-)
-
-ggplot(spurious, aes(x = yearly_divorce_rate_maine_per_1000, y = yearly_US_consumption_margarine_per_capita)) +
-  geom_point() + geom_smooth()
-```
-
-How did this happen? 
-
-Well, we can imagine doing the same thing.
-
-
-```{r}
-y = spurious$yearly_US_consumption_margarine_per_capita
-n = length(y)
-
-r = 100000
-best_abs_corr = 0
-best_random_xs = NULL
-for (i in 1 : r){
-  x = rnorm(n)
-  
-  random_abs_corr = abs(cor(x, y))
-  if (random_abs_corr > best_abs_corr){
-    best_abs_corr = random_abs_corr
-    best_random_xs = x
-  }
-}
-spurious$best_random_xs = best_random_xs
-ggplot(spurious, aes(x = best_random_xs, y = yearly_US_consumption_margarine_per_capita)) +
-  geom_point() + geom_smooth() + ggtitle(paste("Spurious Correlation has |r| = ", round(best_abs_corr, 3)))
-```
-
-So what's the narrative here? If you look through a gajillion random features that have no causal connection with the phenomenon $y$, you will eventually find something that "clicks". However, this will be vanish if you keep collecting data. Anything that is built upon falsehood will crumble!
-
-#An Example of Correlation without Causation
-
-When does correlation really not imply causation? From class, we spoke about the phenomenon $y$ = "num car accidents" with observed feature "x" = "num umbrellas sold" but common cause $z$ = "rain amount". It is clear the umbrella sales has *no causal* relationship with car accidents. But they *are correlated* because they are linked by a common cause. Here's the data example that makes this clear.
-
-The data generating process as specified by the causal diagram looks as follows:
-
-```{r}
-rm(list = ls())
-set.seed(1)
-n = 300
-sigma = 0.3
-
-umbrella_example_data = data.frame(
-  z_rainfall = runif(n, 0, 6) #here's the common cause - rainfall
-)
-umbrella_example_data$x_umbrella_sales = umbrella_example_data$z_rainfall^2 + rnorm(n, sigma) #x is a variable that is driven by z with noise
-umbrella_example_data$y_car_accidents = umbrella_example_data$z_rainfall + rnorm(n, sigma) #y is a variable driven by z with noise
-```
-
-So we only see $x$ and $y$. Here's what it appears as:
-
-```{r}
-pacman::p_load(ggplot2)
-ggplot(umbrella_example_data) +
-  aes(x = x_umbrella_sales, y = y_car_accidents) +
-  geom_point() + 
-  geom_smooth(method = "lm")
-```
-
-and the model looks like:
-
-```{r}
-mod = lm(y_car_accidents ~ x_umbrella_sales, umbrella_example_data)
-round(coef(mod), 3)
-```
-
-So what's the interpretation of the coefficient for $x$? ...
-
-What you can't say is that $x$ is a causal contributor to $y$! You may want to say it, but you can't!
-
-Now let's build a model of $y$ linear in both $x$ and $z$. What happens?
-
-```{r}
-mod = lm(y_car_accidents ~ x_umbrella_sales + z_rainfall, umbrella_example_data)
-round(coef(mod), 3)
-```
-
-The effect of $x$ is gone!! Why? If you keep $z$ constant, the sole true causal factor in $y$, manipulating $x$ won't matter anymore!
-
-Why is this? Well, you can look at how x affects y in local areas of z for instance.
-
-```{r}
-b = 0.8; a = 0.7
-z_small_indices = umbrella_example_data$z_rainfall < 
-  quantile(umbrella_example_data$z_rainfall, b) &
-  umbrella_example_data$z_rainfall >
-  quantile(umbrella_example_data$z_rainfall, a)
-
-ggplot(umbrella_example_data[z_small_indices, ]) +
-  aes(x = x_umbrella_sales, y = y_car_accidents) +
-  geom_point()
-```
-
-If you force the common cause (lurking variable) to be an approximate constant, then you won't see any affect of x on y.
-
-
-
-# Missingness
-
-Take a look at the weather dataset again:
-
-```{r}
-pacman::p_load(nycflights13, tidyverse, magrittr)
-data(weather)
-str(weather)
-summary(weather)
-```
-
-Note how `time_hour` is perfectly collinear with the year, month, day and hour columns. So let's drop `time_hour`:
-
-```{r}
-weather %<>%
-  select(-c(time_hour))
-```
-
-We also cannot have character variables:
-
-```{r}
-weather %<>%
-  mutate(origin = as.factor(origin))
-```
-
-
-Imagine we were trying to predict `precip`. So let's section our dataset:
-
-```{r}
-y = weather$precip
-X = weather
-X$precip = NULL
-rm(weather)
-```
-
-Let's first create a matrix with $p$ columns that represents missingness
-
-```{r}
-M = tbl_df(apply(is.na(X), 2, as.numeric))
-colnames(M) = paste("is_missing_", colnames(X), sep = "")
-head(M)
-summary(M)
-```
-
-Some of these missing indicators are collinear because they share all the rows they are missing on. Let's filter those out:
-
-```{r}
-M = tbl_df(t(unique(t(M))))
-```
-
-
-Many featuers did not have missingness so let's remove them:
-
-```{r}
-M %<>% select_if(function(x){sum(x) > 0})
-head(M)
-dim(M)
-colSums(M)
-```
-
-Now let's work on imputation. The missingness is not extreme except in the `wind_gust` variable. Let's drop that variable:
-
-```{r}
-X %<>% select(-wind_gust)
-```
-
-Without imputing and without using missingness as a predictor in its own right, let's see what we get with a basic linear model now:
-
-```{r}
-lin_mod_listwise_deletion = lm(y ~ ., X)
-summary(lin_mod_listwise_deletion)
-```
-
-A measly 13.2%. Also note: year is collinear.
-
-Now let's impute using the package. we cannot fit RF models to the entire dataset (it's 26,000! observations) so we will sample 2,000 for each of the trees and then average. That will be good enough.
-
-```{r}
-pacman::p_load(missForest)
-Ximp = missForest(data.frame(X), sampsize = rep(2000, ncol(X)))$ximp
-```
-
-Now we take our imputed dataset, combine it with our missingness indicators for a new design matrix.
-
-```{r}
-Xnew = data.frame(cbind(Ximp, M))
-linear_mod_impute_and_missing_dummies = lm(y ~ ., Xnew)
-summary(linear_mod_impute_and_missing_dummies)
-```
-
-Is this a better model?? Are they even comparable? How to compare them? I'm not sure... certainly an R^2 comparison is the wrong way to compare.
-
-Note: this is just an illustration of best practice. It didn't necessarily have to "work".
-
-It is hard to compare the two models since the first model was built with 23,000 observations and this was built with the full 26,000 observations. Those extra 3,000 are the most difficult to predict on. This is complicated...
 
