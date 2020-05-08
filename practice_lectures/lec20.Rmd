@@ -29,7 +29,7 @@ umbrella_example_data$y_car_accidents = umbrella_example_data$z_rainfall + rnorm
 So we only see $x$ and $y$. Here's what it appears as:
 
 ```{r}
-pacman::p_load(ggplot2)
+pacman::p_load(tidyverse, data.table, magrittr)
 ggplot(umbrella_example_data) +
   aes(x = x_umbrella_sales, y = y_car_accidents) +
   geom_point() + 
@@ -40,7 +40,7 @@ and the model looks like:
 
 ```{r}
 mod = lm(y_car_accidents ~ x_umbrella_sales, umbrella_example_data)
-round(coef(mod), 3)
+summary(mod)
 ```
 
 So what's the interpretation of the coefficient for $x$? ...
@@ -51,7 +51,7 @@ Now let's build a model of $y$ linear in both $x$ and $z$. What happens?
 
 ```{r}
 mod = lm(y_car_accidents ~ x_umbrella_sales + z_rainfall, umbrella_example_data)
-round(coef(mod), 3)
+summary(mod)
 ```
 
 The effect of $x$ is gone!! Why? If you keep $z$ constant, the sole true causal factor in $y$, manipulating $x$ won't matter anymore!
@@ -65,19 +65,139 @@ z_small_indices = umbrella_example_data$z_rainfall <
   umbrella_example_data$z_rainfall >
   quantile(umbrella_example_data$z_rainfall, a)
 
-ggplot(umbrella_example_data[z_small_indices, ]) +
+local_plot = ggplot(umbrella_example_data[z_small_indices, ]) +
   aes(x = x_umbrella_sales, y = y_car_accidents) +
   geom_point()
+local_plot
+local_plot +
+  geom_smooth(method = "lm")
 ```
 
 If you force the common cause (lurking variable) to be an approximate constant, then you won't see any affect of x on y.
 
 # Asymmetric Cost Models in Trees and RF
 
+Let's load up the adult dataset where the response is 1 if the person makes more than $50K per year and 0 if they make less than $50K per year.
+
+```{r}
+options(java.parameters = "-Xmx4000m")
+pacman::p_load(YARF)
+pacman::p_load_gh("coatless/ucidata")
+data(adult)
+adult %<>% 
+  na.omit #kill any observations with missingness
+```
+
+Let's use samples of 2,000 to run experiments:
+
+```{r}
+train_size = 2000
+train_indices = sample(1 : nrow(adult), train_size)
+adult_train = adult[train_indices, ]
+y_train = adult_train$income
+X_train = adult_train %>% select(-income)
+test_indices = sample(setdiff(1 : nrow(adult), train_indices), train_size)
+adult_test = adult[test_indices, ]
+y_test = adult_test$income
+X_test = adult_test %>% select(-income)
+```
+
+What does the $y$'s look like?
+
+```{r}
+table(y_train)
+```
+
+Very imbalanced. This would off-the-bat make y=0 the default.
+
+Now make a regular RF and look at the oob confusion table:
+
+```{r}
+num_trees = 500
+yarf_mod = YARF(X_train, y_train, num_trees = num_trees, calculate_oob_error = FALSE)
+y_hat_test = predict(yarf_mod, X_test)
+oos_confusion = table(y_test, y_hat_test)
+oos_confusion
+```
+
+What is FDR and FNR?
+
+```{r}
+oos_confusion[1, 2] / sum(oos_confusion[, 2])
+oos_confusion[2, 1] / sum(oos_confusion[, 1])
+```
+
+High FDR rate and low FNR rate. Let's try to change this and reduce the FDR by oversampling 0's.
+
+```{r}
+idx_0 = which(y_train == "<=50K")
+n_0 = length(idx_0)
+idx_1 = which(y_train == ">50K")
+n_1 = length(idx_1)
+
+bootstrap_indices = list()
+for (m in 1 : num_trees){
+  bootstrap_indices[[m]] = c( #note n_0' + n_1' doesn't equal n. You can make it so with one more line of code...
+    sample(idx_0, round(2.0 * n_0), replace = TRUE),
+    sample(idx_1, round(0.5 * n_1), replace = TRUE)
+  )
+}
+yarf_mod_asymmetric = YARF(X_train, y_train, bootstrap_indices = bootstrap_indices, calculate_oob_error = FALSE)
+y_hat_test = predict(yarf_mod_asymmetric, X_test)
+oos_confusion = table(y_test, y_hat_test)
+oos_confusion
+oos_confusion[1, 2] / sum(oos_confusion[, 2])
+oos_confusion[2, 1] / sum(oos_confusion[, 1])
+```
+
+You can even vary the sampling and trace out ROC / DET curves. See function `YARFROC`.
+
 # Boosting?
+
+Nice simple explanation: https://towardsdatascience.com/basic-ensemble-learning-random-forest-adaboost-gradient-boosting-step-by-step-explained-95d49d1e2725
 
 ```{r}
 pacman::p_load(xgboost)
 ```
 
+Look at performance on adult dataset. This demo isn't working yet.
 
+```{r}
+xgboost_mod = xgboost(data = data.matrix(X_train), 
+ label = as.numeric(y_train == ">50K"), 
+ num_class = 2, #y = 0 or 1
+ eta = 0.3, #default
+ max_depth = 6, #default 
+ nrounds = 25, 
+ subsample = 1,
+ colsample_bytree = 1,
+ eval_metric = "merror",
+ objective = "multi:softprob",
+ nthread = 3
+)
+
+y_hat_test = as.numeric(predict(xgboost_mod, data.matrix(X_test))[1 : train_size] > 0.5)
+oos_confusion = table(y_test, ifelse(y_hat_test == 0, "<=50K", ">50K"))
+oos_confusion
+oos_confusion[1, 2] / sum(oos_confusion[, 2])
+oos_confusion[2, 1] / sum(oos_confusion[, 1])
+```
+
+Look at it go on all the data!
+
+```{r}
+xgboost_mod = xgboost(data = data.matrix(adult %>% select(-income)), 
+ label = as.numeric(adult$income == ">50K"), 
+ num_class = 2, #y = 0 or 1
+ eta = 0.3, #default
+ max_depth = 6, #default 
+ nrounds = 25, 
+ subsample = 1,
+ colsample_bytree = 1,
+ eval_metric = "merror",
+ objective = "multi:softprob",
+ nthread = 3
+)
+```
+
+Lightning fast on $n = 30000$!!!

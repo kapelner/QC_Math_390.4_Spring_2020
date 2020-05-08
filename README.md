@@ -82,8 +82,8 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 ## Labs
 
 <!--
-* [(Lab 11, due 5/12)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab11.Rmd)
-* [(Lab 10, due 5/12)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab10.Rmd)-->
+* [(Lab 11, not collected)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab11.Rmd)-->
+* [(Lab 10, due 5/11)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab10.Rmd)
 * [(Lab 9, due 5/2)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab09.Rmd)
 * [(Lab 8, due 4/25)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab08.Rmd)
 * [(Lab 7, due 4/8)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/labs/lab07.Rmd)
@@ -96,8 +96,8 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 
 ## Theory Homeworks
 
-<!--
-* Homework 5 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf) (due 4/18)-->
+<!---->
+* Homework 5 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw05/hw05t.pdf) (due 5/18)
 * Homework 4 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw04/hw04t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw04/hw04t.pdf) (due 4/20)
 * Homework 3 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw03/hw03t.pdf) (due 3/18)
 * Homework 2 [(download)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw02/hw02t.pdf?raw=true) [(view)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/homeworks/hw02/hw02t.pdf) (due 2/24)

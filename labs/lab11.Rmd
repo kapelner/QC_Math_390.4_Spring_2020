@@ -2,7 +2,6 @@
 title: "Lab 11"
 author: "Your Name Here"
 output: pdf_document
-date: "11:59PM May 16, 2020"
 ---
 
 
