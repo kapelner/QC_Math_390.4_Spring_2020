@@ -80,6 +80,7 @@ If you force the common cause (lurking variable) to be an approximate constant, 
 Let's load up the adult dataset where the response is 1 if the person makes more than $50K per year and 0 if they make less than $50K per year.
 
 ```{r}
+rm(list = ls())
 options(java.parameters = "-Xmx4000m")
 pacman::p_load(YARF)
 pacman::p_load_gh("coatless/ucidata")
@@ -120,14 +121,14 @@ oos_confusion = table(y_test, y_hat_test)
 oos_confusion
 ```
 
-What is FDR and FNR?
+What is FDR and FOR?
 
 ```{r}
 oos_confusion[1, 2] / sum(oos_confusion[, 2])
 oos_confusion[2, 1] / sum(oos_confusion[, 1])
 ```
 
-High FDR rate and low FNR rate. Let's try to change this and reduce the FDR by oversampling 0's.
+High FDR rate and low FOR rate. Let's try to change this and reduce the FDR by oversampling 0's.
 
 ```{r}
 idx_0 = which(y_train == "<=50K")

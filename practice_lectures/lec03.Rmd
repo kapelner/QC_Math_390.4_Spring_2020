@@ -70,14 +70,13 @@ Back to real packages... the content for the MASS package was sitting on the har
 install.packages("tseries")
 ```
 
-Note that it knew where to go online - it went to a CRAN mirror. CRAN is the official repository for R packages.
-
-Might as well load it:
+Note that it knew where to go online - it went to a CRAN mirror. CRAN is the official repository for R packages. Now that it's installed, step 2 is to load it into namespace so we can more seamlessly access its functionality.
 
 ```{r}
 library(tseries)
 ```
-This is its welcome message.
+
+What was a welcome message.
 
 This library is really cool e.g.
 
@@ -92,12 +91,12 @@ Is this a data frame?
 class(ibm_stock_history)
 ```
 
-Nope - they made their own data type. We will get there if I choose to do the unit on "writing your own R packages".
+Nope - they made their own data type. If we had a unit on "writing your own R packages", I would explain how this is done but alas there is no time...
 
 Let's say you're sharing your code with someone and one of your lines is loading a library e.g.
 
 ```{r}
-library(doParallel)
+library(a_library_my_computer_does_not_have_installed_yet)
 ```
 
 And my computer doesn't have this library. Then we need to stop what we're doing and install. This could be annoying. Here is a convenience: use the pacman package that installs if necessary:
@@ -107,14 +106,14 @@ if (!require("pacman")){install.packages("pacman")} #installs pacman if necessar
 pacman::p_load(devtools) #ensures that devtools gets installed and loaded into the workspace but pacman does not (very tidy)!
 ```
 
-It is typical to then have a few lines declaring all packages on top of your R/Rmd script file. Here is an example header from one of my projects:
+It is typical to then have a few lines declaring all packages on top of your R/Rmd script file. Here is an example header from one of my projects. 
 
 ```{r}
 #if (!require("pacman")){install.packages("pacman")}
 #pacman::p_load(knitr, randomForest, dplyr, tidyverse, doParallel, xtable, pracma, yaml)
 ```
 
-I'm going to require this for HW / projects, etc.
+We will be seeing this in pretty much all our demos in the future. It is very rare to be coding in R without making use of packages beyond base R. I'm going to require the use of pacman for HW / projects, etc. Just makes code easier to share, run, etc.
 
 The devtools package is important for modern R usage. It allows downloading R packages directly from source that are not even on CRAN. This allows you to get "bleeding edge" features. For example:
 
@@ -128,7 +127,7 @@ However this doesn't always work!
 install_github("hadley/ggplot2")
 ```
 
-Why can this fail? Because the computer you're running this on is not setup for compiling C++. Admittedly, MAC's usually succeed here and Windows usually fails here. This is one of the big advantages of using Linux and MAC over Windows - Windows just is more buggy when it comes to "real coding" and it gets in the way when you're out there trying to get stuff done.
+Why can this fail? Because the computer you're running this on is not setup for compiling C++. Admittedly, MAC's usually succeed here and Windows usually fails here. To make it succeed you need to install a separate program beyond R called Rtools. This is one of the big advantages of using Linux and MAC over Windows - Windows just is more buggy when it comes to "real coding" and it gets in the way when you're out there trying to get stuff done. Linux absolutely rules here and because Linux is usually the production environment anyway, it may make sense to use it for all your assignments and coding anyway.
 
 Note, you can use the pacman library for this type of installation too. So your header becomes:
 
@@ -137,6 +136,53 @@ if (!require("pacman")){install.packages("pacman")}
 pacman::p_load(devtools)
 pacman::p_load_gh("hadley/ggplot2")
 ```
+
+# Convenient Functions for Lists with the purrr package
+
+We first load the library.
+
+```{r}
+pacman::p_load(purrr)
+```
+
+We will see later that the library `purrr` is part of a collection of libraries called the `tidyverse`.
+
+Now imagine you have a collection of objects in a list. For example, let's let the object be matrices with different sizes:
+
+```{r}
+my_matrix_list = list()
+my_matrix_list[["first"]] = matrix(rnorm(9), nrow = 3)
+my_matrix_list[["second"]] = matrix(rnorm(12), nrow = 2)
+my_matrix_list[["third"]] = matrix(rnorm(8), nrow = 4)
+my_matrix_list
+```
+
+And you want to operate on each of those objects and return a list. Let's say I want to get back the dimensions, or the first rows, or the average values and return the same keys:
+
+```{r}
+my_dims_list = modify(my_matrix_list, ~ dim(.x))
+my_dims_list
+my_first_rows_list = modify(my_matrix_list, ~ .x[1, ])
+my_first_rows_list
+my_avgs_list = modify(my_matrix_list, ~ mean(.x))
+my_avgs_list
+```
+
+This is a very convenient function known as "mapping" in functional programming. It saves a few lines of code e.g. the first `modify` would be:
+
+```{r}
+my_dims_list = list() #make new list to store keys --> dimensions of original matrices
+for (key in names(my_matrix_list)){ #iterate over all list by key
+  .x = my_matrix_list[[key]] #get value at the key for this iteration
+  my_dims_list[[key]] = dim(.x) #run function on value and save it to new list
+}
+```
+
+The above which takes 5 lines and is repeated again and again and again in code all takes one line using the `modify` function. 
+
+The `modify` function uses funky syntax which is not standard R. And it doesn't have to be; packages are allowed to extend the language and use symbols to create their own little mini-language. The `.x` above is a dummy variable for the value in the iteration in the imagined for loop (like in my rewritten boilerplate code above). The "~" tilde symbol we will be seeing in base R later on in class but in a completely different context. Here it just means "run the following function".
+
+Modify is just one of the functions in the `purrr` package. See the following cheatsheet for more convenient functions: https://github.com/rstudio/cheatsheets/blob/master/purrr.pdf.
 
 
 ## Loading datasets from R packages

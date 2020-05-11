@@ -257,7 +257,9 @@ head(x) #the first elements
 tail(x) #the last elements
 head(x, 11) #the first 11 elements
 tail(x, 13) #the last 13 elements
-x[1] #R has one-based indexing while C, C++, Python, Java, have zero-based indexing. Get used to it. SORRY!!!
+x[1] #square brackets are the "getter" - it gets the value at that index. R has one-based indexing while C, C++, Python, Java, have zero-based indexing. Get used to it. SORRY!!!
+x[1] = 1984 #square brackets also serve as the "setter" - it sets the value at that index
+x[1]
 x[6]
 x[length(x)] #unfortunately no "-1" last index convenience...
 x[c(2, 77)]
@@ -268,6 +270,8 @@ x[-(1 : 10)] #everything but 1 - 10
 x[-seq(2, 100, by = 2)] #another way to see odd numbers
 x = c(rep(1, 10), rep(2, 10), rep(3, 10))
 unique(x) #only unique elements (in order in which they appear)
+x[1 : 10] = 10 : 1 # you can set in vectors as well
+x[1 : 10]
 ```
 
 and comparisons on vectors

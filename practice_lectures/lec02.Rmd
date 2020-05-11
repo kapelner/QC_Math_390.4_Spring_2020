@@ -41,6 +41,24 @@ x
 ?rnorm
 ```
 
+Randomness is an illustion in a computer. This is a whole topic in and of itself. But for our purposes, imagine random numbers being generated from a long but fixed list of numbers and the starting point is random. But you can make the randomness deterministic by setting the starting point. Then it's just the same numbers in the same order! This starting point is called a "seed" and it's an integer. 
+
+```{r}
+set.seed(1984)
+rnorm(10)
+set.seed(1984) #reset to that point in the list
+rnorm(10) #same exact numbers!!!
+set.seed(1984.1)
+rnorm(10) #same - needs to be a different integer
+set.seed(-1984)
+rnorm(10) #different
+set.seed(1983)
+rnorm(10) #different
+get.seed()
+```
+
+When writing programs that depend on randomness, you should set the seed at the top so the program is deterministic. Then it is easy to find bugs. When you switch the program to production, you just comment ou the set seed line. I will be doing this fairly often during demos for the rest of the semester.
+
 Sorting is also a key skill in R:
 
 ```{r}
@@ -63,7 +81,7 @@ random_junk = round(runif(n * p), 2)
 random_junk
 X = matrix(random_junk, nrow = n, ncol = p)
 X
-X[1, 1]
+X[1, 1] #the square brackets are still the getter but since there's two dimensions there's two indices
 X[1, ] #first row
 class(X[1, ]) #note: not matrix anymore
 X[1, , drop = FALSE]
@@ -77,11 +95,29 @@ X[1 : 4, ]
 X[, 2 : 3]
 X[, c(1, 3)]
 X[seq(1, n, by = 2), ]
+X[1, 1] = 1984 #the squarae brackets are still the setter
+X[1, 1]
 ```
+
+Sometimes handy by not recommended is getting / setting with only one index.
+
+```{r}
+head(X)
+X[1] #first entry i.e. the 1,1 entry
+X[2] #first entry i.e. the 2,1 entry (column major indexing, see https://cran.r-project.org/web/packages/reticulate/vignettes/arrays.html)
+X[n * p] #last entry i.e. n,p entry
+X[n * p + 1] #beyond last entry returns missing / illegal
+X[-1] #returns everything but the first entry and it automatically vectorizes
+X[1 : 100] #returns the first 100 i.e. the first column
+X[X > 0.5] = NA #replace all values no matter what row / col they exist in
+X
+```
+
 
 A few handy functions for numerical matrices:
 
 ```{r}
+X = matrix(random_junk, nrow = n, ncol = p) #reset
 rowSums(X)
 colSums(X)
 rowMeans(X)

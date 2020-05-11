@@ -6,10 +6,10 @@ This is the course homepage for Math 390.4 (and Masters level 650.3) at Queens C
 
 My lectures can be listened to as youtube tracks and lecture notes are also scanned in as PDF files contributed by students and myself.
 
-<!-- 
+<!--  -->
 * Lecture 26 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec20.Rmd)
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec26kap.pdf) -->
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec26kap.pdf)
 * Lecture 25 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec19.Rmd) 
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec25kap.pdf)
@@ -113,7 +113,7 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 ## Exams
 
 * Midterm I is Thurs, Mar 26 (in "class") [(exam)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/exams/midterm1/midterm1.pdf) [(exam solutions)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/exams/midterm1/midterm1_solutions.pdf)
-* Midterm II is Thurs, May 14 (in "class").
+* Midterm II is Thurs, May 14 (in "class")
 
 
 ## Practice Exams
