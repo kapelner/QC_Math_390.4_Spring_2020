@@ -97,7 +97,7 @@ train_indices = sample(1 : nrow(adult), train_size)
 adult_train = adult[train_indices, ]
 y_train = adult_train$income
 X_train = adult_train %>% select(-income)
-test_indices = sample(setdiff(1 : nrow(adult), train_indices), train_size)
+test_indices = setdiff(1 : nrow(adult), train_indices)
 adult_test = adult[test_indices, ]
 y_test = adult_test$income
 X_test = adult_test %>% select(-income)
@@ -111,7 +111,7 @@ table(y_train)
 
 Very imbalanced. This would off-the-bat make y=0 the default.
 
-Now make a regular RF and look at the oob confusion table:
+Now make a regular RF and look at the oob confusion table and FDR and FOR:
 
 ```{r}
 num_trees = 500
@@ -119,13 +119,8 @@ yarf_mod = YARF(X_train, y_train, num_trees = num_trees, calculate_oob_error = F
 y_hat_test = predict(yarf_mod, X_test)
 oos_confusion = table(y_test, y_hat_test)
 oos_confusion
-```
-
-What is FDR and FOR?
-
-```{r}
-oos_confusion[1, 2] / sum(oos_confusion[, 2])
-oos_confusion[2, 1] / sum(oos_confusion[, 1])
+cat("FDR =", oos_confusion[1, 2] / sum(oos_confusion[, 2]), "\n")
+cat("FOR =", oos_confusion[2, 1] / sum(oos_confusion[, 1]), "\n")
 ```
 
 High FDR rate and low FOR rate. Let's try to change this and reduce the FDR by oversampling 0's.
@@ -147,8 +142,8 @@ yarf_mod_asymmetric = YARF(X_train, y_train, bootstrap_indices = bootstrap_indic
 y_hat_test = predict(yarf_mod_asymmetric, X_test)
 oos_confusion = table(y_test, y_hat_test)
 oos_confusion
-oos_confusion[1, 2] / sum(oos_confusion[, 2])
-oos_confusion[2, 1] / sum(oos_confusion[, 1])
+cat("FDR =", oos_confusion[1, 2] / sum(oos_confusion[, 2]), "\n")
+cat("FOR =", oos_confusion[2, 1] / sum(oos_confusion[, 1]), "\n")
 ```
 
 You can even vary the sampling and trace out ROC / DET curves. See function `YARFROC`.
@@ -170,35 +165,45 @@ xgboost_mod = xgboost(data = data.matrix(X_train),
  eta = 0.3, #default
  max_depth = 6, #default 
  nrounds = 25, 
- subsample = 1,
+ subsample = 1, #default 
  colsample_bytree = 1,
  eval_metric = "merror",
- objective = "multi:softprob",
+ objective = "multi:softmax",
  nthread = 3
 )
 
-y_hat_test = as.numeric(predict(xgboost_mod, data.matrix(X_test))[1 : train_size] > 0.5)
+y_hat_test = as.numeric(predict(xgboost_mod, data.matrix(X_test)))
 oos_confusion = table(y_test, ifelse(y_hat_test == 0, "<=50K", ">50K"))
 oos_confusion
-oos_confusion[1, 2] / sum(oos_confusion[, 2])
-oos_confusion[2, 1] / sum(oos_confusion[, 1])
+cat("FDR =", oos_confusion[1, 2] / sum(oos_confusion[, 2]), "\n")
+cat("FOR =", oos_confusion[2, 1] / sum(oos_confusion[, 1]), "\n")
 ```
 
-Look at it go on all the data!
+Invert train and test splits and let it train on 28,000 observations.
 
 ```{r}
-xgboost_mod = xgboost(data = data.matrix(adult %>% select(-income)), 
- label = as.numeric(adult$income == ">50K"), 
+xgboost_mod = xgboost(data = data.matrix(X_test), 
+ label = as.numeric(y_test == ">50K"), 
  num_class = 2, #y = 0 or 1
  eta = 0.3, #default
  max_depth = 6, #default 
  nrounds = 25, 
- subsample = 1,
+ subsample = 1, #default 
  colsample_bytree = 1,
  eval_metric = "merror",
- objective = "multi:softprob",
+ objective = "multi:softmax",
  nthread = 3
 )
+
+y_hat_test = as.numeric(predict(xgboost_mod, data.matrix(X_train)))
+oos_confusion = table(y_train, ifelse(y_hat_test == 0, "<=50K", ">50K"))
+oos_confusion
+cat("FDR =", oos_confusion[1, 2] / sum(oos_confusion[, 2]), "\n")
+cat("FOR =", oos_confusion[2, 1] / sum(oos_confusion[, 1]), "\n")
 ```
 
-Lightning fast on $n = 30000$!!!
+Lightning fast on $n = 30000$!!! But only a bit more accurate. This leads me to think the error is mostly in delta.
+
+We can try playing with the hyperparams. A lot to CV over! You think this is a lot... wait until you see deep learning networks!
+
+

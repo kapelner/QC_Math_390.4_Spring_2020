@@ -179,8 +179,7 @@ class(java_double)
 #call an instance method 
 .jcall(java_double, "I", "intValue") #java_double.intValue();
 #call a static method
-J("java/lang/String", "valueOf", java_double) #String.valueOf(java_double);
-J("java/lang/String", "valueOf", x) #some sort of alphanumeric code for the pointer address
+J("java/lang/String", "valueOf", java_double)
 ```
 
 A note on rJava vs Rcpp. 

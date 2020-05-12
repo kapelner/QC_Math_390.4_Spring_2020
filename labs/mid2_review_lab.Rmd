@@ -1,0 +1,122 @@
+---
+title: "Midterm 2 Review Lab"
+author: "Your Name Here"
+output: pdf_document
+---
+
+
+Load the `nycflights13` data and join the flights table to the weather table in the four ways we learned about. How many rows are in each join? What does that tell you about missingness?
+
+
+```{r}
+pacman::p_load(tidyverse, magrittr, data.table, nycflights13, skimr)
+data(flights, weather)
+skim(flights)
+skim(weather)
+#TO-DO
+```
+
+Now for some missing data. Transform the `bridges` dataset into the format that was recommended in class to be used in supervised learning:
+
+```{r}
+pacman::p_load_gh("coatless/ucidata")
+data(bridges)
+skim(bridges)
+#TO-DO
+```
+
+
+From previous lab:
+
+Load the boston housing data. Leave 25% of the observations oos for honest validation. 
+
+```{r}
+library(MASS)
+data(Boston)
+Boston = Boston[sample(1 : nrow(Boston)), ]
+n_train = nrow(Boston) * .75 %>% round
+Boston_train = Boston[1 : n_train, ]
+Boston_test = Boston[(n_train + 1) : nrow(Boston), ]
+```
+
+Fit a linear model with all first-order interactions and provide std err of residuals in the test set.
+
+```{r}
+mod = lm(medv ~ . * ., Boston_train)
+mod
+yhat = predict(mod, Boston_test)
+sd(Boston_test$medv - yhat)
+```
+
+Create a bagged version of this algorithm with $M = 1000$ and provide std err of residuals in the test set. 
+
+```{r}
+M = 1000
+#TO-DO
+for (m in 1 : M) {
+  
+}
+```
+
+Find the oob error. How does it compare to the test error?
+
+```{r}
+#TO-DO
+```
+
+Instead of the pure bag, create a model averaged with linear models where you select at random half of the features in the full `. * .` set of interactions. This is a random-forest-inspired-linear-model.
+
+```{r}
+#TO-DO
+```
+
+How does this do out of sample?
+
+```{r}
+#TO-DO
+```
+
+Below is a data generating process with x's being rnorms and response created linearly with coefficients going from high to low and then all remaining features useless realized for many samples:
+
+```{r}
+Nsamp = 1e5
+p = 500
+X = cbind(1, matrix(runif(Nsamp * p), ncol = p))
+beta = c(1, 10, 5, 3, 1, 0.3, 0.05, rep(0, p - 6))
+y = X %*% beta + rnorm(Nsamp, 0, 1)
+colnames(X) = c("intercept", paste("V", 1 : p, sep = ""))
+```
+
+We are now going to use L2 and L1 penalized regression (affectionately called "ridege" and "lasso" for historical reasons). Note that the x's are standardized. And they usually should be standardized before doing penalized regression. Standardization of inputs is actually a larger topic that we didn't have a chance to cover in this class.
+
+Create a training set of 250 and use ridge with lambda = 0.1 to estimate beta. Print out the first 20 estimates. Was it close to the real beta? Why or why not? Do you expect oos performance to be good or bad?
+
+```{r}
+#TO-DO
+```
+
+Use the the same training set of 250 and use ridge cross-validated to estimate beta. Print out the first 20 estimates. Was it close to the real beta? Why or why not? Do you expect oos performance to be good or bad?
+
+```{r}
+pacman::p_load(glmnet)
+#TO-DO
+```
+
+Use the the same training set of 250 and use lasso cross-validated to estimate beta. Print out the first 20 estimates. Was it close to the real beta? Did it select the variables intercept, V1, ..., V6? Why or why not? Do you expect oos performance to be good or bad?
+
+```{r}
+#TO-DO
+```
+
+
+Create a training set of 600 and use ridge cross-validated to estimate beta. Print out the first 20 estimates. Was it close to the real beta? Why or why not? Do you expect oos performance to be good or bad?
+
+```{r}
+#TO-DO
+```
+
+Use the the same training set of 600 and use lasso cross-validated to estimate beta. Print out the first 20 estimates. Was it close to the real beta? Did it select the variables intercept, V1, ..., V6? Why or why not? Do you expect oos performance to be good or bad?
+
+```{r}
+#TO-DO
+```
