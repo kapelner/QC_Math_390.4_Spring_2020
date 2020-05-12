@@ -185,9 +185,9 @@ Invert train and test splits and let it train on 28,000 observations.
 xgboost_mod = xgboost(data = data.matrix(X_test), 
  label = as.numeric(y_test == ">50K"), 
  num_class = 2, #y = 0 or 1
- eta = 0.3, #default
+ eta = 0.5, #default
  max_depth = 6, #default 
- nrounds = 25, 
+ nrounds = 50, 
  subsample = 1, #default 
  colsample_bytree = 1,
  eval_metric = "merror",
