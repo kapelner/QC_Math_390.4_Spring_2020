@@ -9,13 +9,13 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 <!--  -->
 * Lecture 26 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec20.Rmd)
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec26kap.pdf)
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec26kap.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec26nissanthan.pdf)
 * Lecture 25 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec19.Rmd) 
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec25kap.pdf)
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec25kap.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec25nissanthan.pdf)
 * Lecture 24 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec18.Rmd) 
-  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec24kap.pdf)
+  - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec24kap.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec24nissanthan.pdf)
 * Lecture 23 video on slack
   - [Practice Notes](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/practice_lectures/lec17.Rmd)
   - Theory Notes [(Prof)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec23kap.pdf) [(Christella Nissanthan)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/lectures/lec23nissanthan.pdf)
@@ -113,7 +113,7 @@ My lectures can be listened to as youtube tracks and lecture notes are also scan
 ## Exams
 
 * Midterm I is Thurs, Mar 26 (in "class") [(exam)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/exams/midterm1/midterm1.pdf) [(exam solutions)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/exams/midterm1/midterm1_solutions.pdf)
-* Midterm II is Thurs, May 14 (in "class")
+* Midterm II is Thurs, May 14 (in "class") [(exam)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/exams/midterm2/midterm2.pdf) [(exam solutions)](https://github.com/kapelner/QC_Math_390.4_Spring_2020/blob/master/exams/midterm2/midterm2_solutions.pdf)
 
 
 ## Practice Exams
